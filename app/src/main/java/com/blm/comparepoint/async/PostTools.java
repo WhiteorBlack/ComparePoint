@@ -1,12 +1,15 @@
 package com.blm.comparepoint.async;
 
 
+import android.content.Context;
+
 import com.blm.comparepoint.interfacer.PostCallBack;
 import com.zhy.http.okhttp.OkHttpUtils;
 
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 public class PostTools {
 
@@ -22,5 +25,10 @@ public class PostTools {
         if (file.exists()) {
             OkHttpUtils.postFile().url(url).file(file).params(params).build().execute(postCallBack);
         }
+    }
+
+    public static void getDataWithNone(Context context, String url, Map<String, String> params, PostCallBack postCallBack) {
+        OkHttpUtils.getInstance().setConnectTimeout(10 * 1000, TimeUnit.MILLISECONDS);
+        OkHttpUtils.get().url(url).params(params).build().execute(postCallBack);
     }
 }

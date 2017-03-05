@@ -52,6 +52,8 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile project(':okhttputils')
     compile 'com.jakewharton:butterknife:8.5.1'
+    compile files('libs/wechat-sdk-android-without-mta-1.0.2.jar')
+    compile 'com.android.support:recyclerview-v7:24.2.0'
 }
 
 repositories{
