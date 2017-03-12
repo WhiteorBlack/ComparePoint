@@ -10,4 +10,6 @@
     <color name="tableIn">#C35441</color>
     <color name="lineDeep">#A2311F</color>
     <color name="lineLight">#B44430</color>
+    <color name="betSelected">#E77F66</color>
+    <color name="converMoneyEdt">#1C1F24</color>
 </resources>

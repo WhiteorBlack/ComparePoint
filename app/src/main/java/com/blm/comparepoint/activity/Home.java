@@ -1,7 +1,10 @@
 package com.blm.comparepoint.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -11,15 +14,32 @@ import android.widget.TextView;
 
 import com.blm.comparepoint.BaseActivity;
 import com.blm.comparepoint.R;
+import com.blm.comparepoint.adapter.BetHistoryAdapter;
+import com.blm.comparepoint.adapter.BetNumberAdapter;
+import com.blm.comparepoint.adapter.NumberAdapter;
+import com.blm.comparepoint.bean.Bean_BetNumber;
+import com.blm.comparepoint.bean.Bean_Number;
+import com.blm.comparepoint.dialog.GoOnBetPop;
+import com.blm.comparepoint.dialog.NotifyPop;
+import com.blm.comparepoint.dialog.WinPop;
 import com.blm.comparepoint.interfacer.HomeOprateView;
+import com.blm.comparepoint.interfacer.PopInterfacer;
 import com.blm.comparepoint.presenter.HomePresenter;
+import com.blm.comparepoint.untils.DensityUtils;
+import com.blm.comparepoint.widget.CircleImageView;
+import com.blm.comparepoint.widget.RecycleViewDivider;
 import com.blm.comparepoint.widget.ScrollTextView;
+import com.blm.comparepoint.wxapi.Constants;
+import com.bumptech.glide.Glide;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class Home extends BaseActivity implements HomeOprateView {
+public class Home extends BaseActivity implements HomeOprateView, PopInterfacer {
 
     @BindView(R.id.txt_notify)
     ScrollTextView txtNotify;
@@ -28,7 +48,7 @@ public class Home extends BaseActivity implements HomeOprateView {
     @BindView(R.id.txt_money)
     TextView txtMoney;
     @BindView(R.id.img_sign)
-    ImageView imgSign;
+    TextView imgSign;
     @BindView(R.id.txt_red_money)
     TextView txtRedMoney;
     @BindView(R.id.txt_online)
@@ -57,7 +77,41 @@ public class Home extends BaseActivity implements HomeOprateView {
     LinearLayout llMoneyContent;
     @BindView(R.id.img_confirm)
     ImageView imgConfirm;
+    @BindView(R.id.txt_count_down)
+    TextView txtCountDown;
+    @BindView(R.id.txt_single_mutil)
+    TextView txtSingleMutil;
+    @BindView(R.id.txt_small_mutil)
+    TextView txtSmallMutil;
+    @BindView(R.id.txt_double_mutil)
+    TextView txtDoubleMutil;
+    @BindView(R.id.txt_big_mutil)
+    TextView txtBigMutil;
+    @BindView(R.id.img_ten)
+    ImageView imgTen;
+    @BindView(R.id.img_fifty)
+    ImageView imgFifty;
+    @BindView(R.id.img_han)
+    ImageView imgHan;
+    @BindView(R.id.img_fifty_han)
+    ImageView imgFiftyHan;
+    @BindView(R.id.img_avatar)
+    CircleImageView imgAvatar;
+    @BindView(R.id.activity_home)
+    LinearLayout activityHome;
     private HomePresenter homePresenter;
+
+    private BetHistoryAdapter betHistoryAdapter;
+    private BetNumberAdapter betNumberAdapter;
+    private NumberAdapter numberAdapter;
+    private List betHistoryList;
+    private List betNumberList;
+    private List numberList;
+
+    //popwindow
+    private WinPop winPop;
+    private GoOnBetPop goOnBetPop;
+    private NotifyPop notifyPop;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -65,8 +119,107 @@ public class Home extends BaseActivity implements HomeOprateView {
         setContentView(R.layout.activity_home);
         ButterKnife.bind(this);
         homePresenter = new HomePresenter(this);
+        initView();
+        initData();
+        recyNumber.post(new Runnable() {
+            @Override
+            public void run() {
+                numberAdapter.setHeight(recyNumber.getHeight() - DensityUtils.dp2px(context, 9));
+                numberAdapter.notifyDataSetChanged();
+            }
+        });
+        homePresenter.resetStatue();
     }
 
+    private void initData() {
+        for (int i = 0; i < 10; i++) {
+            Bean_BetNumber betNumber = new Bean_BetNumber();
+            betNumber.betMutil = "9.0";
+            betNumber.number = i + 1;
+            betNumber.isSelected = false;
+            betNumberList.add(betNumber);
+            betHistoryList.add(new ArrayList<>());
+
+            Bean_Number number = new Bean_Number();
+            number.number = i + 1;
+            number.isSelected = false;
+            number.isShine = false;
+            numberList.add(number);
+        }
+        betNumberAdapter.notifyDataSetChanged();
+        betHistoryAdapter.notifyDataSetChanged();
+
+    }
+
+    private void initView() {
+        betHistoryList = new ArrayList();
+        betNumberList = new ArrayList();
+        numberList = new ArrayList();
+
+        betHistoryAdapter = new BetHistoryAdapter(betHistoryList);
+        recyHistory.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+//        recyHistory.addItemDecoration(new RecycleViewDivider(context,LinearLayoutManager.HORIZONTAL,1,R.color.lineLight));
+        recyHistory.setAdapter(betHistoryAdapter);
+
+        betNumberAdapter = new BetNumberAdapter(betNumberList);
+        GridLayoutManager gridManager = new GridLayoutManager(this, 5, GridLayoutManager.VERTICAL, false);
+        gridManager.setAutoMeasureEnabled(true);
+        recyBetNumber.setLayoutManager(gridManager);
+        recyBetNumber.addItemDecoration(new RecycleViewDivider(context, GridLayoutManager.HORIZONTAL, 1, R.color.lineLight));
+        recyBetNumber.addItemDecoration(new RecycleViewDivider(context, GridLayoutManager.VERTICAL, 1, R.color.lineLight));
+        recyBetNumber.setAdapter(betNumberAdapter);
+
+        recyNumber.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
+        numberAdapter = new NumberAdapter(numberList);
+        recyNumber.setAdapter(numberAdapter);
+    }
+
+    /**
+     * 选择 10 金币
+     */
+    private void selectTen(){
+        glideImage(R.mipmap.icon_ten_big,imgTen);
+        glideImage(R.mipmap.icon_fifuty_small,imgFifty);
+        glideImage(R.mipmap.icon_handrad_small,imgHan);
+        glideImage(R.mipmap.icon_fifuty_h_small,imgFiftyHan);
+    }
+
+    /**
+     * 选择 50 金币
+     */
+    private void selectFifty(){
+        glideImage(R.mipmap.icon_ten_small,imgTen);
+        glideImage(R.mipmap.icon_fifty_big,imgFifty);
+        glideImage(R.mipmap.icon_handrad_small,imgHan);
+        glideImage(R.mipmap.icon_fifuty_h_small,imgFiftyHan);
+    }
+
+    /**
+     * 选择 100 金币
+     */
+    private void selectHan(){
+        glideImage(R.mipmap.icon_ten_small,imgTen);
+        glideImage(R.mipmap.icon_fifuty_small,imgFifty);
+        glideImage(R.mipmap.icon_han_big,imgHan);
+        glideImage(R.mipmap.icon_fifuty_h_small,imgFiftyHan);
+    }
+
+    /**
+     * 选择 500 金币
+     */
+    private void selectFiftyHan(){
+        glideImage(R.mipmap.icon_ten_small,imgTen);
+        glideImage(R.mipmap.icon_fifuty_small,imgFifty);
+        glideImage(R.mipmap.icon_handrad_small,imgHan);
+        glideImage(R.mipmap.icon_fifty_han_big,imgFiftyHan);
+    }
+
+    private void glideImage(int resId,ImageView imageView){
+        Glide.with(context).load(resId).into(imageView);
+    }
+    private void glideImage(String url,ImageView imageView){
+        Glide.with(context).load(url).into(imageView);
+    }
     @Override
     public void setNotify() {
 
@@ -125,10 +278,76 @@ public class Home extends BaseActivity implements HomeOprateView {
         }.start();
     }
 
-    @OnClick({R.id.txt_notify, R.id.txt_name, R.id.txt_money, R.id.img_sign, R.id.txt_red_money, R.id.txt_role, R.id.txt_order, R.id.fl_single, R.id.fl_small, R.id.fl_double, R.id.fl_big, R.id.img_clear, R.id.img_confirm})
+    @Override
+    public void showWinPop(String money) {
+        if (winPop == null) {
+            winPop = new WinPop(context);
+        }
+        winPop.setMOney(money);
+        winPop.showPop(txtBigMutil);
+        winPop.setPopInterfacer(this, Constants.WIN_POP_FLAG);
+    }
+
+    @Override
+    public void showGoBet(String notify) {
+        if (goOnBetPop == null) {
+            goOnBetPop = new GoOnBetPop(context);
+        }
+        goOnBetPop.setNotify(notify);
+        goOnBetPop.showPop(txtBigMutil);
+        goOnBetPop.setPopInterfacer(this, Constants.GO_BET_POP_FLAG);
+    }
+
+    @Override
+    public void showNotify(String notify) {
+        if (notifyPop==null){
+            notifyPop=new NotifyPop(context);
+        }
+        notifyPop.setNotify(notify);
+        notifyPop.showPop(txtBigMutil);
+        notifyPop.setPopInterfacer(this,Constants.NOTIFY_POP_FLAG);
+    }
+
+    @Override
+    public void betClick(int pos) {
+        switch (pos){
+            case 0: //十金币
+                Constants.SELECT_GOLD=10;
+                selectTen();
+                break;
+            case 1:  //50gold
+                Constants.SELECT_GOLD=50;
+                selectFifty();
+                break;
+            case 2:  //100 gold
+                Constants.SELECT_GOLD=100;
+                selectHan();
+                break;
+            case 3:  //500 gold
+                Constants.SELECT_GOLD=500;
+                selectFiftyHan();
+                break;
+        }
+    }
+
+    @Override
+    public void resetTable() {
+
+    }
+
+    @Override
+    public void toastCommonNotify(String notify) {
+
+    }
+
+
+    @OnClick({R.id.txt_notify, R.id.txt_name, R.id.txt_money, R.id.img_sign, R.id.txt_red_money, R.id.img_avatar,
+            R.id.txt_role, R.id.txt_order, R.id.fl_single, R.id.fl_small, R.id.fl_double, R.id.fl_big,
+            R.id.img_clear, R.id.img_confirm, R.id.img_ten, R.id.img_fifty, R.id.img_han, R.id.img_fifty_han})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.txt_notify:
+
                 break;
             case R.id.txt_name:
                 break;
@@ -141,6 +360,7 @@ public class Home extends BaseActivity implements HomeOprateView {
             case R.id.txt_role:
                 break;
             case R.id.txt_order:
+                startActivity(new Intent(context,MyOrder.class));
                 break;
             case R.id.fl_single:
                 break;
@@ -154,6 +374,46 @@ public class Home extends BaseActivity implements HomeOprateView {
                 break;
             case R.id.img_confirm:
                 break;
+            case R.id.img_ten:
+
+                break;
+            case R.id.img_fifty:
+
+                break;
+            case R.id.img_han:
+
+                break;
+            case R.id.img_fifty_han:
+
+                break;
+            case R.id.img_avatar:
+                startActivity(new Intent(context,PersonalCenter.class));
+                break;
         }
+    }
+
+    @Override
+    public void OnDismiss(int flag) {
+        switch (flag) {
+            case Constants.WIN_POP_FLAG:
+                winPop = null;
+                break;
+            case Constants.GO_BET_POP_FLAG:
+                goOnBetPop = null;
+                break;
+            case Constants.NOTIFY_POP_FLAG:
+                notifyPop=null;
+                break;
+        }
+    }
+
+    @Override
+    public void OnConfirm(int flag, Bundle bundle) {
+
+    }
+
+    @Override
+    public void OnCancle(int flag) {
+
     }
 }

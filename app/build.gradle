@@ -1,5 +1,5 @@
 apply plugin: 'com.android.application'
-
+apply plugin: 'com.neenbedankt.android-apt'
 android {
     signingConfigs {
         config {
@@ -51,9 +51,12 @@ dependencies {
     compile 'com.android.support:appcompat-v7:24.2.1'
     testCompile 'junit:junit:4.12'
     compile project(':okhttputils')
-    compile 'com.jakewharton:butterknife:8.5.1'
+    compile 'com.jakewharton:butterknife:8.2.0'
+    apt 'com.jakewharton:butterknife-compiler:8.2.0'
     compile files('libs/wechat-sdk-android-without-mta-1.0.2.jar')
     compile 'com.android.support:recyclerview-v7:24.2.0'
+    compile project(':takephoto_library')
+    compile 'com.github.bumptech.glide:glide:3.6.0'
 }
 
 repositories{

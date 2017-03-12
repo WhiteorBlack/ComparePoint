@@ -11,7 +11,6 @@ public interface HomeOprateView {
     void setNotify();
 
     /**
-     *
      * @param successful
      */
     void sigin(boolean successful);
@@ -35,8 +34,51 @@ public interface HomeOprateView {
      */
     void clearBetMoney();
 
+    /**
+     * 获取结果
+     */
     void getResult();
 
-    void countDown(int type,int time);
+    /**
+     * 倒计时
+     *
+     * @param type
+     * @param time
+     */
+    void countDown(int type, int time);
 
+    /**
+     * 赢得金币弹窗
+     *
+     * @param money
+     */
+    void showWinPop(String money);
+
+    /**
+     * 继续押注弹窗
+     *
+     * @param notify
+     */
+    void showGoBet(String notify);
+
+    /**
+     * 展示信息弹窗
+     *
+     * @param notify
+     */
+    void showNotify(String notify);
+
+    /**
+     * 选择押注金额
+     *
+     * @param pos
+     */
+    void betClick(int pos);
+
+    /**
+     * 清除桌面押注数据
+     */
+    void resetTable();
+
+    void toastCommonNotify(String notify);
 }

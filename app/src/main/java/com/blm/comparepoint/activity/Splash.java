@@ -50,7 +50,8 @@ public class Splash extends BaseActivity {
                 }else {
                     startActivity(new Intent(context,Home.class));
                 }
-                finish();
+                AppManager.getAppManager().finishActivity();
+
             }
         }.start();
     }
