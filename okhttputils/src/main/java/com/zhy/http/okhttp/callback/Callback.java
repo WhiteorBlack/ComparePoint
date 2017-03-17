@@ -1,6 +1,7 @@
 package com.zhy.http.okhttp.callback;
 
 import okhttp3.Call;
+import okhttp3.Headers;
 import okhttp3.Request;
 import okhttp3.Response;
 
@@ -19,8 +20,9 @@ public abstract class Callback<T>
      * UI Thread
      *
      * @param
+     * @param headers
      */
-    public void onAfter()
+    public void onAfter(Headers headers)
     {
     }
 

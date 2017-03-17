@@ -10,12 +10,22 @@ import android.widget.TextView;
 
 import com.blm.comparepoint.BaseActivity;
 import com.blm.comparepoint.R;
+import com.blm.comparepoint.activity.Home;
 import com.blm.comparepoint.async.PostTools;
+import com.blm.comparepoint.bean.Bean_Login;
+import com.blm.comparepoint.bean.Bean_WxLogin;
 import com.blm.comparepoint.interfacer.PostCallBack;
+import com.blm.comparepoint.untils.L;
+import com.blm.comparepoint.untils.NetUtils;
+import com.blm.comparepoint.untils.SPUtils;
+import com.blm.comparepoint.untils.T;
+import com.google.gson.Gson;
 import com.tencent.mm.opensdk.modelbase.BaseReq;
 import com.tencent.mm.opensdk.modelbase.BaseResp;
 import com.tencent.mm.opensdk.modelmsg.SendAuth;
+import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.IWXAPIEventHandler;
+import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 
 import org.json.JSONObject;
 
@@ -34,12 +44,15 @@ public class WXEntryActivity extends BaseActivity implements IWXAPIEventHandler 
     @BindView(R.id.txt_notify)
     TextView txtNotify;
 
+    private IWXAPI iwxapi;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
-
+        iwxapi = WXAPIFactory.createWXAPI(this, Constants.APP_ID, true);
+        iwxapi.registerApp(Constants.APP_ID);
     }
 
     @Override
@@ -59,6 +72,10 @@ public class WXEntryActivity extends BaseActivity implements IWXAPIEventHandler 
             case 0://同意
                 getToken(resp.code);
                 break;
+            default:
+                T.showShort(WXEntryActivity.this, "授权失败,请重试!");
+                btnLogin.setEnabled(true);
+                break;
         }
     }
 
@@ -67,12 +84,26 @@ public class WXEntryActivity extends BaseActivity implements IWXAPIEventHandler 
         super.pointClick(v);
         switch (v.getId()) {
             case R.id.btn_login:
+                loginByChat();
                 btnLogin.setEnabled(false);
                 break;
             case R.id.txt_notify:
 
                 break;
         }
+    }
+
+    private void loginByChat() {
+        // send oauth request
+        try {
+            SendAuth.Req req = new SendAuth.Req();
+            req.scope = "snsapi_userinfo";
+            req.state = "wechat_sdk_demo_boom";
+            iwxapi.sendReq(req);
+        } catch (Exception e) {
+            L.e(e.toString());
+        }
+
     }
 
     private String openId = "", accessToken = "";
@@ -94,10 +125,64 @@ public class WXEntryActivity extends BaseActivity implements IWXAPIEventHandler 
                     JSONObject object = new JSONObject(response);
                     openId = object.getString("openid");
                     accessToken = object.getString("access_token");
+                    login();
                 } catch (Exception e) {
+                    T.showShort(WXEntryActivity.this, "获取用户信息失败,请重试!");
                 }
 
             }
+        });
+    }
+
+    private void login() {
+        Map<String, String> params = new HashMap<>();
+        params.put("OpenId", openId);
+        PostTools.postData(Constants.MAIN_URL + "Account/Login", params, new PostCallBack() {
+            @Override
+            public void onResponse(String response) {
+                super.onResponse(response);
+                if (TextUtils.isEmpty(response)) {
+                    T.showShort(context, "获取用户信息失败,请重试");
+                    btnLogin.setEnabled(true);
+                    return;
+                }
+                Bean_Login bean_login = new Gson().fromJson(response, Bean_Login.class);
+                if (bean_login.Success) {
+                    Constants.USERTOKEN=bean_login.login.Token;
+                    SPUtils.put(context, Constants.TOKEN, bean_login.login.Token);
+                    SPUtils.put(context, Constants.OPENID, openId);
+                    SPUtils.put(context, Constants.GAMER_ID, bean_login.login.GameUserId);
+                    SPUtils.put(context, Constants.ISSIGN, false);
+                    if (TextUtils.isEmpty(bean_login.login.Avatar) || TextUtils.isEmpty(bean_login.login.NickName)) {
+                        getUserInfoFromWx();
+                    } else {
+                        SPUtils.put(context, Constants.NICKNAME, bean_login.login.NickName);
+                        SPUtils.put(context, Constants.AVATAR, bean_login.login.Avatar);
+                        startActivity(new Intent(context, Home.class));
+                    }
+                }
+            }
+
+            private void getUserInfoFromWx() {
+                Map<String, String> params = new HashMap<>();
+                params.put("access_token", accessToken);
+                params.put("openid", openId);
+                PostTools.getDataWithNone(context, "https://api.weixin.qq.com/sns/userinfo", params, new PostCallBack() {
+                    @Override
+                    public void onResponse(String response) {
+                        super.onResponse(response);
+                        if (TextUtils.isEmpty(response)) {
+                            T.showShort(context, "网络错误,请重试");
+                            return;
+                        }
+                        Bean_WxLogin wxLogin = new Gson().fromJson(response, Bean_WxLogin.class);
+                        SPUtils.put(context, Constants.NICKNAME, wxLogin.nickname);
+                        SPUtils.put(context, Constants.AVATAR, wxLogin.headimgurl);
+                        startActivity(new Intent(context, Home.class));
+                    }
+                });
+            }
+
         });
     }
 

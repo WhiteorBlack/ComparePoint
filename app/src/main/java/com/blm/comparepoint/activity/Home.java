@@ -1,6 +1,9 @@
 package com.blm.comparepoint.activity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.v7.widget.GridLayoutManager;
@@ -17,15 +20,23 @@ import com.blm.comparepoint.R;
 import com.blm.comparepoint.adapter.BetHistoryAdapter;
 import com.blm.comparepoint.adapter.BetNumberAdapter;
 import com.blm.comparepoint.adapter.NumberAdapter;
+import com.blm.comparepoint.bean.Bean_AppVersion;
 import com.blm.comparepoint.bean.Bean_BetNumber;
+import com.blm.comparepoint.bean.Bean_CurrentInfo;
+import com.blm.comparepoint.bean.Bean_GameConfig;
 import com.blm.comparepoint.bean.Bean_Number;
+import com.blm.comparepoint.bean.Bean_SystemConfig;
 import com.blm.comparepoint.dialog.GoOnBetPop;
 import com.blm.comparepoint.dialog.NotifyPop;
+import com.blm.comparepoint.dialog.UpdatePop;
 import com.blm.comparepoint.dialog.WinPop;
 import com.blm.comparepoint.interfacer.HomeOprateView;
 import com.blm.comparepoint.interfacer.PopInterfacer;
 import com.blm.comparepoint.presenter.HomePresenter;
+import com.blm.comparepoint.untils.AppUtils;
 import com.blm.comparepoint.untils.DensityUtils;
+import com.blm.comparepoint.untils.SPUtils;
+import com.blm.comparepoint.untils.T;
 import com.blm.comparepoint.widget.CircleImageView;
 import com.blm.comparepoint.widget.RecycleViewDivider;
 import com.blm.comparepoint.widget.ScrollTextView;
@@ -112,6 +123,10 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
     private WinPop winPop;
     private GoOnBetPop goOnBetPop;
     private NotifyPop notifyPop;
+    private ProgressDialog progressDialog;
+    private UpdatePop updatePop;
+
+    private int historyCount = 10;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -120,7 +135,7 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
         ButterKnife.bind(this);
         homePresenter = new HomePresenter(this);
         initView();
-        initData();
+        initNumData();
         recyNumber.post(new Runnable() {
             @Override
             public void run() {
@@ -128,17 +143,53 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
                 numberAdapter.notifyDataSetChanged();
             }
         });
+        recyHistory.post(new Runnable() {
+            @Override
+            public void run() {
+                historyCount = recyHistory.getHeight() / DensityUtils.dp2px(context, 30);
+            }
+        });
         homePresenter.resetStatue();
+        homePresenter.getSystemConfig();
+        homePresenter.getGameConfig();
+        homePresenter.getVersion();
+    }
+
+    private void initNumData() {
+        for (int i = 0; i < 10; i++) {
+            Bean_Number number = new Bean_Number();
+            number.number = i + 1;
+            number.isSelected = false;
+            number.isShine = false;
+            numberList.add(number);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setUserInfo();
+    }
+
+    private void setUserInfo() {
+        glideImage((String) SPUtils.get(context, Constants.AVATAR, ""), imgAvatar);
+        txtName.setText((String) SPUtils.get(context, Constants.NICKNAME, ""));
+        txtMoney.setText(SPUtils.get(context, Constants.USERAMOUNT, 0) + "");
+        txtRedMoney.setText(SPUtils.get(context, Constants.ACTIVEAMOUNT, 0) + "");
+        imgSign.setEnabled(!(boolean) SPUtils.get(context, Constants.ISSIGN, false));
     }
 
     private void initData() {
+        txtBigMutil.setText(Constants.RATIO);
+        txtSingleMutil.setText(Constants.RATIO);
+        txtSmallMutil.setText(Constants.RATIO);
+        txtDoubleMutil.setText(Constants.RATIO);
         for (int i = 0; i < 10; i++) {
             Bean_BetNumber betNumber = new Bean_BetNumber();
-            betNumber.betMutil = "9.0";
+            betNumber.betMutil = Constants.RATIO;
             betNumber.number = i + 1;
             betNumber.isSelected = false;
             betNumberList.add(betNumber);
-            betHistoryList.add(new ArrayList<>());
 
             Bean_Number number = new Bean_Number();
             number.number = i + 1;
@@ -147,7 +198,6 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
             numberList.add(number);
         }
         betNumberAdapter.notifyDataSetChanged();
-        betHistoryAdapter.notifyDataSetChanged();
 
     }
 
@@ -172,54 +222,57 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
         recyNumber.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
         numberAdapter = new NumberAdapter(numberList);
         recyNumber.setAdapter(numberAdapter);
+        selectTen();
     }
 
     /**
      * 选择 10 金币
      */
-    private void selectTen(){
-        glideImage(R.mipmap.icon_ten_big,imgTen);
-        glideImage(R.mipmap.icon_fifuty_small,imgFifty);
-        glideImage(R.mipmap.icon_handrad_small,imgHan);
-        glideImage(R.mipmap.icon_fifuty_h_small,imgFiftyHan);
+    private void selectTen() {
+        glideImage(R.mipmap.icon_ten_big, imgTen);
+        glideImage(R.mipmap.icon_fifuty_small, imgFifty);
+        glideImage(R.mipmap.icon_handrad_small, imgHan);
+        glideImage(R.mipmap.icon_fifuty_h_small, imgFiftyHan);
     }
 
     /**
      * 选择 50 金币
      */
-    private void selectFifty(){
-        glideImage(R.mipmap.icon_ten_small,imgTen);
-        glideImage(R.mipmap.icon_fifty_big,imgFifty);
-        glideImage(R.mipmap.icon_handrad_small,imgHan);
-        glideImage(R.mipmap.icon_fifuty_h_small,imgFiftyHan);
+    private void selectFifty() {
+        glideImage(R.mipmap.icon_ten_small, imgTen);
+        glideImage(R.mipmap.icon_fifty_big, imgFifty);
+        glideImage(R.mipmap.icon_handrad_small, imgHan);
+        glideImage(R.mipmap.icon_fifuty_h_small, imgFiftyHan);
     }
 
     /**
      * 选择 100 金币
      */
-    private void selectHan(){
-        glideImage(R.mipmap.icon_ten_small,imgTen);
-        glideImage(R.mipmap.icon_fifuty_small,imgFifty);
-        glideImage(R.mipmap.icon_han_big,imgHan);
-        glideImage(R.mipmap.icon_fifuty_h_small,imgFiftyHan);
+    private void selectHan() {
+        glideImage(R.mipmap.icon_ten_small, imgTen);
+        glideImage(R.mipmap.icon_fifuty_small, imgFifty);
+        glideImage(R.mipmap.icon_han_big, imgHan);
+        glideImage(R.mipmap.icon_fifuty_h_small, imgFiftyHan);
     }
 
     /**
      * 选择 500 金币
      */
-    private void selectFiftyHan(){
-        glideImage(R.mipmap.icon_ten_small,imgTen);
-        glideImage(R.mipmap.icon_fifuty_small,imgFifty);
-        glideImage(R.mipmap.icon_handrad_small,imgHan);
-        glideImage(R.mipmap.icon_fifty_han_big,imgFiftyHan);
+    private void selectFiftyHan() {
+        glideImage(R.mipmap.icon_ten_small, imgTen);
+        glideImage(R.mipmap.icon_fifuty_small, imgFifty);
+        glideImage(R.mipmap.icon_handrad_small, imgHan);
+        glideImage(R.mipmap.icon_fifty_han_big, imgFiftyHan);
     }
 
-    private void glideImage(int resId,ImageView imageView){
+    private void glideImage(int resId, ImageView imageView) {
         Glide.with(context).load(resId).into(imageView);
     }
-    private void glideImage(String url,ImageView imageView){
+
+    private void glideImage(String url, ImageView imageView) {
         Glide.with(context).load(url).into(imageView);
     }
+
     @Override
     public void setNotify() {
 
@@ -227,16 +280,17 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
 
     @Override
     public void sigin(boolean successful) {
-
-    }
-
-    @Override
-    public void showRoleDetial() {
-
-    }
-
-    @Override
-    public void showOrderInfo() {
+        imgSign.setEnabled(successful);
+        if (successful) {
+            SPUtils.put(context, Constants.USERAMOUNT, (long) ((long) SPUtils.get(context, Constants.USERAMOUNT, 0) +
+                    (int) SPUtils.get(context, Constants.SIGNBOUNS, 0)));
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    txtMoney.setText(SPUtils.get(context, Constants.USERAMOUNT, 0) + "");
+                }
+            });
+        }
 
     }
 
@@ -247,12 +301,7 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
 
     @Override
     public void toastNotify(String notify) {
-
-    }
-
-    @Override
-    public void clearBetMoney() {
-
+        T.showShort(context, notify);
     }
 
     @Override
@@ -260,22 +309,36 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
 
     }
 
+    private CountDownTimer countDownTimer;
+
     @Override
-    public void countDown(int type, int time) {
-        new CountDownTimer(time * 1000, 1000) {
+    public void countDown(final int type, int time) {
+        countDownTimer = new CountDownTimer(time, 1000) {
 
             @Override
             public void onTick(long millisUntilFinished) {
                 if (isFinishing()) {
                     cancel();
                 }
+                int leftTIme = (int) (millisUntilFinished / 1000);
+                if (type == Constants.TYPE_BET_MONEY && leftTIme < 6) {
+                    if (leftTIme % 2 > 1) {
+                        txtCountDown.setTextColor(Color.RED);
+                    } else {
+                        txtCountDown.setTextColor(Color.WHITE);
+                    }
+                }
+                txtCountDown.setText(leftTIme + "s");
             }
 
             @Override
             public void onFinish() {
-
+                txtCountDown.setTextColor(Color.WHITE);
+                homePresenter.endCountDown(type);
             }
-        }.start();
+        };
+        countDownTimer.cancel();
+        countDownTimer.start();
     }
 
     @Override
@@ -300,31 +363,31 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
 
     @Override
     public void showNotify(String notify) {
-        if (notifyPop==null){
-            notifyPop=new NotifyPop(context);
+        if (notifyPop == null) {
+            notifyPop = new NotifyPop(context);
         }
         notifyPop.setNotify(notify);
         notifyPop.showPop(txtBigMutil);
-        notifyPop.setPopInterfacer(this,Constants.NOTIFY_POP_FLAG);
+        notifyPop.setPopInterfacer(this, Constants.NOTIFY_POP_FLAG);
     }
 
     @Override
     public void betClick(int pos) {
-        switch (pos){
+        switch (pos) {
             case 0: //十金币
-                Constants.SELECT_GOLD=10;
+                Constants.SELECT_GOLD = 10;
                 selectTen();
                 break;
             case 1:  //50gold
-                Constants.SELECT_GOLD=50;
+                Constants.SELECT_GOLD = 50;
                 selectFifty();
                 break;
             case 2:  //100 gold
-                Constants.SELECT_GOLD=100;
+                Constants.SELECT_GOLD = 100;
                 selectHan();
                 break;
             case 3:  //500 gold
-                Constants.SELECT_GOLD=500;
+                Constants.SELECT_GOLD = 500;
                 selectFiftyHan();
                 break;
         }
@@ -338,6 +401,68 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
     @Override
     public void toastCommonNotify(String notify) {
 
+    }
+
+    @Override
+    public void showDialog() {
+        if (progressDialog == null) {
+            progressDialog = new ProgressDialog(this);
+            progressDialog.setMessage("加载配置中...");
+            progressDialog.setCancelable(false);
+            progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        }
+        if (!progressDialog.isShowing()) {
+            progressDialog.show();
+        }
+    }
+
+    @Override
+    public void dimissDialog() {
+        progressDialog.dismiss();
+    }
+
+    @Override
+    public void setSystemConfig(Bean_SystemConfig.SystemConfig systemConfig) {
+        SPUtils.put(context, Constants.MINEXCHANGEAMOUNT, systemConfig.MinWithdramAmount);
+        SPUtils.put(context, Constants.SIGNBOUNS, systemConfig.SignBonus);
+        Constants.ROUNDTIME = systemConfig.RoundTime;
+        Constants.LOTTERYTIME = systemConfig.LotteryTime;
+        Constants.GOldRANGE = systemConfig.GoldRange;
+    }
+
+    @Override
+    public void setGameConfig(Bean_GameConfig.GameConfig gameConfig) {
+        Constants.RATIO = gameConfig.Ratio;
+        initData();
+    }
+
+
+    private String downUrl;
+
+    @Override
+    public void checkUpdate(Bean_AppVersion.AppVersion appVersion) {
+        if (appVersion.AppVisionId > AppUtils.getVersionCode(context) && AppUtils.getVersionCode(context) > 0) {
+            downUrl = appVersion.DownUrl;
+            if (updatePop == null) {
+                updatePop = new UpdatePop(context);
+                updatePop.setPopInterfacer(this, Constants.UPDATE_POP_FLAG);
+            }
+            updatePop.setContent(appVersion.VisionDesc);
+            updatePop.showPop(txtBigMutil);
+        }
+    }
+
+    @Override
+    public void currentInfo(Bean_CurrentInfo.CurrentInfo currentInfo) {
+        betHistoryList.addAll(currentInfo.LastBonusNum);
+        betHistoryAdapter.notifyDataSetChanged();
+        Constants.COUNTDOWNTIME = (int) (currentInfo.StartTime - (System.currentTimeMillis() + Constants.NETTIME_LOCALTIME_DELATE));
+        Constants.BONUSDOWNTIME = (int) (currentInfo.BonusTime - (System.currentTimeMillis() + Constants.NETTIME_LOCALTIME_DELATE));
+        if (Constants.COUNTDOWNTIME > 1) {
+            countDown(Constants.TYPE_BET_MONEY, Constants.COUNTDOWNTIME);
+        } else {
+            countDown(Constants.TYPE_OPEN_CHESS, Constants.BONUSDOWNTIME);
+        }
     }
 
 
@@ -360,7 +485,7 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
             case R.id.txt_role:
                 break;
             case R.id.txt_order:
-                startActivity(new Intent(context,MyOrder.class));
+                startActivity(new Intent(context, MyOrder.class));
                 break;
             case R.id.fl_single:
                 break;
@@ -387,7 +512,7 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
 
                 break;
             case R.id.img_avatar:
-                startActivity(new Intent(context,PersonalCenter.class));
+                startActivity(new Intent(context, PersonalCenter.class));
                 break;
         }
     }
@@ -402,14 +527,25 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
                 goOnBetPop = null;
                 break;
             case Constants.NOTIFY_POP_FLAG:
-                notifyPop=null;
+                notifyPop = null;
+                break;
+            case Constants.UPDATE_POP_FLAG:
+                updatePop = null;
                 break;
         }
     }
 
     @Override
     public void OnConfirm(int flag, Bundle bundle) {
-
+        switch (flag) {
+            case Constants.UPDATE_POP_FLAG:
+                Intent intent = new Intent();
+                intent.setAction("android.intent.action.View");
+                Uri downUri = Uri.parse(downUrl);
+                intent.setData(downUri);
+                startActivity(intent);
+                break;
+        }
     }
 
     @Override

@@ -4,6 +4,8 @@ package com.blm.comparepoint.async;
 import android.content.Context;
 
 import com.blm.comparepoint.interfacer.PostCallBack;
+import com.blm.comparepoint.untils.NetUtils;
+import com.blm.comparepoint.wxapi.Constants;
 import com.zhy.http.okhttp.OkHttpUtils;
 
 import java.io.File;
@@ -16,6 +18,8 @@ public class PostTools {
     public static void postData(final String url, Map<String, String> params, final PostCallBack postCallBack) {
         if (params == null)
             params = new HashMap<>();
+        params.put("Sign", NetUtils.get32MD5Str(System.currentTimeMillis()));
+        params.put("Token", Constants.USERTOKEN);
         params.put("timestamp",System.currentTimeMillis()+"");
         OkHttpUtils.post().url(url).params(params).build().execute(postCallBack);
     }

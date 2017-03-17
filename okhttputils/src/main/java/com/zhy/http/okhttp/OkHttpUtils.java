@@ -207,7 +207,7 @@ public class OkHttpUtils
 	                try
 	                {
 	                    Object o = finalCallback.parseNetworkResponse(response);
-	                    sendSuccessResultCallback(o, finalCallback);
+	                    sendSuccessResultCallback(o, finalCallback,call);
 	                } catch (Exception e)
 	                {
 	                    sendFailResultCallback(call, e, finalCallback);
@@ -233,12 +233,12 @@ public class OkHttpUtils
             public void run()
             {
                 callback.onError(call, e);
-                callback.onAfter();
+                callback.onAfter(call.request().headers());
             }
         });
     }
 
-    public void sendSuccessResultCallback(final Object object, final Callback callback)
+    public void sendSuccessResultCallback(final Object object, final Callback callback,final Call call)
     {
         if (callback == null) return;
         mDelivery.post(new Runnable()
@@ -247,7 +247,7 @@ public class OkHttpUtils
             public void run()
             {
                 callback.onResponse(object);
-                callback.onAfter();
+                callback.onAfter(call.request().headers());
             }
         });
     }

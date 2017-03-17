@@ -16,31 +16,46 @@ public class Constants {
 
     public static final String APP_SCECET = "3e63d9844fd26c0d6a56c74af3673187";
 
-    public static final String IS_LOGIN="isLogin";
+    //SP key
+    public static final String IS_LOGIN = "isLogin";
+    public static final String TOKEN = "token";
+    public static final String GAMER_ID = "gamerId";
+    public static final String AVATAR = "avatar";
+    public static final String NICKNAME = "nickName";
+    public static final String OPENID = "openId";
+    public static final String ISSIGN = "isSign";
+    public static final String SIGNBOUNS = "SignBonus";
+    public static final String MINEXCHANGEAMOUNT = "minExchangeAmount";
+    public static final String USERAMOUNT="UserBalance";
+    public static final String ACTIVEAMOUNT="UserActive";
 
-    public static int SELECT_GOLD=10;
+    public static int SELECT_GOLD = 10;
     //pop flag
-    public static final int WIN_POP_FLAG=0;
-    public static final int GO_BET_POP_FLAG=1;
-    public static final int NOTIFY_POP_FLAG=2;
+    public static final int WIN_POP_FLAG = 0;
+    public static final int GO_BET_POP_FLAG = 1;
+    public static final int NOTIFY_POP_FLAG = 2;
+    public static final int UPDATE_POP_FLAG=3;
 
-    //对应类别 押注金额
-    public static int BET_SINGLE_MONEY=-1;
-    public static int BET_DOUBLE_MONEY=-1;
-    public static int BET_BIG_MONEY=-1;
-    public static int BET_SMALL_MONEY=-1;
-    public static int BET_ONE_MONEY=-1;
-    public static int BET_TWO_MONEY=-1;
-    public static int BET_THREE_MONEY=-1;
-    public static int BET_FOUR_MONEY=-1;
-    public static int BET_FIVE_MONEY=-1;
-    public static int BET_SIX_MONEY=-1;
-    public static int BET_SEVEN_MONEY=-1;
-    public static int BET_EIGHT_MONEY=-1;
-    public static int BET_NINE_MONEY=-1;
-    public static int BET_TEN_MONEY=-1;
+   //接受消息的类型
+    public static final int TYPE_BET_MONEY=1;
+    public static final int TYPE_OPEN_CHESS=2;
 
     //选择的类别
-    public static int BET_SELECT_NUM=-1;
+    public static int BET_SELECT_NUM = -1;
 
+    public static String MD5_KEY = "v5d6g8fldghid58fdksigmnv5249d5ft";
+
+    public static String USERTOKEN = "";
+
+    public static String MAIN_URL = "http://118.244.236.240/api/";
+
+    //system config
+    public static int ROUNDTIME = -1;
+    public static int LOTTERYTIME = -1;
+    public static double GOldRANGE = 1d;
+    public static String RATIO = "";
+
+    public static long NETTIME_LOCALTIME_DELATE=0;
+    public static int COUNTDOWNTIME=30;
+    public static int BONUSDOWNTIME=10;
 }

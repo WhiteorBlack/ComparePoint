@@ -5,4 +5,7 @@ package com.blm.comparepoint.bean;
  */
 
 public class BaseBean {
+    public boolean Success;
+    public String Msg;
+    public String ExceptionMsg;
 }

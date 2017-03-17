@@ -1,5 +1,10 @@
 package com.blm.comparepoint.interfacer;
 
+import com.blm.comparepoint.bean.Bean_AppVersion;
+import com.blm.comparepoint.bean.Bean_CurrentInfo;
+import com.blm.comparepoint.bean.Bean_GameConfig;
+import com.blm.comparepoint.bean.Bean_SystemConfig;
+
 /**
  * Created by 41508 on 2017/3/2.
  */
@@ -15,24 +20,11 @@ public interface HomeOprateView {
      */
     void sigin(boolean successful);
 
-    /**
-     * 展示规则详情
-     */
-    void showRoleDetial();
-
-    /**
-     * 展示订单信息
-     */
-    void showOrderInfo();
 
     void betMoney();
 
     void toastNotify(String notify);
 
-    /**
-     * 清楚押注金币
-     */
-    void clearBetMoney();
 
     /**
      * 获取结果
@@ -81,4 +73,14 @@ public interface HomeOprateView {
     void resetTable();
 
     void toastCommonNotify(String notify);
+
+    void showDialog();
+    void dimissDialog();
+
+    void setSystemConfig(Bean_SystemConfig.SystemConfig systemConfig);
+    void setGameConfig(Bean_GameConfig.GameConfig gameConfig);
+
+    void checkUpdate(Bean_AppVersion.AppVersion appVersion);
+
+    void currentInfo(Bean_CurrentInfo.CurrentInfo currentInfo);
 }
