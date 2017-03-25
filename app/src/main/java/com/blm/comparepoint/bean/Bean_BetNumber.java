@@ -8,4 +8,5 @@ public class Bean_BetNumber extends BaseBean {
     public int number;
     public String betMutil;
     public boolean isSelected;
+    public int betGold;
 }

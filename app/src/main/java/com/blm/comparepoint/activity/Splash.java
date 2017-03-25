@@ -12,12 +12,16 @@ import com.blm.comparepoint.async.PostTools;
 import com.blm.comparepoint.bean.Bean_GamerInfo;
 import com.blm.comparepoint.interfacer.PostCallBack;
 import com.blm.comparepoint.untils.AppManager;
+import com.blm.comparepoint.untils.L;
 import com.blm.comparepoint.untils.NetUtils;
 import com.blm.comparepoint.untils.SPUtils;
 import com.blm.comparepoint.untils.T;
 import com.blm.comparepoint.wxapi.Constants;
 import com.blm.comparepoint.wxapi.WXEntryActivity;
 import com.google.gson.Gson;
+import com.tencent.TIMCallBack;
+import com.tencent.TIMManager;
+import com.tencent.TIMUser;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -61,17 +65,32 @@ public class Splash extends BaseActivity {
                     return;
                 }
                 Bean_GamerInfo bean_gamerInfo = new Gson().fromJson(response, Bean_GamerInfo.class);
-                if (bean_gamerInfo.Success && bean_gamerInfo.gamerInfo != null) {
-                    Constants.USERTOKEN = bean_gamerInfo.gamerInfo.Token;
-                    SPUtils.put(context, Constants.TOKEN, bean_gamerInfo.gamerInfo.Token);
-                    SPUtils.put(context, Constants.AVATAR, bean_gamerInfo.gamerInfo.Avatar);
-                    SPUtils.put(context, Constants.GAMER_ID, bean_gamerInfo.gamerInfo.GameUserId);
-                    SPUtils.put(context, Constants.NICKNAME, bean_gamerInfo.gamerInfo.NickName);
-                    SPUtils.put(context, Constants.OPENID, bean_gamerInfo.gamerInfo.OpenId);
-                    SPUtils.put(context, Constants.USERAMOUNT, bean_gamerInfo.gamerInfo.UserBalance);
-                    SPUtils.put(context, Constants.ACTIVEAMOUNT, bean_gamerInfo.gamerInfo.UserActive);
+                if (bean_gamerInfo.Success && bean_gamerInfo.Data != null) {
+                    TIMUser user = new TIMUser();
+                    user.setAccountType(Constants.ACCOUNT_TYPE);
+                    user.setAppIdAt3rd(Constants.IM_APP_ID + "");
+                    user.setIdentifier(bean_gamerInfo.Data.GameUserId);
+                    TIMManager.getInstance().login(Constants.IM_APP_ID, user, bean_gamerInfo.Data.Sign, new TIMCallBack() {
+                        @Override
+                        public void onError(int i, String s) {
+                            L.e("IM error--" + s);
+                        }
+
+                        @Override
+                        public void onSuccess() {
+                            L.e("IM login success--");
+                        }
+                    });
+                    Constants.USERTOKEN = bean_gamerInfo.Data.Token;
+                    SPUtils.put(context, Constants.TOKEN, bean_gamerInfo.Data.Token);
+                    SPUtils.put(context, Constants.AVATAR, bean_gamerInfo.Data.Avatar);
+                    SPUtils.put(context, Constants.GAMER_ID, bean_gamerInfo.Data.GameUserId);
+                    SPUtils.put(context, Constants.NICKNAME, bean_gamerInfo.Data.NickName);
+                    SPUtils.put(context, Constants.OPENID, bean_gamerInfo.Data.OpenId);
+                    SPUtils.put(context, Constants.USERAMOUNT, bean_gamerInfo.Data.UserBalance);
+                    SPUtils.put(context, Constants.ACTIVEAMOUNT, bean_gamerInfo.Data.UserActive);
                     SPUtils.put(context, Constants.IS_LOGIN, true);
-                    SPUtils.put(context, Constants.ISSIGN, bean_gamerInfo.gamerInfo.IsSignToday);
+                    SPUtils.put(context, Constants.ISSIGN, bean_gamerInfo.Data.IsSignToday);
                     startActivity(new Intent(context, Home.class));
                     AppManager.getAppManager().finishActivity();
                     countDownTimer.cancel();

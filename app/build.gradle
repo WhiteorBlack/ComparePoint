@@ -3,10 +3,10 @@ apply plugin: 'com.neenbedankt.android-apt'
 android {
     signingConfigs {
         config {
-            keyAlias ''
-            keyPassword ''
-            storeFile file('C:/')
-            storePassword ''
+            keyAlias 'compare'
+            keyPassword 'compare2017'
+            storeFile file('C:\\Users\\41508\\Documents\\MyProject\\ComparePoint\\comparePoint.jks')
+            storePassword 'compare2017'
         }
     }
 
@@ -25,9 +25,9 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             debuggable true;
-//            signingConfig signingConfigs.config;
+            signingConfig signingConfigs.config;
         }
-//        debug { signingConfig signingConfigs.config }
+        debug { signingConfig signingConfigs.config }
     }
     sourceSets { main { jniLibs.srcDirs = ['libs'] } }
     task nativeLibsToJar(type: Zip, description: "create a jar archive of the native libs") {

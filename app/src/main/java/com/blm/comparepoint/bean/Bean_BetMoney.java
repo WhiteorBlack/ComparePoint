@@ -5,5 +5,6 @@ package com.blm.comparepoint.bean;
  */
 
 public class Bean_BetMoney {
-    public int betTotalMoney=0;
+    public int BetNum;
+    public int BetGold;
 }

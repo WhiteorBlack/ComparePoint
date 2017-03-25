@@ -17,5 +17,6 @@ public class Bean_GamerInfo extends BaseBean {
         public String Token;
         public int Status;
         public boolean IsSignToday;
+        public String Sign;
     }
 }

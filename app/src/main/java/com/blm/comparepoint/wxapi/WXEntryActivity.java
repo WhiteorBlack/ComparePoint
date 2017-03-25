@@ -20,6 +20,10 @@ import com.blm.comparepoint.untils.NetUtils;
 import com.blm.comparepoint.untils.SPUtils;
 import com.blm.comparepoint.untils.T;
 import com.google.gson.Gson;
+import com.tencent.TIMCallBack;
+import com.tencent.TIMFriendshipManager;
+import com.tencent.TIMManager;
+import com.tencent.TIMUser;
 import com.tencent.mm.opensdk.modelbase.BaseReq;
 import com.tencent.mm.opensdk.modelbase.BaseResp;
 import com.tencent.mm.opensdk.modelmsg.SendAuth;
@@ -146,18 +150,35 @@ public class WXEntryActivity extends BaseActivity implements IWXAPIEventHandler 
                     btnLogin.setEnabled(true);
                     return;
                 }
-                Bean_Login bean_login = new Gson().fromJson(response, Bean_Login.class);
+                final Bean_Login bean_login = new Gson().fromJson(response, Bean_Login.class);
                 if (bean_login.Success) {
-                    Constants.USERTOKEN=bean_login.login.Token;
-                    SPUtils.put(context, Constants.TOKEN, bean_login.login.Token);
+                    TIMUser user = new TIMUser();
+                    user.setAccountType(Constants.ACCOUNT_TYPE);
+                    user.setAppIdAt3rd(Constants.IM_APP_ID + "");
+                    user.setIdentifier(bean_login.Data.GameUserId);
+                    TIMManager.getInstance().login(Constants.IM_APP_ID, user, bean_login.Data.Sign, new TIMCallBack() {
+                        @Override
+                        public void onError(int i, String s) {
+                            L.e("IM error--" + s);
+                        }
+
+                        @Override
+                        public void onSuccess() {
+                            L.e("IM login success--");
+                        }
+                    });
+                    Constants.USERTOKEN = bean_login.Data.Token;
+                    SPUtils.put(context, Constants.TOKEN, bean_login.Data.Token);
                     SPUtils.put(context, Constants.OPENID, openId);
-                    SPUtils.put(context, Constants.GAMER_ID, bean_login.login.GameUserId);
+                    SPUtils.put(context, Constants.GAMER_ID, bean_login.Data.GameUserId);
                     SPUtils.put(context, Constants.ISSIGN, false);
-                    if (TextUtils.isEmpty(bean_login.login.Avatar) || TextUtils.isEmpty(bean_login.login.NickName)) {
+                    SPUtils.put(context,Constants.USERAMOUNT,bean_login.Data.UserBalance);
+                    SPUtils.put(context,Constants.ACTIVEAMOUNT,bean_login.Data.UserActive);
+                    if (TextUtils.isEmpty(bean_login.Data.Avatar) || TextUtils.isEmpty(bean_login.Data.NickName)) {
                         getUserInfoFromWx();
                     } else {
-                        SPUtils.put(context, Constants.NICKNAME, bean_login.login.NickName);
-                        SPUtils.put(context, Constants.AVATAR, bean_login.login.Avatar);
+                        SPUtils.put(context, Constants.NICKNAME, bean_login.Data.NickName);
+                        SPUtils.put(context, Constants.AVATAR, bean_login.Data.Avatar);
                         startActivity(new Intent(context, Home.class));
                     }
                 }

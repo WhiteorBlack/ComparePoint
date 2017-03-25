@@ -116,4 +116,16 @@ public class DataOprate {
         });
     }
 
+    public void betMoney(String bets){
+        Map<String,String> params=new HashMap<>();
+        params.put("RoundNo",Constants.ROUNDNO);
+        params.put("Bets",bets);
+        PostTools.postData(Constants.MAIN_URL+"Game",params,new PostCallBack(){
+            @Override
+            public void onResponse(String response) {
+                super.onResponse(response);
+            }
+        });
+    }
+
 }

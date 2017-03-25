@@ -31,6 +31,7 @@ import com.blm.comparepoint.dialog.NotifyPop;
 import com.blm.comparepoint.dialog.UpdatePop;
 import com.blm.comparepoint.dialog.WinPop;
 import com.blm.comparepoint.interfacer.HomeOprateView;
+import com.blm.comparepoint.interfacer.OnItemClickListener;
 import com.blm.comparepoint.interfacer.PopInterfacer;
 import com.blm.comparepoint.presenter.HomePresenter;
 import com.blm.comparepoint.untils.AppUtils;
@@ -149,6 +150,9 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
                 historyCount = recyHistory.getHeight() / DensityUtils.dp2px(context, 30);
             }
         });
+
+        selectTen();
+
         homePresenter.resetStatue();
         homePresenter.getSystemConfig();
         homePresenter.getGameConfig();
@@ -189,13 +193,8 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
             betNumber.betMutil = Constants.RATIO;
             betNumber.number = i + 1;
             betNumber.isSelected = false;
+            betNumber.betGold=0;
             betNumberList.add(betNumber);
-
-            Bean_Number number = new Bean_Number();
-            number.number = i + 1;
-            number.isSelected = false;
-            number.isShine = false;
-            numberList.add(number);
         }
         betNumberAdapter.notifyDataSetChanged();
 
@@ -218,6 +217,17 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
         recyBetNumber.addItemDecoration(new RecycleViewDivider(context, GridLayoutManager.HORIZONTAL, 1, R.color.lineLight));
         recyBetNumber.addItemDecoration(new RecycleViewDivider(context, GridLayoutManager.VERTICAL, 1, R.color.lineLight));
         recyBetNumber.setAdapter(betNumberAdapter);
+        betNumberAdapter.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(View v, int pos) {
+                homePresenter.betMoney(pos);
+            }
+
+            @Override
+            public void onItemLongClick(View v, int pos) {
+
+            }
+        });
 
         recyNumber.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
         numberAdapter = new NumberAdapter(numberList);
@@ -229,6 +239,7 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
      * 选择 10 金币
      */
     private void selectTen() {
+        Constants.SELECT_GOLD = 10;
         glideImage(R.mipmap.icon_ten_big, imgTen);
         glideImage(R.mipmap.icon_fifuty_small, imgFifty);
         glideImage(R.mipmap.icon_handrad_small, imgHan);
@@ -239,6 +250,7 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
      * 选择 50 金币
      */
     private void selectFifty() {
+        Constants.SELECT_GOLD = 50;
         glideImage(R.mipmap.icon_ten_small, imgTen);
         glideImage(R.mipmap.icon_fifty_big, imgFifty);
         glideImage(R.mipmap.icon_handrad_small, imgHan);
@@ -249,6 +261,7 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
      * 选择 100 金币
      */
     private void selectHan() {
+        Constants.SELECT_GOLD = 100;
         glideImage(R.mipmap.icon_ten_small, imgTen);
         glideImage(R.mipmap.icon_fifuty_small, imgFifty);
         glideImage(R.mipmap.icon_han_big, imgHan);
@@ -259,6 +272,7 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
      * 选择 500 金币
      */
     private void selectFiftyHan() {
+        Constants.SELECT_GOLD = 500;
         glideImage(R.mipmap.icon_ten_small, imgTen);
         glideImage(R.mipmap.icon_fifuty_small, imgFifty);
         glideImage(R.mipmap.icon_handrad_small, imgHan);
@@ -477,8 +491,10 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
             case R.id.txt_name:
                 break;
             case R.id.txt_money:
+
                 break;
             case R.id.img_sign:
+                homePresenter.signIn();
                 break;
             case R.id.txt_red_money:
                 break;
@@ -488,28 +504,34 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
                 startActivity(new Intent(context, MyOrder.class));
                 break;
             case R.id.fl_single:
+                homePresenter.betMoney(103);
                 break;
             case R.id.fl_small:
+                homePresenter.betMoney(102);
                 break;
             case R.id.fl_double:
+                homePresenter.betMoney(104);
                 break;
             case R.id.fl_big:
+                homePresenter.betMoney(101);
                 break;
             case R.id.img_clear:
+                homePresenter.resetStatue();
                 break;
             case R.id.img_confirm:
+                homePresenter.betMoney();
                 break;
             case R.id.img_ten:
-
+                selectTen();
                 break;
             case R.id.img_fifty:
-
+                selectFifty();
                 break;
             case R.id.img_han:
-
+                selectHan();
                 break;
             case R.id.img_fifty_han:
-
+                selectFiftyHan();
                 break;
             case R.id.img_avatar:
                 startActivity(new Intent(context, PersonalCenter.class));
@@ -540,7 +562,7 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
         switch (flag) {
             case Constants.UPDATE_POP_FLAG:
                 Intent intent = new Intent();
-                intent.setAction("android.intent.action.View");
+                intent.setAction("android.intent.action.VIEW");
                 Uri downUri = Uri.parse(downUrl);
                 intent.setData(downUri);
                 startActivity(intent);

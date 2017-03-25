@@ -12,8 +12,8 @@ import java.util.List;
  * Created by 41508 on 2017/3/8.
  */
 
-public class MyOrderAdapter extends BaseRecyAdapter {
-    public MyOrderAdapter(List dataList) {
+public class ChargeConvertAdapter extends BaseRecyAdapter {
+    public ChargeConvertAdapter(List dataList) {
         super(dataList);
     }
 

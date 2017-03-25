@@ -9,6 +9,7 @@ import android.view.View;
 
 import com.blm.comparepoint.untils.AppManager;
 import com.blm.comparepoint.untils.L;
+import com.bumptech.glide.Glide;
 
 /**
  * Created by Administrator on 2017/2/15.
@@ -23,8 +24,8 @@ public class BaseActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         AppManager.getAppManager().addActivity(this);
-        context=this;
-        activity=this;
+        context = this;
+        activity = this;
     }
 
     @Override
@@ -40,11 +41,12 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        Glide.with(this).pauseRequests();
         L.e("ondestory");
 //        AppManager.getAppManager().finishActivity();
     }
 
-   public void pointClick(View v){
+    public void pointClick(View v) {
 
-   }
+    }
 }

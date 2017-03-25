@@ -28,6 +28,8 @@ public class Constants {
     public static final String MINEXCHANGEAMOUNT = "minExchangeAmount";
     public static final String USERAMOUNT="UserBalance";
     public static final String ACTIVEAMOUNT="UserActive";
+    public static final String SERVICEURL="serviceUrl";
+    public static final String CHARGEURL="chargeUrl";
 
     public static int SELECT_GOLD = 10;
     //pop flag
@@ -54,8 +56,14 @@ public class Constants {
     public static int LOTTERYTIME = -1;
     public static double GOldRANGE = 1d;
     public static String RATIO = "";
+    public static String ROUNDNO="";
 
     public static long NETTIME_LOCALTIME_DELATE=0;
     public static int COUNTDOWNTIME=30;
     public static int BONUSDOWNTIME=10;
+
+    public static String GROUP_ID="@TGS#bVZI7XNEN";
+    public static String GROUP_TYPE="BChatRoom";
+    public static int IM_APP_ID=1400026901;
+    public static String ACCOUNT_TYPE="11366";
 }

@@ -17,5 +17,7 @@ public class Bean_Login extends BaseBean{
         public long UserActive;
         public String Token;
         public boolean IsSignToday;
+
+        public String Sign;
     }
 }
