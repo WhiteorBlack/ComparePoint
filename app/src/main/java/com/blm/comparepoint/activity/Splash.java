@@ -48,15 +48,12 @@ public class Splash extends BaseActivity {
         super.onStart();
         if ((boolean) SPUtils.get(context, Constants.IS_LOGIN, false)) {
             getUserInfo();
-        }else {
-            startActivity(new Intent(context,Login.class));
-            AppManager.getAppManager().finishActivity();
         }
     }
 
     private void getUserInfo() {
         Map<String, String> params = new HashMap<>();
-        params.put("Token", (String) SPUtils.get(context, Constants.TOKEN, ""));
+        Constants.USERTOKEN = (String) SPUtils.get(context, Constants.TOKEN, "");
         PostTools.postData(Constants.MAIN_URL + "User/GetInfo", params, new PostCallBack() {
             @Override
             public void onResponse(String response) {
@@ -100,7 +97,7 @@ public class Splash extends BaseActivity {
                 } else {
                     SPUtils.put(context, Constants.IS_LOGIN, false);
                     T.showShort(context, "登陆已过期,请重新登陆");
-                    startActivity(new Intent(context, WXEntryActivity.class));
+                    startActivity(new Intent(context, Login.class));
                     AppManager.getAppManager().finishActivity();
                     countDownTimer.cancel();
                 }
@@ -118,18 +115,17 @@ public class Splash extends BaseActivity {
 
             @Override
             public void onTick(long millisUntilFinished) {
-                if (!(boolean) SPUtils.get(context, Constants.IS_LOGIN, false) && millisUntilFinished / 1000 < 4) {
+                if (!(boolean) SPUtils.get(context, Constants.IS_LOGIN, false) && millisUntilFinished / 1000 == 8) {
                     AppManager.getAppManager().finishActivity();
-                    startActivity(new Intent(context, WXEntryActivity.class));
-                    cancel();
+                    startActivity(new Intent(context, Login.class));
+                    countDownTimer.cancel();
                 }
             }
 
             @Override
             public void onFinish() {
-                if (NetUtils.isConnected(context) || NetUtils.isWifi(context)) {
-                    T.showShort(context, "获取用户信息失败,请重新登陆");
-                    startActivity(new Intent(context, WXEntryActivity.class));
+                if (!NetUtils.isConnected(context) || !NetUtils.isWifi(context)) {
+                    T.showShort(context, "无网络连接,请检查后重试");
                     AppManager.getAppManager().finishActivity();
                 }
 

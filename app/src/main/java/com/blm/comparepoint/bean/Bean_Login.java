@@ -18,6 +18,6 @@ public class Bean_Login extends BaseBean{
         public String Token;
         public boolean IsSignToday;
 
-        public String Sign;
+        public String IMSign;
     }
 }

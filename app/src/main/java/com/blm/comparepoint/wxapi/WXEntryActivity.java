@@ -24,12 +24,12 @@ import com.tencent.TIMCallBack;
 import com.tencent.TIMFriendshipManager;
 import com.tencent.TIMManager;
 import com.tencent.TIMUser;
-import com.tencent.mm.opensdk.modelbase.BaseReq;
-import com.tencent.mm.opensdk.modelbase.BaseResp;
-import com.tencent.mm.opensdk.modelmsg.SendAuth;
-import com.tencent.mm.opensdk.openapi.IWXAPI;
-import com.tencent.mm.opensdk.openapi.IWXAPIEventHandler;
-import com.tencent.mm.opensdk.openapi.WXAPIFactory;
+import com.tencent.mm.sdk.modelbase.BaseReq;
+import com.tencent.mm.sdk.modelbase.BaseResp;
+import com.tencent.mm.sdk.modelmsg.SendAuth;
+import com.tencent.mm.sdk.openapi.IWXAPI;
+import com.tencent.mm.sdk.openapi.IWXAPIEventHandler;
+import com.tencent.mm.sdk.openapi.WXAPIFactory;
 
 import org.json.JSONObject;
 
@@ -156,7 +156,7 @@ public class WXEntryActivity extends BaseActivity implements IWXAPIEventHandler 
                     user.setAccountType(Constants.ACCOUNT_TYPE);
                     user.setAppIdAt3rd(Constants.IM_APP_ID + "");
                     user.setIdentifier(bean_login.Data.GameUserId);
-                    TIMManager.getInstance().login(Constants.IM_APP_ID, user, bean_login.Data.Sign, new TIMCallBack() {
+                    TIMManager.getInstance().login(Constants.IM_APP_ID, user, bean_login.Data.IMSign, new TIMCallBack() {
                         @Override
                         public void onError(int i, String s) {
                             L.e("IM error--" + s);

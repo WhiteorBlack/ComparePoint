@@ -18,9 +18,10 @@ public class PostTools {
     public static void postData(final String url, Map<String, String> params, final PostCallBack postCallBack) {
         if (params == null)
             params = new HashMap<>();
-        params.put("Sign", NetUtils.get32MD5Str(System.currentTimeMillis()));
+        long timeStamp=System.currentTimeMillis();
+        params.put("Sign", NetUtils.get32MD5Str(timeStamp));
         params.put("Token", Constants.USERTOKEN);
-        params.put("timestamp",System.currentTimeMillis()+"");
+        params.put("timestamp",timeStamp+"");
         OkHttpUtils.post().url(url).params(params).build().execute(postCallBack);
     }
 
