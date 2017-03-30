@@ -5,7 +5,8 @@ android {
         config {
             keyAlias 'compare'
             keyPassword 'compare2017'
-            storeFile file('C:\\Users\\41508\\Documents\\MyProject\\ComparePoint\\comparePoint.jks')
+//            storeFile file('C:\\Users\\41508\\Documents\\MyProject\\ComparePoint\\comparePoint.jks')
+            storeFile file('E:\\androidApp\\ComparePoint\\comparePoint.jks')
             storePassword 'compare2017'
         }
     }

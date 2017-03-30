@@ -48,6 +48,9 @@ public class Splash extends BaseActivity {
         super.onStart();
         if ((boolean) SPUtils.get(context, Constants.IS_LOGIN, false)) {
             getUserInfo();
+        }else {
+            startActivity(new Intent(context,Login.class));
+            AppManager.getAppManager().finishActivity();
         }
     }
 
@@ -115,7 +118,7 @@ public class Splash extends BaseActivity {
 
             @Override
             public void onTick(long millisUntilFinished) {
-                if ((boolean) SPUtils.get(context, Constants.IS_LOGIN, false) && millisUntilFinished / 1000 > 3) {
+                if (!(boolean) SPUtils.get(context, Constants.IS_LOGIN, false) && millisUntilFinished / 1000 < 4) {
                     AppManager.getAppManager().finishActivity();
                     startActivity(new Intent(context, WXEntryActivity.class));
                     cancel();

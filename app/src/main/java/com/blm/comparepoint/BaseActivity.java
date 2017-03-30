@@ -41,9 +41,6 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Glide.with(this).pauseRequests();
-        L.e("ondestory");
-//        AppManager.getAppManager().finishActivity();
     }
 
     public void pointClick(View v) {

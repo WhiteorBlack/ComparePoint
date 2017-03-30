@@ -6,7 +6,7 @@ public class Constants {
     // appid
     // 请同时修改 androidmanifest.xml里面，.PayActivityd里的属性<data
     // android:scheme="wxb4ba3c02aa476ea1"/>为新设置的appid
-    public static final String APP_ID = "wxd54740ca347dcebb";
+    public static final String APP_ID = "wxc9b392d17e8f8091";
 
     // 商户号
     public static final String MCH_ID = "";
@@ -14,7 +14,7 @@ public class Constants {
     // API密钥，在商户平台设置
     public static final String API_KEY = "";
 
-    public static final String APP_SCECET = "3e63d9844fd26c0d6a56c74af3673187";
+    public static final String APP_SCECET = "a3d2761e4816a7bf31521cf117aeceb9";
 
     //SP key
     public static final String IS_LOGIN = "isLogin";

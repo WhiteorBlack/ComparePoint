@@ -102,7 +102,7 @@ public class WXEntryActivity extends BaseActivity implements IWXAPIEventHandler 
         try {
             SendAuth.Req req = new SendAuth.Req();
             req.scope = "snsapi_userinfo";
-            req.state = "wechat_sdk_demo_boom";
+            req.state = "wechat_sdk_compare_point";
             iwxapi.sendReq(req);
         } catch (Exception e) {
             L.e(e.toString());
