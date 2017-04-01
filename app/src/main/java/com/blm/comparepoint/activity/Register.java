@@ -98,7 +98,7 @@ public class Register extends BaseActivity {
     }
 
     private void login() {
-        Constants.USERTOKEN="";
+        Constants.USERTOKEN = "";
         Map<String, String> params = new HashMap<>();
         params.put("UserName", userName);
         params.put("PassWord", userPwd);
@@ -132,11 +132,12 @@ public class Register extends BaseActivity {
                     Constants.USERTOKEN = bean_login.Data.Token;
                     SPUtils.put(context, Constants.TOKEN, bean_login.Data.Token);
                     SPUtils.put(context, Constants.GAMER_ID, bean_login.Data.GameUserId);
-                    SPUtils.put(context, Constants.ISSIGN, true);
+                    SPUtils.put(context, Constants.IS_LOGIN, true);
+                    SPUtils.put(context, Constants.ISSIGN, bean_login.Data.IsSignToday);
                     SPUtils.put(context, Constants.USERAMOUNT, bean_login.Data.UserBalance);
                     SPUtils.put(context, Constants.ACTIVEAMOUNT, bean_login.Data.UserActive);
                     SPUtils.put(context, Constants.NICKNAME, bean_login.Data.NickName);
-                    SPUtils.put(context, Constants.AVATAR, bean_login.Data.Avatar);
+                    SPUtils.put(context, Constants.AVATAR, bean_login.Data.Avatar == null ? "" : bean_login.Data.Avatar);
                     AppManager.getAppManager().finishActivity();
                     startActivity(new Intent(context, Home.class));
                 } else {

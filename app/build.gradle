@@ -5,8 +5,8 @@ android {
         config {
             keyAlias 'compare'
             keyPassword 'compare2017'
-//            storeFile file('C:\\Users\\41508\\Documents\\MyProject\\ComparePoint\\comparePoint.jks')
-            storeFile file('E:\\androidApp\\ComparePoint\\comparePoint.jks')
+            storeFile file('C:\\Users\\41508\\Documents\\MyProject\\ComparePoint\\comparePoint.jks')
+//            storeFile file('E:\\androidApp\\ComparePoint\\comparePoint.jks')
             storePassword 'compare2017'
         }
     }
@@ -67,6 +67,7 @@ dependencies {
     compile files('libs/ShareSDK-Wechat-Favorite-2.8.2.jar')
     compile files('libs/ShareSDK-Wechat-2.7.8.jar')
     compile files('libs/libammsdk.jar')
+    compile files('libs/org.apache.http.legacy.jar')
 }
 
 repositories{

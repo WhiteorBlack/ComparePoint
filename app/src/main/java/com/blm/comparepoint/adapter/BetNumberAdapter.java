@@ -29,7 +29,7 @@ public class BetNumberAdapter extends BaseRecyAdapter {
         super.onBindViewHolder(holder, position);
         ViewHolder mHolder = (ViewHolder) holder;
         Bean_BetNumber betNumber = (Bean_BetNumber) dataList.get(position);
-        mHolder.setText(betNumber.betMutil, R.id.txt_bet_muitl);
+        mHolder.setText(betNumber.betMutil+"", R.id.txt_bet_muitl);
         mHolder.setText(betNumber.number + "", R.id.txt_number);
         if (betNumber.isSelected) {
             mHolder.getView(R.id.fl_parent).setBackgroundColor(mHolder.parent.getContext().getResources().getColor(R.color.betSelected));

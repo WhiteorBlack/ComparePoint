@@ -68,8 +68,8 @@ public class ChargeMoney extends BaseActivity {
     private void setUserInfo() {
         Glide.with(this).load(SPUtils.get(context, Constants.AVATAR, "")).into(imgAvatar);
         txtName.setText((String) SPUtils.get(context, Constants.NICKNAME, ""));
-        txtMoney.setText(SPUtils.get(context, Constants.USERAMOUNT, 0) + "");
-        txtRedMoney.setText(SPUtils.get(context, Constants.ACTIVEAMOUNT, 0) + "");
+        txtMoney.setText(SPUtils.get(context, Constants.USERAMOUNT, 0l) + "");
+        txtRedMoney.setText(SPUtils.get(context, Constants.ACTIVEAMOUNT, 0l) + "");
         imgSign.setEnabled(!(boolean) SPUtils.get(context, Constants.ISSIGN, false));
         Glide.with(this).load(SPUtils.get(context,Constants.CHARGEURL,"")).into(imgCodePic);
     }

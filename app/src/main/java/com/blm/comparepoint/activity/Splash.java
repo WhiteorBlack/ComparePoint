@@ -41,6 +41,7 @@ public class Splash extends BaseActivity {
         setContentView(R.layout.activity_splash);
         ButterKnife.bind(this);
         countDown();
+
     }
 
     @Override
@@ -70,15 +71,18 @@ public class Splash extends BaseActivity {
                     user.setAccountType(Constants.ACCOUNT_TYPE);
                     user.setAppIdAt3rd(Constants.IM_APP_ID + "");
                     user.setIdentifier(bean_gamerInfo.Data.GameUserId);
-                    TIMManager.getInstance().login(Constants.IM_APP_ID, user, bean_gamerInfo.Data.Sign, new TIMCallBack() {
+                    TIMManager.getInstance().login(Constants.IM_APP_ID, user, bean_gamerInfo.Data.IMSign, new TIMCallBack() {
                         @Override
                         public void onError(int i, String s) {
-                            L.e("IM error--" + s);
+                            L.e("IM error--" + i + "---" + s);
                         }
 
                         @Override
                         public void onSuccess() {
                             L.e("IM login success--");
+                            startActivity(new Intent(context, Home.class));
+                            AppManager.getAppManager().finishActivity();
+                            countDownTimer.cancel();
                         }
                     });
                     Constants.USERTOKEN = bean_gamerInfo.Data.Token;
@@ -91,9 +95,7 @@ public class Splash extends BaseActivity {
                     SPUtils.put(context, Constants.ACTIVEAMOUNT, bean_gamerInfo.Data.UserActive);
                     SPUtils.put(context, Constants.IS_LOGIN, true);
                     SPUtils.put(context, Constants.ISSIGN, bean_gamerInfo.Data.IsSignToday);
-                    startActivity(new Intent(context, Home.class));
-                    AppManager.getAppManager().finishActivity();
-                    countDownTimer.cancel();
+
                 } else {
                     SPUtils.put(context, Constants.IS_LOGIN, false);
                     T.showShort(context, "登陆已过期,请重新登陆");

@@ -14,5 +14,6 @@ public class Bean_SystemConfig extends BaseBean {
         public String GameRules;
         public int SignBonus;
         public int MinWithdramAmount;
+        public String RechargeQrCode;
     }
 }

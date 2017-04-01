@@ -6,7 +6,7 @@ package com.blm.comparepoint.bean;
 
 public class Bean_BetNumber extends BaseBean {
     public int number;
-    public String betMutil;
+    public float betMutil;
     public boolean isSelected;
     public int betGold;
 }

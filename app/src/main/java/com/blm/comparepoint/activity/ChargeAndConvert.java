@@ -86,9 +86,14 @@ public class ChargeAndConvert extends BaseActivity implements XRecyclerView.Load
     private void setUserInfo() {
         Glide.with(this).load(SPUtils.get(context, Constants.AVATAR, "")).into(imgAvatar);
         txtName.setText((String) SPUtils.get(context, Constants.NICKNAME, ""));
-        txtMoney.setText(SPUtils.get(context, Constants.USERAMOUNT, 0) + "");
-        txtRedMoney.setText(SPUtils.get(context, Constants.ACTIVEAMOUNT, 0) + "");
+        txtMoney.setText(SPUtils.get(context, Constants.USERAMOUNT, 0l) + "");
+        txtRedMoney.setText(SPUtils.get(context, Constants.ACTIVEAMOUNT, 0l) + "");
         imgSign.setEnabled(!(boolean) SPUtils.get(context, Constants.ISSIGN, false));
+        if ((boolean) SPUtils.get(context, Constants.ISSIGN, false)){
+            imgSign.setText("已签到");
+        }else {
+            imgSign.setText("签到");
+        }
     }
 
     private void getHistory() {

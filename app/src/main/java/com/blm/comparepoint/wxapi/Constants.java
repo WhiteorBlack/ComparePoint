@@ -55,7 +55,6 @@ public class Constants {
     public static int ROUNDTIME = -1;
     public static int LOTTERYTIME = -1;
     public static double GOldRANGE = 1d;
-    public static String RATIO = "";
     public static String ROUNDNO="";
 
     public static long NETTIME_LOCALTIME_DELATE=0;

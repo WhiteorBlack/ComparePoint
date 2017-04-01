@@ -71,8 +71,8 @@ public class MyOrder extends BaseActivity implements XRecyclerView.LoadingListen
     private void setUserInfo() {
         Glide.with(this).load(SPUtils.get(context, Constants.AVATAR, "")).into(imgAvatar);
         txtName.setText((String) SPUtils.get(context, Constants.NICKNAME, ""));
-        txtMoney.setText(SPUtils.get(context, Constants.USERAMOUNT, 0) + "");
-        txtRedMoney.setText(SPUtils.get(context, Constants.ACTIVEAMOUNT, 0) + "");
+        txtMoney.setText(SPUtils.get(context, Constants.USERAMOUNT, 0l) + "");
+        txtRedMoney.setText(SPUtils.get(context, Constants.ACTIVEAMOUNT, 0l) + "");
         imgSign.setEnabled(!(boolean) SPUtils.get(context, Constants.ISSIGN, false));
     }
 
@@ -80,7 +80,7 @@ public class MyOrder extends BaseActivity implements XRecyclerView.LoadingListen
         Map<String, String> params = new HashMap<>();
         params.put("PageIndex", pageIndex + "");
         params.put("PageSize", pageSize + "");
-        PostTools.postData(Constants.MAIN_URL + "User/GetBetRecords", params, new PostCallBack() {
+        PostTools.getData(Constants.MAIN_URL + "User/GetBetRecords", params, new PostCallBack() {
             @Override
             public void onResponse(String response) {
                 super.onResponse(response);

@@ -4,14 +4,16 @@ import android.os.Handler;
 import android.text.TextUtils;
 
 import com.blm.comparepoint.async.DataOprate;
-import com.blm.comparepoint.bean.BaseBean;
 import com.blm.comparepoint.bean.Bean_AppVersion;
 import com.blm.comparepoint.bean.Bean_BetMoney;
-import com.blm.comparepoint.bean.Bean_Bets;
 import com.blm.comparepoint.bean.Bean_CurrentInfo;
+import com.blm.comparepoint.bean.Bean_GameConfig;
+import com.blm.comparepoint.bean.Bean_Sign;
 import com.blm.comparepoint.bean.Bean_SystemConfig;
 import com.blm.comparepoint.interfacer.DataOprateInterfacer;
 import com.blm.comparepoint.interfacer.HomeOprateView;
+import com.blm.comparepoint.untils.L;
+import com.blm.comparepoint.untils.T;
 import com.blm.comparepoint.wxapi.Constants;
 import com.google.gson.Gson;
 import com.tencent.TIMConversation;
@@ -33,7 +35,7 @@ import java.util.TimeZone;
  * Created by 41508 on 2017/3/2.
  */
 
-public class HomePresenter implements DataOprateInterfacer,Observer {
+public class HomePresenter implements DataOprateInterfacer, Observer {
     private HomeOprateView homeOprateView;
     private DataOprate dataOprate;
     private List<Bean_BetMoney> betMoneyList;
@@ -54,9 +56,9 @@ public class HomePresenter implements DataOprateInterfacer,Observer {
     private void resetBetMoney() {
         betMoneyList.clear();
         for (int i = 0; i < 14; i++) {
-            Bean_BetMoney bean_betMoney=new Bean_BetMoney();
-            bean_betMoney.BetGold=0;
-            bean_betMoney.BetNum=-1;
+            Bean_BetMoney bean_betMoney = new Bean_BetMoney();
+            bean_betMoney.BetGold = 0;
+            bean_betMoney.BetNum = -1;
             betMoneyList.add(new Bean_BetMoney());
         }
     }
@@ -100,86 +102,86 @@ public class HomePresenter implements DataOprateInterfacer,Observer {
      * 签到
      */
 
-    public void signIn(){
+    public void signIn() {
         dataOprate.signIn();
     }
 
     /**
      * 点击确定押注
      */
-    public void betMoney(){
+    public void betMoney() {
         dataOprate.betMoney("");
     }
 
     public void betMoney(int num) {
-        if (betMoneyList==null){
-           resetBetMoney();
+        if (betMoneyList == null) {
+            resetBetMoney();
         }
         switch (num) {
             case -1:
                 homeOprateView.toastCommonNotify("请选择投注类别");
                 break;
             case 1:
-                betMoneyList.get(0).BetGold+=Constants.SELECT_GOLD;
-                betMoneyList.get(0).BetNum=1;
+                betMoneyList.get(0).BetGold += Constants.SELECT_GOLD;
+                betMoneyList.get(0).BetNum = 1;
                 break;
             case 2:
-                betMoneyList.get(1).BetGold+=Constants.SELECT_GOLD;
-                betMoneyList.get(1).BetNum=2;
+                betMoneyList.get(1).BetGold += Constants.SELECT_GOLD;
+                betMoneyList.get(1).BetNum = 2;
                 break;
             case 3:
-                betMoneyList.get(2).BetGold+=Constants.SELECT_GOLD;
-                betMoneyList.get(2).BetNum=3;
+                betMoneyList.get(2).BetGold += Constants.SELECT_GOLD;
+                betMoneyList.get(2).BetNum = 3;
                 break;
             case 4:
-                betMoneyList.get(3).BetGold+=Constants.SELECT_GOLD;
-                betMoneyList.get(3).BetNum=4;
+                betMoneyList.get(3).BetGold += Constants.SELECT_GOLD;
+                betMoneyList.get(3).BetNum = 4;
                 break;
             case 5:
-                betMoneyList.get(4).BetGold+=Constants.SELECT_GOLD;
-                betMoneyList.get(4).BetNum=5;
+                betMoneyList.get(4).BetGold += Constants.SELECT_GOLD;
+                betMoneyList.get(4).BetNum = 5;
                 break;
             case 6:
-                betMoneyList.get(5).BetGold+=Constants.SELECT_GOLD;
-                betMoneyList.get(5).BetNum=6;
+                betMoneyList.get(5).BetGold += Constants.SELECT_GOLD;
+                betMoneyList.get(5).BetNum = 6;
                 break;
             case 7:
-                betMoneyList.get(6).BetGold+=Constants.SELECT_GOLD;
-                betMoneyList.get(6).BetNum=7;
+                betMoneyList.get(6).BetGold += Constants.SELECT_GOLD;
+                betMoneyList.get(6).BetNum = 7;
                 break;
             case 8:
-                betMoneyList.get(7).BetGold+=Constants.SELECT_GOLD;
-                betMoneyList.get(7).BetNum=8;
+                betMoneyList.get(7).BetGold += Constants.SELECT_GOLD;
+                betMoneyList.get(7).BetNum = 8;
                 break;
             case 9:
-                betMoneyList.get(8).BetGold+=Constants.SELECT_GOLD;
-                betMoneyList.get(8).BetNum=9;
+                betMoneyList.get(8).BetGold += Constants.SELECT_GOLD;
+                betMoneyList.get(8).BetNum = 9;
                 break;
             case 10:
-                betMoneyList.get(9).BetGold+=Constants.SELECT_GOLD;
-                betMoneyList.get(9).BetNum=10;
+                betMoneyList.get(9).BetGold += Constants.SELECT_GOLD;
+                betMoneyList.get(9).BetNum = 10;
                 break;
             case 101: //大
-                betMoneyList.get(10).BetGold+=Constants.SELECT_GOLD;
-                betMoneyList.get(10).BetNum=101;
+                betMoneyList.get(10).BetGold += Constants.SELECT_GOLD;
+                betMoneyList.get(10).BetNum = 101;
                 break;
             case 102: //小
-                betMoneyList.get(11).BetGold+=Constants.SELECT_GOLD;
-                betMoneyList.get(11).BetNum=102;
+                betMoneyList.get(11).BetGold += Constants.SELECT_GOLD;
+                betMoneyList.get(11).BetNum = 102;
                 break;
             case 103:  //单
-                betMoneyList.get(12).BetGold+=Constants.SELECT_GOLD;
-                betMoneyList.get(12).BetNum=103;
+                betMoneyList.get(12).BetGold += Constants.SELECT_GOLD;
+                betMoneyList.get(12).BetNum = 103;
                 break;
             case 104:  //双
-                betMoneyList.get(13).BetGold+=Constants.SELECT_GOLD;
-                betMoneyList.get(13).BetNum=104;
+                betMoneyList.get(13).BetGold += Constants.SELECT_GOLD;
+                betMoneyList.get(13).BetNum = 104;
                 break;
         }
     }
 
-    public void endCountDown(int type){
-        switch (type){
+    public void endCountDown(int type) {
+        switch (type) {
             case Constants.TYPE_BET_MONEY:
 
                 break;
@@ -193,7 +195,7 @@ public class HomePresenter implements DataOprateInterfacer,Observer {
     public void getSystemConfigSuccess(String response) {
         homeOprateView.dimissDialog();
         Bean_SystemConfig bean_systemConfig = new Gson().fromJson(response, Bean_SystemConfig.class);
-        if (bean_systemConfig.Success) {
+        if (bean_systemConfig.Success&&bean_systemConfig.Data!=null) {
             homeOprateView.setSystemConfig(bean_systemConfig.Data);
         }
     }
@@ -206,6 +208,10 @@ public class HomePresenter implements DataOprateInterfacer,Observer {
     @Override
     public void getGameCfgSuccess(String response) {
         homeOprateView.dimissDialog();
+        Bean_GameConfig bean_gameConfig = new Gson().fromJson(response, Bean_GameConfig.class);
+        if (bean_gameConfig != null && bean_gameConfig.Success && bean_gameConfig.Data != null) {
+            homeOprateView.setGameConfig(bean_gameConfig.Data);
+        }
     }
 
     @Override
@@ -216,17 +222,20 @@ public class HomePresenter implements DataOprateInterfacer,Observer {
     @Override
     public void signSuccess(String response) {
         if (TextUtils.isEmpty(response)) {
-            homeOprateView.sigin(false);
+            homeOprateView.sigin(false, -1);
             homeOprateView.toastNotify("网络错误请重试");
             return;
         }
-        BaseBean baseBean = new Gson().fromJson(response, BaseBean.class);
-        if (baseBean.Success) {
-            homeOprateView.sigin(true);
-        } else {
-            homeOprateView.sigin(false);
-            homeOprateView.toastNotify(baseBean.Msg);
+        Bean_Sign baseBean = new Gson().fromJson(response, Bean_Sign.class);
+        if (baseBean.Data != null) {
+            if (baseBean.Success) {
+                homeOprateView.sigin(true, baseBean.Data.UserBalance);
+            } else {
+                homeOprateView.sigin(false, baseBean.Data.UserBalance);
+            }
         }
+
+        homeOprateView.toastNotify(baseBean.Msg);
     }
 
     @Override
@@ -240,7 +249,7 @@ public class HomePresenter implements DataOprateInterfacer,Observer {
             return;
         }
         Bean_AppVersion bean_appVersion = new Gson().fromJson(response, Bean_AppVersion.class);
-        if (bean_appVersion.Success && bean_appVersion != null) {
+        if (bean_appVersion.Success && bean_appVersion != null && bean_appVersion.Data != null) {
             homeOprateView.checkUpdate(bean_appVersion.Data);
         }
     }
@@ -296,6 +305,7 @@ public class HomePresenter implements DataOprateInterfacer,Observer {
     public void update(Observable observable, Object data) {
         if (observable instanceof MessageEvent) {
             TIMMessage msg = (TIMMessage) data;
+            L.e("Msg----"+msg.getMsgId());
         }
     }
 }

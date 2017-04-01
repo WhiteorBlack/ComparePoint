@@ -10,7 +10,10 @@ import android.widget.TextView;
 import com.blm.comparepoint.BaseActivity;
 import com.blm.comparepoint.R;
 import com.blm.comparepoint.untils.AppManager;
+import com.blm.comparepoint.untils.SPUtils;
 import com.blm.comparepoint.widget.CircleImageView;
+import com.blm.comparepoint.wxapi.Constants;
+import com.bumptech.glide.Glide;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -49,6 +52,24 @@ public class PersonalCenter extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.personal_center);
         ButterKnife.bind(this);
+        setUserInfo();
+    }
+
+    private void setUserInfo() {
+        glideImage((String) SPUtils.get(context, Constants.AVATAR, ""), imgAvatar);
+        txtName.setText((String) SPUtils.get(context, Constants.NICKNAME, ""));
+        txtMoney.setText(SPUtils.get(context, Constants.USERAMOUNT, 0l) + "");
+        txtRedMoney.setText(SPUtils.get(context, Constants.ACTIVEAMOUNT, 0l) + "");
+        imgSign.setEnabled(!(boolean) SPUtils.get(context, Constants.ISSIGN, false));
+        if ((boolean) SPUtils.get(context, Constants.ISSIGN, false)){
+            imgSign.setText("已签到");
+        }else {
+            imgSign.setText("签到");
+        }
+    }
+
+    private void glideImage(String url, ImageView imageView) {
+        Glide.with(context).load(url).into(imageView);
     }
 
     @OnClick({R.id.img_back, R.id.img_sign, R.id.fl_my_info, R.id.fl_my_order, R.id.fl_my_charge, R.id.fl_help, R.id.fl_service})

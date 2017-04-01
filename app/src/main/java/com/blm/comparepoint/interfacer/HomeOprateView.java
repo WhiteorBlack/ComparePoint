@@ -5,6 +5,8 @@ import com.blm.comparepoint.bean.Bean_CurrentInfo;
 import com.blm.comparepoint.bean.Bean_GameConfig;
 import com.blm.comparepoint.bean.Bean_SystemConfig;
 
+import java.util.List;
+
 /**
  * Created by 41508 on 2017/3/2.
  */
@@ -17,8 +19,9 @@ public interface HomeOprateView {
 
     /**
      * @param successful
+     * @param userBalance
      */
-    void sigin(boolean successful);
+    void sigin(boolean successful, long userBalance);
 
 
     void betMoney();
@@ -78,7 +81,7 @@ public interface HomeOprateView {
     void dimissDialog();
 
     void setSystemConfig(Bean_SystemConfig.SystemConfig systemConfig);
-    void setGameConfig(Bean_GameConfig.GameConfig gameConfig);
+    void setGameConfig(List<Bean_GameConfig.GameConfig> data);
 
     void checkUpdate(Bean_AppVersion.AppVersion appVersion);
 

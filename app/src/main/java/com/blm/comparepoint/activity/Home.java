@@ -37,6 +37,7 @@ import com.blm.comparepoint.presenter.HomePresenter;
 import com.blm.comparepoint.untils.AppUtils;
 import com.blm.comparepoint.untils.DensityUtils;
 import com.blm.comparepoint.untils.SPUtils;
+import com.blm.comparepoint.untils.ScreenUtils;
 import com.blm.comparepoint.untils.T;
 import com.blm.comparepoint.widget.CircleImageView;
 import com.blm.comparepoint.widget.RecycleViewDivider;
@@ -128,6 +129,9 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
     private UpdatePop updatePop;
 
     private int historyCount = 10;
+    private int unselectedHeight = 0;
+    private int selectedHeight = 0;
+    private List gameConfig;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -157,9 +161,12 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
         homePresenter.getSystemConfig();
         homePresenter.getGameConfig();
         homePresenter.getVersion();
+        homePresenter.getCurrentInfo();
     }
 
     private void initNumData() {
+        selectedHeight = (int) (ScreenUtils.getScreenWidth(context) / 8.5);
+        unselectedHeight = selectedHeight * 3 / 4;
         for (int i = 0; i < 10; i++) {
             Bean_Number number = new Bean_Number();
             number.number = i + 1;
@@ -178,23 +185,47 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
     private void setUserInfo() {
         glideImage((String) SPUtils.get(context, Constants.AVATAR, ""), imgAvatar);
         txtName.setText((String) SPUtils.get(context, Constants.NICKNAME, ""));
-        txtMoney.setText(SPUtils.get(context, Constants.USERAMOUNT, 0) + "");
-        txtRedMoney.setText(SPUtils.get(context, Constants.ACTIVEAMOUNT, 0) + "");
+        txtMoney.setText(SPUtils.get(context, Constants.USERAMOUNT, 0l) + "");
+        txtRedMoney.setText(SPUtils.get(context, Constants.ACTIVEAMOUNT, 0l) + "");
         imgSign.setEnabled(!(boolean) SPUtils.get(context, Constants.ISSIGN, false));
+        if ((boolean) SPUtils.get(context, Constants.ISSIGN, false)){
+            imgSign.setText("已签到");
+        }else {
+            imgSign.setText("签到");
+        }
     }
 
     private void initData() {
-        txtBigMutil.setText(Constants.RATIO);
-        txtSingleMutil.setText(Constants.RATIO);
-        txtSmallMutil.setText(Constants.RATIO);
-        txtDoubleMutil.setText(Constants.RATIO);
-        for (int i = 0; i < 10; i++) {
-            Bean_BetNumber betNumber = new Bean_BetNumber();
-            betNumber.betMutil = Constants.RATIO;
-            betNumber.number = i + 1;
-            betNumber.isSelected = false;
-            betNumber.betGold=0;
-            betNumberList.add(betNumber);
+
+
+
+
+        for (int i = 0; i < 14; i++) {
+            Bean_GameConfig.GameConfig config= (Bean_GameConfig.GameConfig) gameConfig.get(i);
+            if (i < 10) {
+                Bean_BetNumber betNumber = new Bean_BetNumber();
+                betNumber.betMutil =config.Ratio;
+                betNumber.number = i + 1;
+                betNumber.isSelected = false;
+                betNumber.betGold = 0;
+                betNumberList.add(betNumber);
+            }else {
+                switch (config.Number){
+                    case 101: //大
+                        txtBigMutil.setText(config.Ratio+"");
+                        break;
+                    case 102: //小
+                        txtSmallMutil.setText(config.Ratio+"");
+                        break;
+                    case 103:  //单
+                        txtSingleMutil.setText(config.Ratio+"");
+                        break;
+                    case 104:  //双
+                        txtDoubleMutil.setText(config.Ratio+"");
+                        break;
+                }
+            }
+
         }
         betNumberAdapter.notifyDataSetChanged();
 
@@ -204,6 +235,7 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
         betHistoryList = new ArrayList();
         betNumberList = new ArrayList();
         numberList = new ArrayList();
+        gameConfig = new ArrayList();
 
         betHistoryAdapter = new BetHistoryAdapter(betHistoryList);
         recyHistory.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
@@ -240,10 +272,10 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
      */
     private void selectTen() {
         Constants.SELECT_GOLD = 10;
-        glideImage(R.mipmap.icon_ten_big, imgTen);
-        glideImage(R.mipmap.icon_fifuty_small, imgFifty);
-        glideImage(R.mipmap.icon_handrad_small, imgHan);
-        glideImage(R.mipmap.icon_fifuty_h_small, imgFiftyHan);
+        setPointSelected(imgTen);
+        setPointUnselected(imgFifty);
+        setPointUnselected(imgHan);
+        setPointUnselected(imgFiftyHan);
     }
 
     /**
@@ -251,10 +283,10 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
      */
     private void selectFifty() {
         Constants.SELECT_GOLD = 50;
-        glideImage(R.mipmap.icon_ten_small, imgTen);
-        glideImage(R.mipmap.icon_fifty_big, imgFifty);
-        glideImage(R.mipmap.icon_handrad_small, imgHan);
-        glideImage(R.mipmap.icon_fifuty_h_small, imgFiftyHan);
+        setPointSelected(imgFifty);
+        setPointUnselected(imgTen);
+        setPointUnselected(imgHan);
+        setPointUnselected(imgFiftyHan);
     }
 
     /**
@@ -262,10 +294,10 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
      */
     private void selectHan() {
         Constants.SELECT_GOLD = 100;
-        glideImage(R.mipmap.icon_ten_small, imgTen);
-        glideImage(R.mipmap.icon_fifuty_small, imgFifty);
-        glideImage(R.mipmap.icon_han_big, imgHan);
-        glideImage(R.mipmap.icon_fifuty_h_small, imgFiftyHan);
+        setPointSelected(imgHan);
+        setPointUnselected(imgFifty);
+        setPointUnselected(imgTen);
+        setPointUnselected(imgFiftyHan);
     }
 
     /**
@@ -273,10 +305,24 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
      */
     private void selectFiftyHan() {
         Constants.SELECT_GOLD = 500;
-        glideImage(R.mipmap.icon_ten_small, imgTen);
-        glideImage(R.mipmap.icon_fifuty_small, imgFifty);
-        glideImage(R.mipmap.icon_handrad_small, imgHan);
-        glideImage(R.mipmap.icon_fifty_han_big, imgFiftyHan);
+        setPointSelected(imgFiftyHan);
+        setPointUnselected(imgFifty);
+        setPointUnselected(imgHan);
+        setPointUnselected(imgTen);
+    }
+
+    private void setPointSelected(View v) {
+        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) v.getLayoutParams();
+        params.height = params.width = selectedHeight;
+        v.setLayoutParams(params);
+
+    }
+
+    private void setPointUnselected(View v) {
+        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) v.getLayoutParams();
+        params.height = params.width = unselectedHeight;
+        v.setLayoutParams(params);
+
     }
 
     private void glideImage(int resId, ImageView imageView) {
@@ -293,15 +339,20 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
     }
 
     @Override
-    public void sigin(boolean successful) {
-        imgSign.setEnabled(successful);
+    public void sigin(boolean successful, final long userBalance) {
+        imgSign.setEnabled(!successful);
+        SPUtils.put(context,Constants.ISSIGN,successful);
+        if (successful){
+            imgSign.setText("已签到");
+        }else {
+            imgSign.setText("签到");
+        }
         if (successful) {
-            SPUtils.put(context, Constants.USERAMOUNT, (long) ((long) SPUtils.get(context, Constants.USERAMOUNT, 0) +
-                    (int) SPUtils.get(context, Constants.SIGNBOUNS, 0)));
+            SPUtils.put(context, Constants.USERAMOUNT, userBalance);
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    txtMoney.setText(SPUtils.get(context, Constants.USERAMOUNT, 0) + "");
+                    txtMoney.setText(userBalance + "");
                 }
             });
         }
@@ -442,11 +493,12 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
         Constants.ROUNDTIME = systemConfig.RoundTime;
         Constants.LOTTERYTIME = systemConfig.LotteryTime;
         Constants.GOldRANGE = systemConfig.GoldRange;
+        SPUtils.put(context,Constants.SERVICEURL,systemConfig.RechargeQrCode);
     }
 
     @Override
-    public void setGameConfig(Bean_GameConfig.GameConfig gameConfig) {
-        Constants.RATIO = gameConfig.Ratio;
+    public void setGameConfig(List<Bean_GameConfig.GameConfig> data) {
+        this.gameConfig.addAll(data);
         initData();
     }
 
