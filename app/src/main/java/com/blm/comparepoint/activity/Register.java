@@ -22,6 +22,7 @@ import com.blm.comparepoint.untils.T;
 import com.blm.comparepoint.wxapi.Constants;
 import com.google.gson.Gson;
 import com.tencent.TIMCallBack;
+import com.tencent.TIMGroupManager;
 import com.tencent.TIMManager;
 import com.tencent.TIMUser;
 
@@ -127,6 +128,18 @@ public class Register extends BaseActivity {
                         @Override
                         public void onSuccess() {
                             L.e("IM login success--");
+                            TIMGroupManager.getInstance().applyJoinGroup(Constants.GROUP_ID, "", new TIMCallBack() {
+                                @Override
+                                public void onError(int i, String s) {
+                                    L.e("applay error--" + i + s);
+                                }
+
+                                @Override
+                                public void onSuccess() {
+                                    L.e("join success");
+                                }
+                            });
+                            startActivity(new Intent(context, Home.class));
                         }
                     });
                     Constants.USERTOKEN = bean_login.Data.Token;

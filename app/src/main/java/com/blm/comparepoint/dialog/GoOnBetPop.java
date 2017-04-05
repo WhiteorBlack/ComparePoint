@@ -20,7 +20,7 @@ public class GoOnBetPop extends BasePopupWindow {
     public GoOnBetPop(Context context) {
         super(context);
         if (view == null) {
-            view = LayoutInflater.from(context).inflate(R.layout.win_pop, null);
+            view = LayoutInflater.from(context).inflate(R.layout.go_on_pop, null);
         }
         txtMoney = (TextView) view.findViewById(R.id.txt_money);
         view.findViewById(R.id.img_confirm).setOnClickListener(this);

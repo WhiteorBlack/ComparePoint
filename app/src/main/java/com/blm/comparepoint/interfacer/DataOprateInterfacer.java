@@ -40,4 +40,6 @@ public interface DataOprateInterfacer {
     void getCurrentInfo(String response);
 
     void getNetDate(String date);
+
+    void betMoneyResult(String response);
 }

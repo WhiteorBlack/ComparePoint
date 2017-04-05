@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="30dp">
+    android:layout_height="25dp">
     <ImageView
         android:id="@+id/img_line_top"
         android:layout_width="match_parent"
@@ -10,7 +10,8 @@
         android:background="@color/lineLight"/>
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
         android:orientation="horizontal">
     <TextView
         android:layout_width="0dp"
@@ -19,7 +20,7 @@
         android:textSize="14sp"
         android:gravity="center"
         android:id="@+id/txt_num"
-        android:textColor="@color/lineLight"
+        android:textColor="@color/lineDeep"
         android:layout_weight="1"/>
     <ImageView
         android:layout_width="0.8dp"
@@ -28,7 +29,7 @@
     <TextView
         android:id="@+id/txt_size"
         android:text="大"
-        android:textColor="@color/lineLight"
+        android:textColor="@color/lineDeep"
         android:textSize="14sp"
         android:gravity="center"
         android:layout_width="0dp"
@@ -43,7 +44,7 @@
     <TextView
         android:id="@+id/txt_single_double"
         android:text="大"
-        android:textColor="@color/lineLight"
+        android:textColor="@color/lineDeep"
         android:textSize="14sp"
         android:gravity="center"
         android:layout_width="0dp"

@@ -51,6 +51,10 @@ public class Constants {
 
     public static String MAIN_URL = "http://118.244.236.240/api/";
 
+    public static String PIC_URL="http://118.244.236.240";
+
+    public static String SHARE_URL="http://118.244.236.240";
+
     //system config
     public static int ROUNDTIME = -1;
     public static int LOTTERYTIME = -1;
@@ -61,8 +65,14 @@ public class Constants {
     public static int COUNTDOWNTIME=30;
     public static int BONUSDOWNTIME=10;
 
+    public static boolean ISBETABLE=false;
+
     public static String GROUP_ID="@TGS#bVZI7XNEN";
     public static String GROUP_TYPE="BChatRoom";
     public static int IM_APP_ID=1400026901;
     public static String ACCOUNT_TYPE="11366";
+    public static String MSG_ID="";
+    public static String USER_ID="";
+    public static boolean IS_BET=false;
+
 }

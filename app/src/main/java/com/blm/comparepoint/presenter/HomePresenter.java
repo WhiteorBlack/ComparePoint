@@ -4,10 +4,17 @@ import android.os.Handler;
 import android.text.TextUtils;
 
 import com.blm.comparepoint.async.DataOprate;
+import com.blm.comparepoint.bean.BaseBean;
 import com.blm.comparepoint.bean.Bean_AppVersion;
 import com.blm.comparepoint.bean.Bean_BetMoney;
+import com.blm.comparepoint.bean.Bean_BonusTip;
+import com.blm.comparepoint.bean.Bean_Bouns;
 import com.blm.comparepoint.bean.Bean_CurrentInfo;
 import com.blm.comparepoint.bean.Bean_GameConfig;
+import com.blm.comparepoint.bean.Bean_Msg;
+import com.blm.comparepoint.bean.Bean_OnLine;
+import com.blm.comparepoint.bean.Bean_Recharge;
+import com.blm.comparepoint.bean.Bean_Round;
 import com.blm.comparepoint.bean.Bean_Sign;
 import com.blm.comparepoint.bean.Bean_SystemConfig;
 import com.blm.comparepoint.interfacer.DataOprateInterfacer;
@@ -18,8 +25,10 @@ import com.blm.comparepoint.wxapi.Constants;
 import com.google.gson.Gson;
 import com.tencent.TIMConversation;
 import com.tencent.TIMConversationType;
+import com.tencent.TIMGroupSystemElem;
 import com.tencent.TIMManager;
 import com.tencent.TIMMessage;
+import com.tencent.TIMTextElem;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -39,6 +48,7 @@ public class HomePresenter implements DataOprateInterfacer, Observer {
     private HomeOprateView homeOprateView;
     private DataOprate dataOprate;
     private List<Bean_BetMoney> betMoneyList;
+    private List<Bean_GameConfig.GameConfig> ratoList;
 
     private TIMConversation conversation;
 
@@ -46,6 +56,7 @@ public class HomePresenter implements DataOprateInterfacer, Observer {
         this.homeOprateView = homeOprateView;
         this.dataOprate = DataOprate.getInstance(this);
         betMoneyList = new ArrayList<>();
+        ratoList = new ArrayList<>();
 
         conversation = TIMManager.getInstance().getConversation(TIMConversationType.Group, Constants.GROUP_ID);
         conversation.disableStorage();
@@ -53,7 +64,7 @@ public class HomePresenter implements DataOprateInterfacer, Observer {
 
     }
 
-    private void resetBetMoney() {
+    public void resetBetMoney() {
         betMoneyList.clear();
         for (int i = 0; i < 14; i++) {
             Bean_BetMoney bean_betMoney = new Bean_BetMoney();
@@ -61,12 +72,18 @@ public class HomePresenter implements DataOprateInterfacer, Observer {
             bean_betMoney.BetNum = -1;
             betMoneyList.add(new Bean_BetMoney());
         }
+        homeOprateView.clearBetMoney();
+    }
+
+    public void dismissAllPop() {
+        homeOprateView.dismissAllPop();
     }
 
     /**
      * 重置所有投注金额
      */
     public void resetStatue() {
+        Constants.IS_BET = false;
         Constants.BET_SELECT_NUM = -1;
         resetBetMoney();
         homeOprateView.resetTable();
@@ -75,6 +92,13 @@ public class HomePresenter implements DataOprateInterfacer, Observer {
     public void getSystemConfig() {
         homeOprateView.showDialog();
         dataOprate.getSystemConfig();
+    }
+
+    /**
+     * 重置所有选择状态
+     */
+    public void resetBetStatue() {
+        homeOprateView.resetBetStatue();
     }
 
     /**
@@ -110,13 +134,24 @@ public class HomePresenter implements DataOprateInterfacer, Observer {
      * 点击确定押注
      */
     public void betMoney() {
-        dataOprate.betMoney("");
+        List<Bean_BetMoney> betParams=new ArrayList<>();
+        for (int i = 0; i < betMoneyList.size(); i++) {
+            if (betMoneyList.get(i).BetGold>0){
+                betParams.add(betMoneyList.get(i));
+            }
+        }
+        String bets = new Gson().toJson(betParams);
+        dataOprate.betMoney(bets);
     }
 
     public void betMoney(int num) {
         if (betMoneyList == null) {
             resetBetMoney();
         }
+        if (!Constants.ISBETABLE) {
+            return;
+        }
+        homeOprateView.betMoney(num);
         switch (num) {
             case -1:
                 homeOprateView.toastCommonNotify("请选择投注类别");
@@ -178,6 +213,24 @@ public class HomePresenter implements DataOprateInterfacer, Observer {
                 betMoneyList.get(13).BetNum = 104;
                 break;
         }
+        if (num > 10) {
+            switch (num) {
+                case 101: //大
+                    homeOprateView.updateBetMoney(num, betMoneyList.get(10).BetGold);
+                    break;
+                case 102: //小
+                    homeOprateView.updateBetMoney(num, betMoneyList.get(11).BetGold);
+                    break;
+                case 103:  //单
+                    homeOprateView.updateBetMoney(num, betMoneyList.get(12).BetGold);
+                    break;
+                case 104:  //双
+                    homeOprateView.updateBetMoney(num, betMoneyList.get(13).BetGold);
+                    break;
+            }
+        } else {
+            homeOprateView.updateBetMoney(num, betMoneyList.get(num - 1).BetGold);
+        }
     }
 
     public void endCountDown(int type) {
@@ -195,7 +248,7 @@ public class HomePresenter implements DataOprateInterfacer, Observer {
     public void getSystemConfigSuccess(String response) {
         homeOprateView.dimissDialog();
         Bean_SystemConfig bean_systemConfig = new Gson().fromJson(response, Bean_SystemConfig.class);
-        if (bean_systemConfig.Success&&bean_systemConfig.Data!=null) {
+        if (bean_systemConfig.Success && bean_systemConfig.Data != null) {
             homeOprateView.setSystemConfig(bean_systemConfig.Data);
         }
     }
@@ -211,6 +264,7 @@ public class HomePresenter implements DataOprateInterfacer, Observer {
         Bean_GameConfig bean_gameConfig = new Gson().fromJson(response, Bean_GameConfig.class);
         if (bean_gameConfig != null && bean_gameConfig.Success && bean_gameConfig.Data != null) {
             homeOprateView.setGameConfig(bean_gameConfig.Data);
+            ratoList.addAll(bean_gameConfig.Data);
         }
     }
 
@@ -287,6 +341,21 @@ public class HomePresenter implements DataOprateInterfacer, Observer {
         }
     }
 
+    @Override
+    public void betMoneyResult(String response) {
+        homeOprateView.toastNotify(response);
+        if (TextUtils.isEmpty(response)) {
+            homeOprateView.toastNotify("请检查后重试!");
+            return;
+        }
+        BaseBean baseBean = new Gson().fromJson(response, BaseBean.class);
+        if (baseBean.Success) {
+            Constants.IS_BET = true;
+            homeOprateView.resetTable();
+        }
+        homeOprateView.toastNotify(baseBean.Msg);
+    }
+
     private int time = 1;
 
     private void retryGameInfo() {
@@ -304,8 +373,113 @@ public class HomePresenter implements DataOprateInterfacer, Observer {
     @Override
     public void update(Observable observable, Object data) {
         if (observable instanceof MessageEvent) {
+
             TIMMessage msg = (TIMMessage) data;
-            L.e("Msg----"+msg.getMsgId());
+            L.e("Msg----" + msg.getMsgId() + msg.getConversation().getType());
+            if (TextUtils.equals(Constants.MSG_ID, msg.getMsgId())) {
+                return;
+            }
+            Constants.MSG_ID = msg.getMsgId();
+            TIMGroupSystemElem elem = null;
+            try {
+                elem = (TIMGroupSystemElem) msg.getElement(0);
+                L.e("Msg----" + msg.getMsgId() + msg.getConversation().getType() + new String(elem.getUserData()));
+            } catch (Exception e) {
+
+            }
+            if (elem == null) {
+                return;
+            }
+            String msgString = new String(elem.getUserData());
+            if (TextUtils.isEmpty(msgString)) {
+                return;
+            }
+            Bean_Msg bean_msg = new Gson().fromJson(msgString, Bean_Msg.class);
+            if (TextUtils.equals(bean_msg.Type, "OnLineNumber")) {
+                //更新在线人数
+                Bean_OnLine onLine = new Gson().fromJson(msgString, Bean_OnLine.class);
+                homeOprateView.updateOnline((onLine.Data + 1) + "");
+            }
+
+            if (TextUtils.equals("Round", bean_msg.Type)) {
+                //游戏开局信息
+                Constants.IS_BET = false;
+                Constants.ISBETABLE = true;
+                Bean_Round round = new Gson().fromJson(msgString, Bean_Round.class);
+                homeOprateView.currentInfo(round.Data);
+                homeOprateView.resetTable();
+            }
+
+            if (TextUtils.equals("BounsTip", bean_msg.Type)) {
+                //更新获奖人的滚动信息
+                Bean_BonusTip bonusTip = new Gson().fromJson(msgString, Bean_BonusTip.class);
+                if (bonusTip.Data != null && bonusTip.Data.size() > 0) {
+                    homeOprateView.setNotifyData(bonusTip.Data);
+                }
+            }
+            if (TextUtils.equals("Recharge", bean_msg.Type)) {
+                //充值信息
+                Bean_Recharge recharge = new Gson().fromJson(msgString, Bean_Recharge.class);
+                if (TextUtils.equals(recharge.GameUserId, Constants.USER_ID)) {
+                    homeOprateView.updateAmount(recharge.RechargeGold);
+                }
+            }
+            if (TextUtils.equals("Bonus", bean_msg.Type)) {
+                Constants.ISBETABLE = false;
+                Bean_Bouns bouns = new Gson().fromJson(msgString, Bean_Bouns.class);
+                homeOprateView.updateBounsHistory(bouns.Data.BonusNum);
+                countBetMoney(bouns.Data.BonusNum);
+            }
+        }
+    }
+
+    private void countBetMoney(int bonusNum) {
+        boolean isSingle = bonusNum % 2 > 0;
+        boolean isBig = bonusNum > 5;
+        int money = 0;
+        if (ratoList != null) {
+            for (int i = 0; i < betMoneyList.size(); i++) {
+                int betGole = betMoneyList.get(i).BetGold;
+                if (betGole > 0) {
+                    if (betMoneyList.get(i).BetNum == bonusNum) {
+                        money += betGole * ratoList.get(i).Ratio;
+                    }
+                    switch (betMoneyList.get(i).BetNum) {
+                        case 101:
+                            //big
+                            if (isBig) {
+                                money += betGole * ratoList.get(i).Ratio;
+                            }
+                            break;
+                        case 102:
+                            //small
+                            if (!isBig) {
+                                money += betGole * ratoList.get(i).Ratio;
+                            }
+                            break;
+                        case 103:
+                            //single
+                            if (isSingle) {
+                                money += betGole * ratoList.get(i).Ratio;
+                            }
+                            break;
+                        case 104:
+                            //double
+                            if (!isSingle) {
+                                money += betGole * ratoList.get(i).Ratio;
+                            }
+                            break;
+                    }
+                }
+            }
+            if (money > 0) {
+                homeOprateView.showWinPop(money + "");
+                homeOprateView.updateRedAmount(money);
+            } else {
+                if (Constants.IS_BET) {
+                    homeOprateView.showGoBet("再接再厉吧!!");
+                }
+            }
         }
     }
 }

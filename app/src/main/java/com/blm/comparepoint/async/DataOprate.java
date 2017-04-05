@@ -120,10 +120,16 @@ public class DataOprate {
         Map<String,String> params=new HashMap<>();
         params.put("RoundNo",Constants.ROUNDNO);
         params.put("Bets",bets);
-        PostTools.postData(Constants.MAIN_URL+"Game",params,new PostCallBack(){
+        PostTools.postData(Constants.MAIN_URL+"Game/Bet",params,new PostCallBack(){
             @Override
             public void onResponse(String response) {
                 super.onResponse(response);
+                dataOprateInterfacer.betMoneyResult(response);
+            }
+
+            @Override
+            public void onError(Call call, Exception e) {
+                super.onError(call, e);
             }
         });
     }

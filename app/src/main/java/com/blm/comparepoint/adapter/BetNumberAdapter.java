@@ -29,16 +29,22 @@ public class BetNumberAdapter extends BaseRecyAdapter {
         super.onBindViewHolder(holder, position);
         ViewHolder mHolder = (ViewHolder) holder;
         Bean_BetNumber betNumber = (Bean_BetNumber) dataList.get(position);
-        mHolder.setText(betNumber.betMutil+"", R.id.txt_bet_muitl);
+        mHolder.setText(betNumber.betMutil + "", R.id.txt_bet_muitl);
         mHolder.setText(betNumber.number + "", R.id.txt_number);
         if (betNumber.isSelected) {
-            mHolder.getView(R.id.fl_parent).setBackgroundColor(mHolder.parent.getContext().getResources().getColor(R.color.betSelected));
+            mHolder.getView(R.id.ll_doulbe).setVisibility(View.VISIBLE);
         } else {
-            mHolder.getView(R.id.fl_parent).setBackgroundColor(mHolder.parent.getContext().getResources().getColor(R.color.tableIn));
+            mHolder.getView(R.id.ll_doulbe).setVisibility(View.GONE);
         }
-        if (position==4||position==9){
+        if (betNumber.betGold > 0) {
+            mHolder.getView(R.id.txt_bet).setVisibility(View.VISIBLE);
+            mHolder.setText(betNumber.betGold + "", R.id.txt_bet);
+        } else {
+            mHolder.getView(R.id.txt_bet).setVisibility(View.GONE);
+        }
+        if (position == 4 || position == 9) {
             mHolder.getView(R.id.img_line).setVisibility(View.GONE);
-        }else {
+        } else {
             mHolder.getView(R.id.img_line).setVisibility(View.VISIBLE);
         }
     }

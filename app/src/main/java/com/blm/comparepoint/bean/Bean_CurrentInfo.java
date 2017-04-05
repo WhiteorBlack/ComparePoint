@@ -10,10 +10,15 @@ public class Bean_CurrentInfo extends BaseBean {
     public CurrentInfo Data;
     public static class CurrentInfo{
         public String RoundNo;
-        public int StartTime;
+        public long StartTime;
         public int BonusNum;
-        public int BonusTime;
-        public List<BonusNumList>LastBonusNum;
+        public long BonusTime;
+        public int RoundCost;
+        public int LotteryCost;
+        public int BetAmount;
+        public int BonusAmount;
+        public int BetUserCount;
+        public int[] LastBonusNum;
     }
 
     public static class BonusNumList{

@@ -24,7 +24,7 @@ public interface HomeOprateView {
     void sigin(boolean successful, long userBalance);
 
 
-    void betMoney();
+    void betMoney(int pos);
 
     void toastNotify(String notify);
 
@@ -78,12 +78,70 @@ public interface HomeOprateView {
     void toastCommonNotify(String notify);
 
     void showDialog();
+
     void dimissDialog();
 
     void setSystemConfig(Bean_SystemConfig.SystemConfig systemConfig);
+
     void setGameConfig(List<Bean_GameConfig.GameConfig> data);
 
+    /**
+     * 检查是否有新版APP
+     *
+     * @param appVersion
+     */
     void checkUpdate(Bean_AppVersion.AppVersion appVersion);
 
+    /**
+     * 更新当前游戏进度
+     *
+     * @param currentInfo
+     */
     void currentInfo(Bean_CurrentInfo.CurrentInfo currentInfo);
+
+    /**
+     * 更新在线人数
+     *
+     * @param count
+     */
+    void updateOnline(String count);
+
+    /**
+     * 更新用户账户金额
+     *
+     * @param money
+     */
+    void updateAmount(long money);
+
+    /**
+     * 更新开奖记录
+     *
+     * @param num
+     */
+    void updateBounsHistory(int num);
+
+    /**
+     * 更新用户红包账户金额
+     *
+     * @param money
+     */
+    void updateRedAmount(long money);
+
+    void setNotifyData(List<String> data);
+
+    void dismissAllPop();
+
+    /**
+     * 清除压注的金币
+     */
+    void clearBetMoney();
+
+
+    /**
+     * 重置所有的压注选择状态
+     */
+    void resetBetStatue();
+
+    void updateBetMoney(int pos, int money);
+
 }
