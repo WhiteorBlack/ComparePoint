@@ -133,7 +133,7 @@
             android:textColor="@color/lightYellow"
             android:textSize="14sp" />
 
-        <TextView
+        <com.blm.comparepoint.widget.MSGCountTimeView
             android:id="@+id/txt_count_down"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -261,9 +261,9 @@
                             android:background="@drawable/bet_money_bg"
                             android:gravity="center"
                             android:text="100"
-                            android:visibility="gone"
                             android:textColor="@color/lineDeep"
-                            android:textSize="12sp" />
+                            android:textSize="12sp"
+                            android:visibility="gone" />
 
                         <LinearLayout
                             android:id="@+id/ll_single"
@@ -316,9 +316,9 @@
                             android:background="@drawable/bet_money_bg"
                             android:gravity="center"
                             android:text="100"
-                            android:visibility="gone"
                             android:textColor="@color/lineDeep"
-                            android:textSize="12sp" />
+                            android:textSize="12sp"
+                            android:visibility="gone" />
 
                         <LinearLayout
                             android:id="@+id/ll_small"
@@ -377,10 +377,10 @@
                             android:alpha="0.5"
                             android:background="@drawable/bet_money_bg"
                             android:gravity="center"
-                            android:visibility="gone"
                             android:text="100"
                             android:textColor="@color/lineDeep"
-                            android:textSize="12sp" />
+                            android:textSize="12sp"
+                            android:visibility="gone" />
 
                         <LinearLayout
                             android:id="@+id/ll_doulbe"
@@ -433,9 +433,9 @@
                             android:background="@drawable/bet_money_bg"
                             android:gravity="center"
                             android:text="100"
-                            android:visibility="gone"
                             android:textColor="@color/lineDeep"
-                            android:textSize="12sp" />
+                            android:textSize="12sp"
+                            android:visibility="gone" />
 
                         <LinearLayout
                             android:id="@+id/ll_big"

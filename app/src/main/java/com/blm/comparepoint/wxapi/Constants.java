@@ -26,21 +26,22 @@ public class Constants {
     public static final String ISSIGN = "isSign";
     public static final String SIGNBOUNS = "SignBonus";
     public static final String MINEXCHANGEAMOUNT = "minExchangeAmount";
-    public static final String USERAMOUNT="UserBalance";
-    public static final String ACTIVEAMOUNT="UserActive";
-    public static final String SERVICEURL="serviceUrl";
-    public static final String CHARGEURL="chargeUrl";
+    public static final String USERAMOUNT = "UserBalance";
+    public static final String ACTIVEAMOUNT = "UserActive";
+    public static final String SERVICEURL = "serviceUrl";
+    public static final String CHARGEURL = "chargeUrl";
+
 
     public static int SELECT_GOLD = 10;
     //pop flag
     public static final int WIN_POP_FLAG = 0;
     public static final int GO_BET_POP_FLAG = 1;
     public static final int NOTIFY_POP_FLAG = 2;
-    public static final int UPDATE_POP_FLAG=3;
+    public static final int UPDATE_POP_FLAG = 3;
 
-   //接受消息的类型
-    public static final int TYPE_BET_MONEY=1;
-    public static final int TYPE_OPEN_CHESS=2;
+    //接受消息的类型
+    public static final int TYPE_BET_MONEY = 1;
+    public static final int TYPE_OPEN_CHESS = 2;
 
     //选择的类别
     public static int BET_SELECT_NUM = -1;
@@ -51,28 +52,29 @@ public class Constants {
 
     public static String MAIN_URL = "http://118.244.236.240/api/";
 
-    public static String PIC_URL="http://118.244.236.240";
+    public static String PIC_URL = "http://118.244.236.240";
 
-    public static String SHARE_URL="http://118.244.236.240";
+    public static String SHARE_URL = "http://118.244.236.240";
 
     //system config
     public static int ROUNDTIME = -1;
-    public static int LOTTERYTIME = -1;
+    public static int LOTTERYTIME = 5;
     public static double GOldRANGE = 1d;
-    public static String ROUNDNO="";
+    public static String ROUNDNO = "";
 
-    public static long NETTIME_LOCALTIME_DELATE=0;
-    public static int COUNTDOWNTIME=30;
-    public static int BONUSDOWNTIME=10;
+    public static long NETTIME_LOCALTIME_DELATE = 0;
+    public static int COUNTDOWNTIME = 30;
+    public static int BONUSDOWNTIME = 10;
 
-    public static boolean ISBETABLE=false;
+    public static boolean ISBETABLE = false;
 
-    public static String GROUP_ID="@TGS#bVZI7XNEN";
-    public static String GROUP_TYPE="BChatRoom";
-    public static int IM_APP_ID=1400026901;
-    public static String ACCOUNT_TYPE="11366";
-    public static String MSG_ID="";
-    public static String USER_ID="";
-    public static boolean IS_BET=false;
-
+    public static String GROUP_ID = "@TGS#bVZI7XNEN";
+    public static String GROUP_TYPE = "BChatRoom";
+    public static int IM_APP_ID = 1400026901;
+    public static String ACCOUNT_TYPE = "11366";
+    public static String MSG_ID = "";
+    public static String USER_ID = "";
+    public static boolean IS_BET = false;
+    public static boolean BONUSEND = false;
+    public static int BONUSNUM=-1;
 }

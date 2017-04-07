@@ -144,4 +144,19 @@ public interface HomeOprateView {
 
     void updateBetMoney(int pos, int money);
 
+    /**
+     * 压注成功之后更新账户金额
+     *
+     * @param money
+     */
+    void betMoneySuccess(int money);
+
+    void showBonusNumAnim();
+
+    void endBonusAnim(int num);
+
+    /**
+     * 重置开注的数字状态
+     */
+    void resetNumStatue();
 }

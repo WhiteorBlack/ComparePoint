@@ -134,9 +134,9 @@ public class HomePresenter implements DataOprateInterfacer, Observer {
      * 点击确定押注
      */
     public void betMoney() {
-        List<Bean_BetMoney> betParams=new ArrayList<>();
+        List<Bean_BetMoney> betParams = new ArrayList<>();
         for (int i = 0; i < betMoneyList.size(); i++) {
-            if (betMoneyList.get(i).BetGold>0){
+            if (betMoneyList.get(i).BetGold > 0) {
                 betParams.add(betMoneyList.get(i));
             }
         }
@@ -236,7 +236,7 @@ public class HomePresenter implements DataOprateInterfacer, Observer {
     public void endCountDown(int type) {
         switch (type) {
             case Constants.TYPE_BET_MONEY:
-
+                homeOprateView.showBonusNumAnim();
                 break;
             case Constants.TYPE_OPEN_CHESS:
 
@@ -343,7 +343,6 @@ public class HomePresenter implements DataOprateInterfacer, Observer {
 
     @Override
     public void betMoneyResult(String response) {
-        homeOprateView.toastNotify(response);
         if (TextUtils.isEmpty(response)) {
             homeOprateView.toastNotify("请检查后重试!");
             return;
@@ -351,6 +350,11 @@ public class HomePresenter implements DataOprateInterfacer, Observer {
         BaseBean baseBean = new Gson().fromJson(response, BaseBean.class);
         if (baseBean.Success) {
             Constants.IS_BET = true;
+            int betCount = 0;
+            for (int i = 0; i < betMoneyList.size(); i++) {
+                betCount += betMoneyList.get(i).BetGold;
+            }
+            homeOprateView.betMoneySuccess(betCount);
             homeOprateView.resetTable();
         }
         homeOprateView.toastNotify(baseBean.Msg);
@@ -403,11 +407,15 @@ public class HomePresenter implements DataOprateInterfacer, Observer {
 
             if (TextUtils.equals("Round", bean_msg.Type)) {
                 //游戏开局信息
+                Constants.BONUSEND = false;
                 Constants.IS_BET = false;
                 Constants.ISBETABLE = true;
+                Constants.BONUSNUM=-1;
                 Bean_Round round = new Gson().fromJson(msgString, Bean_Round.class);
+                Constants.LOTTERYTIME=round.Data.LotteryCost;
                 homeOprateView.currentInfo(round.Data);
                 homeOprateView.resetTable();
+                homeOprateView.resetNumStatue();
             }
 
             if (TextUtils.equals("BounsTip", bean_msg.Type)) {
@@ -427,11 +435,16 @@ public class HomePresenter implements DataOprateInterfacer, Observer {
             if (TextUtils.equals("Bonus", bean_msg.Type)) {
                 Constants.ISBETABLE = false;
                 Bean_Bouns bouns = new Gson().fromJson(msgString, Bean_Bouns.class);
-                homeOprateView.updateBounsHistory(bouns.Data.BonusNum);
-                countBetMoney(bouns.Data.BonusNum);
+                Constants.BONUSEND = true;
+                Constants.BONUSNUM=bouns.Data.BonusNum;
+                homeOprateView.updateBounsHistory(Constants.BONUSNUM);
+                countBetMoney(Constants.BONUSNUM);
+                homeOprateView.endBonusAnim(bouns.Data.BonusNum);
             }
         }
     }
+
+
 
     private void countBetMoney(int bonusNum) {
         boolean isSingle = bonusNum % 2 > 0;
@@ -472,11 +485,12 @@ public class HomePresenter implements DataOprateInterfacer, Observer {
                     }
                 }
             }
-            if (money > 0) {
-                homeOprateView.showWinPop(money + "");
-                homeOprateView.updateRedAmount(money);
-            } else {
-                if (Constants.IS_BET) {
+            if (Constants.IS_BET) {
+                if (money > 0) {
+                    homeOprateView.showWinPop(money + "");
+                    homeOprateView.updateRedAmount(money);
+                } else {
+
                     homeOprateView.showGoBet("再接再厉吧!!");
                 }
             }
