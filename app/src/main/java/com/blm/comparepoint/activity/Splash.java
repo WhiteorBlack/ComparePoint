@@ -62,7 +62,7 @@ public class Splash extends BaseActivity {
                 super.onResponse(response);
                 if (TextUtils.isEmpty(response)) {
                     T.showShort(context, "检查网络后重试!");
-                    AppManager.getAppManager().finishActivity();
+                    finish();
                     countDownTimer.cancel();
                     return;
                 }
@@ -92,17 +92,16 @@ public class Splash extends BaseActivity {
                                     L.e("join success");
                                 }
                             });
+                            finish();
                             startActivity(new Intent(context, Home.class));
-                            AppManager.getAppManager().finishActivity();
                             countDownTimer.cancel();
                         }
                     });
                     Constants.USERTOKEN = bean_gamerInfo.Data.Token;
                     SPUtils.put(context, Constants.TOKEN, bean_gamerInfo.Data.Token);
-                    SPUtils.put(context, Constants.AVATAR, bean_gamerInfo.Data.Avatar);
+                    SPUtils.put(context, Constants.AVATAR, bean_gamerInfo.Data.Avatar==null?"":bean_gamerInfo.Data.Avatar);
                     SPUtils.put(context, Constants.GAMER_ID, bean_gamerInfo.Data.GameUserId);
                     SPUtils.put(context, Constants.NICKNAME, bean_gamerInfo.Data.NickName);
-                    SPUtils.put(context, Constants.OPENID, bean_gamerInfo.Data.OpenId);
                     SPUtils.put(context, Constants.USERAMOUNT, bean_gamerInfo.Data.UserBalance);
                     SPUtils.put(context, Constants.ACTIVEAMOUNT, bean_gamerInfo.Data.UserActive);
                     SPUtils.put(context, Constants.IS_LOGIN, true);
@@ -112,7 +111,7 @@ public class Splash extends BaseActivity {
                     SPUtils.put(context, Constants.IS_LOGIN, false);
                     T.showShort(context, "登陆已过期,请重新登陆");
                     startActivity(new Intent(context, Login.class));
-                    AppManager.getAppManager().finishActivity();
+                    finish();
                     countDownTimer.cancel();
                 }
             }
@@ -130,7 +129,7 @@ public class Splash extends BaseActivity {
             @Override
             public void onTick(long millisUntilFinished) {
                 if (!(boolean) SPUtils.get(context, Constants.IS_LOGIN, false) && millisUntilFinished / 1000 == 8) {
-                    AppManager.getAppManager().finishActivity();
+                    finish();
                     startActivity(new Intent(context, Login.class));
                     countDownTimer.cancel();
                 }
@@ -138,10 +137,8 @@ public class Splash extends BaseActivity {
 
             @Override
             public void onFinish() {
-                if (!NetUtils.isConnected(context) || !NetUtils.isWifi(context)) {
                     T.showShort(context, "无网络连接,请检查后重试");
-                    AppManager.getAppManager().finishActivity();
-                }
+                    finish();
 
             }
         }.start();

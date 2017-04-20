@@ -22,7 +22,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="个人中心"
+            android:text="我的名片"
             android:textColor="@color/lightYellow"
             android:textSize="18sp"
             android:textStyle="bold" />
@@ -172,11 +172,13 @@
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:visibility="invisible"
         android:background="@mipmap/line_height" />
 
 
     <FrameLayout
         android:id="@+id/fl_my_sex"
+        android:visibility="invisible"
         style="@style/personal_item">
 
         <TextView
@@ -203,6 +205,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="25dp"
+        android:visibility="invisible"
         android:layout_marginRight="25dp"
         android:background="@mipmap/line_horizontal" />
 

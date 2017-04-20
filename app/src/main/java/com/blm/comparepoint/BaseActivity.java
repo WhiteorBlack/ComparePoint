@@ -10,6 +10,7 @@ import android.view.View;
 import com.blm.comparepoint.untils.AppManager;
 import com.blm.comparepoint.untils.L;
 import com.bumptech.glide.Glide;
+import com.umeng.analytics.MobclickAgent;
 
 /**
  * Created by Administrator on 2017/2/15.
@@ -31,16 +32,19 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        MobclickAgent.onResume(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        MobclickAgent.onPause(this);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        AppManager.getAppManager().finishActivity(this);
     }
 
     public void pointClick(View v) {

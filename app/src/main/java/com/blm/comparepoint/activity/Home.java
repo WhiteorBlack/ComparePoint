@@ -10,7 +10,9 @@ import android.os.Handler;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -29,6 +31,7 @@ import com.blm.comparepoint.bean.Bean_Number;
 import com.blm.comparepoint.bean.Bean_SystemConfig;
 import com.blm.comparepoint.dialog.GoOnBetPop;
 import com.blm.comparepoint.dialog.NotifyPop;
+import com.blm.comparepoint.dialog.RolePop;
 import com.blm.comparepoint.dialog.UpdatePop;
 import com.blm.comparepoint.dialog.WinPop;
 import com.blm.comparepoint.interfacer.HomeOprateView;
@@ -47,6 +50,7 @@ import com.blm.comparepoint.widget.RecycleViewDivider;
 import com.blm.comparepoint.widget.ScrollTextView;
 import com.blm.comparepoint.wxapi.Constants;
 import com.bumptech.glide.Glide;
+import com.tencent.TIMManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -146,8 +150,10 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
     private NotifyPop notifyPop;
     private ProgressDialog progressDialog;
     private UpdatePop updatePop;
+    private RolePop rolePop;
+    private String roleString;
 
-    private int historyCount = 10;
+    private int historyCount = 15;
     private int unselectedHeight = 0;
     private int selectedHeight = 0;
     private List gameConfig;
@@ -157,6 +163,7 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         ButterKnife.bind(this);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         homePresenter = new HomePresenter(this);
         Constants.USER_ID = (String) SPUtils.get(context, Constants.GAMER_ID, "-1");
         initView();
@@ -165,19 +172,19 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
         recyNumber.post(new Runnable() {
             @Override
             public void run() {
-                numberAdapter.setHeight(recyNumber.getHeight() - DensityUtils.dp2px(context, 9));
+                numberAdapter.setHeight(recyNumber.getHeight());
                 numberAdapter.notifyDataSetChanged();
             }
         });
         recyHistory.post(new Runnable() {
             @Override
             public void run() {
-                historyCount = recyHistory.getHeight() / DensityUtils.dp2px(context, 26);
+                betHistoryAdapter.setHeight(recyHistory.getHeight());
             }
         });
 
         selectTen();
-
+        clearBetMoney();
         homePresenter.resetStatue();
         homePresenter.getSystemConfig();
         homePresenter.getGameConfig();
@@ -217,7 +224,6 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
     }
 
     private void initData() {
-
 
         for (int i = 0; i < 14; i++) {
             Bean_GameConfig.GameConfig config = (Bean_GameConfig.GameConfig) gameConfig.get(i);
@@ -432,13 +438,26 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
 
     @Override
     public void countDown(final int type, int time) {
+        L.e("time----" + time);
         txtCountDown.isAllowRun(true);
         txtCountDown.setTotaltime(time * 1000);
-        txtCountDown.setSuffixRuntext("s");//设置运行时的文字的后缀
+        txtCountDown.setTextSize(14f);
+        txtCountDown.setSuffixRuntext("秒");//设置运行时的文字的后缀
+        switch (type) {
+            case Constants.TYPE_BET_MONEY:
+                txtCountDown.setFinishtext("开奖中");
+                break;
+            case Constants.TYPE_OPEN_CHESS:
+                txtCountDown.setFinishtext("等待");
+                break;
+        }
         txtCountDown.startCount();
         txtCountDown.onDownTime(new MSGCountTimeView.onDownTime() {
             @Override
             public void onDown(int time) {
+                if (type == Constants.TYPE_OPEN_CHESS) {
+                    return;
+                }
                 if (time < 7) {
                     if (time % 2 > 0) {
                         txtCountDown.setTimeColor(Color.RED);
@@ -450,40 +469,18 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
 
             @Override
             public void onFinish() {
+                if (type == Constants.TYPE_BET_MONEY) {
+//                    countDown(Constants.TYPE_OPEN_CHESS,Constants.BONUSDOWNTIME);
+                }
                 homePresenter.endCountDown(type);
             }
         });
-//        countDownTimer = new CountDownTimer(time * 1000, 1000) {
-//
-//            @Override
-//            public void onTick(long millisUntilFinished) {
-//                if (isFinishing()) {
-//                    cancel();
-//                }
-//                int leftTIme = (int) (millisUntilFinished / 1000);
-//                if (leftTIme < 6) {
-//                    if (leftTIme % 2 > 0) {
-//                        txtCountDown.setTextColor(Color.RED);
-//                    } else {
-//                        txtCountDown.setTextColor(Color.WHITE);
-//                    }
-//                }
-//                txtCountDown.setText(leftTIme + "s");
-//            }
-//
-//            @Override
-//            public void onFinish() {
-//                txtCountDown.setTextColor(Color.WHITE);
-//                homePresenter.endCountDown(type);
-//            }
-//        };
-//        countDownTimer.cancel();
-//        countDownTimer.start();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        TIMManager.getInstance().logout();
 //        if (countDownTimer != null) {
 //            countDownTimer.cancel();
 //        }
@@ -491,29 +488,80 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
 
     @Override
     public void showWinPop(String money) {
-        if (winPop == null) {
-            winPop = new WinPop(context);
-        }
+        winPop = new WinPop(context);
         winPop.setMOney(money);
-        winPop.showPop(txtBigMutil);
         winPop.setPopInterfacer(this, Constants.WIN_POP_FLAG);
+        if (isFinishing()) {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            winPop.showPop(txtBigMutil);
+                        }
+                    });
+                }
+            }, 300);
+        } else {
+            try {
+                winPop.showPop(txtBigMutil);
+            } catch (WindowManager.BadTokenException e) {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                winPop.showPop(txtBigMutil);
+                            }
+                        });
+                    }
+                }, 300);
+            }
+        }
     }
 
     @Override
     public void showGoBet(String notify) {
-        if (goOnBetPop == null) {
-            goOnBetPop = new GoOnBetPop(context);
-        }
+        goOnBetPop = new GoOnBetPop(context);
         goOnBetPop.setNotify(notify);
-        goOnBetPop.showPop(txtBigMutil);
+
         goOnBetPop.setPopInterfacer(this, Constants.GO_BET_POP_FLAG);
+        if (isFinishing()) {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            goOnBetPop.showPop(txtBigMutil);
+                        }
+                    });
+                }
+            }, 300);
+        } else {
+            try {
+                goOnBetPop.showPop(txtBigMutil);
+            } catch (WindowManager.BadTokenException e) {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                goOnBetPop.showPop(txtBigMutil);
+                            }
+                        });
+                    }
+                }, 300);
+            }
+        }
     }
 
     @Override
     public void showNotify(String notify) {
-        if (notifyPop == null) {
-            notifyPop = new NotifyPop(context);
-        }
+        notifyPop = new NotifyPop(context);
         notifyPop.setNotify(notify);
         notifyPop.showPop(txtBigMutil);
         notifyPop.setPopInterfacer(this, Constants.NOTIFY_POP_FLAG);
@@ -546,6 +594,7 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
     public void resetTable() {
         homePresenter.dismissAllPop();
         homePresenter.resetBetMoney();
+        homePresenter.resetTotalBetMoney();
         initBetStatue();
     }
 
@@ -574,12 +623,14 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
 
     @Override
     public void setSystemConfig(Bean_SystemConfig.SystemConfig systemConfig) {
+        roleString = systemConfig.GameRules;
         SPUtils.put(context, Constants.MINEXCHANGEAMOUNT, systemConfig.MinWithdramAmount);
         SPUtils.put(context, Constants.SIGNBOUNS, systemConfig.SignBonus);
         Constants.ROUNDTIME = systemConfig.RoundTime;
         Constants.LOTTERYTIME = systemConfig.LotteryTime;
         Constants.GOldRANGE = systemConfig.GoldRange;
-        SPUtils.put(context, Constants.SERVICEURL, systemConfig.RechargeQrCode);
+        SPUtils.put(context, Constants.CHARGEURL, Constants.PIC_URL + systemConfig.RechargeQrCode);
+        SPUtils.put(context, Constants.SERVICEURL, Constants.PIC_URL + systemConfig.CustomerQrCode);
     }
 
     @Override
@@ -609,9 +660,14 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
 //        betHistoryList.addAll(currentInfo.LastBonusNum);
         if (currentInfo.LastBonusNum != null && currentInfo.LastBonusNum.length > 0) {
             for (int i = 0; i < currentInfo.LastBonusNum.length; i++) {
-                Bean_CurrentInfo.BonusNumList num = new Bean_CurrentInfo.BonusNumList();
-                num.BonusNum = currentInfo.LastBonusNum[i];
-                betHistoryList.add(num);
+                if (i < historyCount + 1) {
+                    Bean_CurrentInfo.BonusNumList num = new Bean_CurrentInfo.BonusNumList();
+                    num.BonusNum = currentInfo.LastBonusNum[i];
+                    betHistoryList.add(num);
+                } else {
+                    break;
+                }
+
             }
             betHistoryAdapter.notifyDataSetChanged();
         }
@@ -621,17 +677,25 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
         if (currentInfo.LotteryCost == 0 && Constants.LOTTERYTIME > 0) {
             currentInfo.LotteryCost = Constants.LOTTERYTIME;
         }
+        if (currentInfo.LotteryCost == 0) {
+            currentInfo.LotteryCost = 5;
+        }
         Constants.COUNTDOWNTIME = timeDelate + (int) (currentInfo.BonusTime - currentInfo.LotteryCost - systemTime);
         Constants.BONUSDOWNTIME = (int) (currentInfo.BonusTime - systemTime);
-        L.e("time--" + currentInfo.StartTime + "-system-" + systemTime + "--" + currentInfo.BonusTime + "--" + Constants.COUNTDOWNTIME + "--" + Constants.BONUSDOWNTIME);
-        if (Constants.COUNTDOWNTIME > 1) {
-            countDown(Constants.TYPE_BET_MONEY, Constants.COUNTDOWNTIME);
+        L.e("time--" + currentInfo.StartTime + "-system-" + systemTime + "--" + currentInfo.BonusTime + "--" + Constants.COUNTDOWNTIME + "--" + Constants.BONUSDOWNTIME + "--" + currentInfo.LotteryCost + Constants.LOTTERYTIME);
+        if (Constants.COUNTDOWNTIME > 2) {
+            countDown(Constants.TYPE_BET_MONEY, Constants.COUNTDOWNTIME - 1);
             Constants.ISBETABLE = true;
         } else {
-            if (Constants.BONUSDOWNTIME > 0) {
+            if (Constants.BONUSDOWNTIME > currentInfo.LotteryCost) {
+                countDown(Constants.TYPE_BET_MONEY, Constants.BONUSDOWNTIME - currentInfo.LotteryCost);
+                Constants.ISBETABLE = true;
+
+            } else {
                 countDown(Constants.TYPE_OPEN_CHESS, Constants.BONUSDOWNTIME);
+                Constants.ISBETABLE = false;
             }
-            Constants.ISBETABLE = false;
+
         }
     }
 
@@ -659,12 +723,16 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
 
     @Override
     public void updateRedAmount(long money) {
-        txtRedMoney.setText(money + "");
+        long redAmount = (long) SPUtils.get(context, Constants.ACTIVEAMOUNT, 0l);
+        redAmount += money;
+        txtRedMoney.setText(redAmount + "");
+        SPUtils.put(context, Constants.ACTIVEAMOUNT, redAmount);
     }
 
     @Override
     public void setNotifyData(List<String> data) {
         if (data != null && data.size() > 0) {
+            txtNotify.setVisibility(View.VISIBLE);
             txtNotify.setData(data);
         }
     }
@@ -711,25 +779,83 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
             switch (pos) {
                 case 101: //大
                     txtBigBet.setVisibility(View.VISIBLE);
-                    txtBigBet.setText(money + "");
+                    String bigBet = txtBigBet.getText().toString();
+                    int bigBetInt = 0;
+                    if (!TextUtils.isEmpty(bigBet)) {
+                        try {
+                            bigBetInt = Integer.parseInt(bigBet) + money;
+                        } catch (Exception e) {
+                            txtBigBet.setVisibility(View.GONE);
+                        }
+                    }
+                    txtBigBet.setText(bigBetInt + "");
+                    if (bigBetInt == 0) {
+                        txtBigBet.setVisibility(View.GONE);
+                    } else {
+                        txtBigBet.setVisibility(View.VISIBLE);
+                    }
                     break;
                 case 102: //小
                     txtSmallBet.setVisibility(View.VISIBLE);
-                    txtSmallBet.setText(money + "");
+                    String smallBet = txtSmallBet.getText().toString();
+                    int smallInt = 0;
+                    if (!TextUtils.isEmpty(smallBet)) {
+                        try {
+                            smallInt = Integer.parseInt(smallBet) + money;
+                        } catch (Exception e) {
+                            txtSmallBet.setVisibility(View.GONE);
+                        }
+                    }
+                    txtSmallBet.setText(smallInt + "");
+                    if (smallInt == 0) {
+                        txtSmallBet.setVisibility(View.GONE);
+                    } else {
+                        txtSmallBet.setVisibility(View.VISIBLE);
+                    }
                     break;
                 case 103:  //单
                     txtSingleBet.setVisibility(View.VISIBLE);
-                    txtSingleBet.setText(money + "");
+                    String singleBet = txtSingleBet.getText().toString();
+                    int singleInt = 0;
+                    if (!TextUtils.isEmpty(singleBet)) {
+                        try {
+                            singleInt = Integer.parseInt(singleBet) + money;
+                        } catch (Exception e) {
+                            txtSingleBet.setVisibility(View.GONE);
+                        }
+                    }
+                    txtSingleBet.setText(singleInt + "");
+                    if (singleInt == 0) {
+                        txtSingleBet.setVisibility(View.GONE);
+                    } else {
+                        txtSingleBet.setVisibility(View.VISIBLE);
+                    }
                     break;
                 case 104:  //双
                     txtDoubleBet.setVisibility(View.VISIBLE);
-                    txtDoubleBet.setText(money + "");
+                    String doubleBet = txtDoubleBet.getText().toString();
+                    int doubleInt = 0;
+                    if (!TextUtils.isEmpty(doubleBet)) {
+                        try {
+                            doubleInt = Integer.parseInt(doubleBet) + money;
+                        } catch (Exception e) {
+                            txtDoubleBet.setVisibility(View.GONE);
+                        }
+                    }
+                    if (doubleInt == 0) {
+                        txtDoubleBet.setVisibility(View.GONE);
+                    } else {
+                        txtDoubleBet.setVisibility(View.VISIBLE);
+                    }
+                    txtDoubleBet.setText(doubleInt + "");
                     break;
             }
+
         } else {
-            ((Bean_BetNumber) betNumberList.get(pos - 1)).betGold = money;
+            ((Bean_BetNumber) betNumberList.get(pos - 1)).betGold += money;
             betNumberAdapter.notifyDataSetChanged();
         }
+
     }
 
     @Override
@@ -742,38 +868,40 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
 
     @Override
     public void showBonusNumAnim() {
-        if (Constants.LOTTERYTIME > 0) {
-            new CountDownTimer(Constants.LOTTERYTIME * 1000, 100) {
+        new CountDownTimer(10 * 1000, 100) {
 
-                @Override
-                public void onTick(long millisUntilFinished) {
-                    if (Constants.BONUSEND) {
-                        cancel();
+            @Override
+            public void onTick(long millisUntilFinished) {
+
+                for (int j = 0; j < numberList.size(); j++) {
+                    if (j == i) {
+                        ((Bean_Number) numberList.get(j)).isShine = true;
+                    } else {
+                        ((Bean_Number) numberList.get(j)).isShine = false;
+                    }
+
+                    if (Constants.BONUSNUM == i + 1) {
+                        break;
+                    }
+
+                }
+                i++;
+                if (i > numberList.size() - 1) {
+                    i = 0;
+                }
+                numberAdapter.notifyDataSetChanged();
+                if (Constants.BONUSEND) {
+                    cancel();
 //                        endBonusAnim();
-                        return;
-                    }
-                    for (int j = 0; j < numberList.size(); j++) {
-                        if (j == i) {
-                            ((Bean_Number) numberList.get(j)).isShine = true;
-                        } else {
-                            ((Bean_Number) numberList.get(j)).isShine = false;
-                        }
-
-                    }
-                    i++;
-                    if (i > numberList.size() - 1) {
-                        i = 0;
-                    }
-                    numberAdapter.notifyDataSetChanged();
-                    L.e("tick--" + i);
+                    return;
                 }
+            }
 
-                @Override
-                public void onFinish() {
+            @Override
+            public void onFinish() {
 
-                }
-            }.start();
-        }
+            }
+        }.start();
 
     }
 
@@ -796,6 +924,97 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
             ((Bean_Number) numberList.get(j)).isShine = false;
         }
         numberAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void setBetMoney(int pos, int amount) {
+        if (pos > 10) {
+            switch (pos) {
+                case 101: //大
+                    txtBigBet.setVisibility(View.VISIBLE);
+                    String bigBet = txtBigBet.getText().toString();
+                    int bigBetInt = 0;
+                    if (!TextUtils.isEmpty(bigBet)) {
+                        try {
+                            bigBetInt = Integer.parseInt(bigBet) - amount;
+                        } catch (Exception e) {
+                            txtBigBet.setVisibility(View.GONE);
+                        }
+                    }
+                    txtBigBet.setText(bigBetInt + "");
+                    if (bigBetInt == 0) {
+                        txtBigBet.setVisibility(View.GONE);
+                    } else {
+                        txtBigBet.setVisibility(View.VISIBLE);
+                    }
+                    break;
+                case 102: //小
+                    txtSmallBet.setVisibility(View.VISIBLE);
+                    String smallBet = txtSmallBet.getText().toString();
+                    int smallInt = 0;
+                    if (!TextUtils.isEmpty(smallBet)) {
+                        try {
+                            smallInt = Integer.parseInt(smallBet) - amount;
+                        } catch (Exception e) {
+                            txtSmallBet.setVisibility(View.GONE);
+                        }
+                    }
+                    txtSmallBet.setText(smallInt + "");
+                    if (smallInt == 0) {
+                        txtSmallBet.setVisibility(View.GONE);
+                    } else {
+                        txtSmallBet.setVisibility(View.VISIBLE);
+                    }
+                    break;
+                case 103:  //单
+                    txtSingleBet.setVisibility(View.VISIBLE);
+                    String singleBet = txtSingleBet.getText().toString();
+                    int singleInt = 0;
+                    if (!TextUtils.isEmpty(singleBet)) {
+                        try {
+                            singleInt = Integer.parseInt(singleBet) - amount;
+                        } catch (Exception e) {
+                            txtSingleBet.setVisibility(View.GONE);
+                        }
+                    }
+                    txtSingleBet.setText(singleInt + "");
+                    if (singleInt == 0) {
+                        txtSingleBet.setVisibility(View.GONE);
+                    } else {
+                        txtSingleBet.setVisibility(View.VISIBLE);
+                    }
+                    break;
+                case 104:  //双
+                    txtDoubleBet.setVisibility(View.VISIBLE);
+                    String doubleBet = txtDoubleBet.getText().toString();
+                    int doubleInt = 0;
+                    if (!TextUtils.isEmpty(doubleBet)) {
+                        try {
+                            doubleInt = Integer.parseInt(doubleBet) - amount;
+                        } catch (Exception e) {
+                            txtDoubleBet.setVisibility(View.GONE);
+                        }
+                    }
+                    if (doubleInt == 0) {
+                        txtDoubleBet.setVisibility(View.GONE);
+                    } else {
+                        txtDoubleBet.setVisibility(View.VISIBLE);
+                    }
+                    txtDoubleBet.setText(doubleInt + "");
+                    break;
+            }
+        } else {
+            ((Bean_BetNumber) betNumberList.get(pos - 1)).betGold -= amount;
+            betNumberAdapter.notifyDataSetChanged();
+        }
+    }
+
+    @Override
+    public void resetAmount(long amount) {
+        long account = (long) SPUtils.get(context, Constants.USERAMOUNT, 0l);
+        account += amount;
+        SPUtils.put(this, Constants.USERAMOUNT, account);
+        txtMoney.setText(account + "");
     }
 
     private void endBonusAnim() {
@@ -821,14 +1040,16 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
             case R.id.txt_name:
                 break;
             case R.id.txt_money:
-
+                startActivity(new Intent(context, GoldRecord.class));
                 break;
             case R.id.img_sign:
                 homePresenter.signIn();
                 break;
             case R.id.txt_red_money:
+                startActivity(new Intent(context, RedGoldRecord.class));
                 break;
             case R.id.txt_role:
+                showRolePop();
                 break;
             case R.id.txt_order:
                 startActivity(new Intent(context, MyOrder.class));
@@ -862,7 +1083,8 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
                 homePresenter.betMoney(101);
                 break;
             case R.id.img_clear:
-                homePresenter.resetStatue();
+//                homePresenter.resetStatue();
+                homePresenter.clearBetMoney();
                 break;
             case R.id.img_confirm:
                 homePresenter.betMoney();
@@ -885,6 +1107,15 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
         }
     }
 
+    private void showRolePop() {
+        if (rolePop == null) {
+            rolePop = new RolePop(context);
+            rolePop.setPopInterfacer(this, Constants.ROLE_POP_FLAG);
+        }
+        rolePop.setRole(roleString);
+        rolePop.showPop(txtBigMutil);
+    }
+
     @Override
     public void OnDismiss(int flag) {
         switch (flag) {
@@ -899,6 +1130,9 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
                 break;
             case Constants.UPDATE_POP_FLAG:
                 updatePop = null;
+                break;
+            case Constants.ROLE_POP_FLAG:
+                rolePop = null;
                 break;
         }
     }

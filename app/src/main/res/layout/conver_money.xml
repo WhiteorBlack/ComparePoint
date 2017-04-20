@@ -46,7 +46,6 @@
                 android:layout_width="60dp"
                 android:layout_height="60dp"
                 android:layout_gravity="center"
-                android:src="@mipmap/ic_launcher"
                 app:border_width="0dp" />
         </FrameLayout>
 
@@ -115,14 +114,6 @@
         </LinearLayout>
     </LinearLayout>
 
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="25dp"
-        android:layout_marginRight="25dp"
-        android:layout_marginTop="15dp"
-        android:background="@mipmap/line_horizontal" />
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -147,6 +138,7 @@
                 android:id="@+id/edt_money"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:inputType="number"
                 android:background="@color/converMoneyEdt"
                 android:gravity="center"
 
@@ -175,6 +167,7 @@
                 android:layout_height="match_parent"
                 android:background="@color/converMoneyEdt"
                 android:gravity="center"
+                android:inputType="number"
                 android:hint="输入你要提现的银行卡号"
                 android:textColor="@color/goldYellow"
                 android:textColorHint="@color/lightYellow"
@@ -221,9 +214,15 @@
             android:gravity="center"
             android:id="@+id/radioGroup"
             android:orientation="horizontal">
-
+            <RadioButton
+                android:id="@+id/chb_card"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:button="@drawable/checkbox_card" />
             <RadioButton
                 android:id="@+id/chb_alipay"
+                android:layout_marginLeft="30dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:button="@drawable/checkbox_alipay" />
@@ -236,19 +235,24 @@
                 android:layout_marginLeft="30dp"
                 android:button="@drawable/checkbox_wechat" />
 
-            <RadioButton
-                android:id="@+id/chb_card"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="30dp"
-                android:button="@drawable/checkbox_alipay" />
+
         </RadioGroup>
     </LinearLayout>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="25dp"
+        android:layout_marginRight="25dp"
+        android:layout_marginTop="15dp"
+        android:visibility="gone"
+        android:background="@mipmap/line_horizontal" />
 
     <ImageView
         android:id="@+id/img_confirm"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
         android:layout_gravity="center_horizontal"
         android:layout_marginBottom="20dp"
         android:background="@mipmap/btn_confirm_bet" />

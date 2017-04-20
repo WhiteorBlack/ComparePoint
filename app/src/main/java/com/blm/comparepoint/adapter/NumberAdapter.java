@@ -30,9 +30,9 @@ public class NumberAdapter extends BaseRecyAdapter {
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         super.onBindViewHolder(holder, position);
         ViewHolder mHolder = (ViewHolder) holder;
-        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) mHolder.getView(R.id.txt_number).getLayoutParams();
+        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) mHolder.getView(R.id.fl_content).getLayoutParams();
         params.height = height / 10;
-        mHolder.getView(R.id.txt_number).setLayoutParams(params);
+        mHolder.getView(R.id.fl_content).setLayoutParams(params);
         Bean_Number number = (Bean_Number) dataList.get(position);
         mHolder.setText(number.number + "", R.id.txt_number);
 //        if (number.isSelected) {

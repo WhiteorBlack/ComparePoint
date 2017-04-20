@@ -20,6 +20,7 @@ import com.blm.comparepoint.untils.SPUtils;
 import com.blm.comparepoint.untils.T;
 import com.blm.comparepoint.widget.CircleImageView;
 import com.blm.comparepoint.wxapi.Constants;
+import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 
 import java.util.HashMap;
@@ -71,6 +72,20 @@ public class ConvertMoney extends BaseActivity {
         setContentView(R.layout.conver_money);
         ButterKnife.bind(this);
         initView();
+        setUserInfo();
+    }
+
+    private void setUserInfo() {
+        Glide.with(this).load((String) SPUtils.get(this, Constants.AVATAR, "")).into(imgAvatar);
+        txtName.setText((String) SPUtils.get(this, Constants.NICKNAME, ""));
+        txtMoney.setText(SPUtils.get(this, Constants.USERAMOUNT, 0l) + "");
+        txtRedMoney.setText(SPUtils.get(this, Constants.ACTIVEAMOUNT, 0l) + "");
+        imgSign.setEnabled(!(boolean) SPUtils.get(this, Constants.ISSIGN, false));
+        if ((boolean) SPUtils.get(this, Constants.ISSIGN, false)) {
+            imgSign.setText("已签到");
+        } else {
+            imgSign.setText("签到");
+        }
     }
 
     private void initView() {
@@ -90,11 +105,13 @@ public class ConvertMoney extends BaseActivity {
                 }
             }
         });
+        cardSelected();
+        edtMoney.setHint("当前可提现金额 "+((long)(SPUtils.get(context,Constants.ACTIVEAMOUNT,0l))/10));
     }
 
     private void wechatSelected() {
         edtAccount.setHint("请输入微信账号");
-        edtName.setHint("请输入微信昵称");
+        edtName.setHint("请输入微信手机号");
         type = "微信";
     }
 
@@ -106,7 +123,7 @@ public class ConvertMoney extends BaseActivity {
 
     private void aliPaySelected() {
         edtAccount.setHint("请输入支付宝账号");
-        edtName.setHint("请输入支付宝昵称");
+        edtName.setHint("请输入支付宝真实姓名");
         type = "支付宝";
     }
 
@@ -116,7 +133,7 @@ public class ConvertMoney extends BaseActivity {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.img_back:
-                AppManager.getAppManager().finishActivity();
+                finish();
                 break;
             case R.id.img_confirm:
                 name = edtName.getText().toString();
@@ -136,7 +153,7 @@ public class ConvertMoney extends BaseActivity {
                     return;
                 }
 
-                if (Integer.parseInt(money) > (long) SPUtils.get(context, Constants.ACTIVEAMOUNT, 0)) {
+                if (Integer.parseInt(money) > (long) SPUtils.get(context, Constants.ACTIVEAMOUNT, 0l)) {
                     T.showShort(context, "账户余额不足");
                     return;
                 }
@@ -152,7 +169,8 @@ public class ConvertMoney extends BaseActivity {
         params.put("WithdrawType", type);
         params.put("WithdrawAccount", account);
         params.put("Amount", money);
-        PostTools.postData(Constants.MAIN_URL + "User", params, new PostCallBack() {
+        params.put("GoldAmount",money);
+        PostTools.postData(Constants.MAIN_URL + "User/ApplyWithDraw", params, new PostCallBack() {
             @Override
             public void onResponse(String response) {
                 super.onResponse(response);
@@ -163,6 +181,14 @@ public class ConvertMoney extends BaseActivity {
                 BaseBean baseBean = new Gson().fromJson(response, BaseBean.class);
                 if (baseBean.Success) {
                     T.showShort(context, "申请成功,我们会尽快处理");
+
+                    try{
+//                        int amount=(int)SPUtils.get(context,Constants.ACTIVEAMOUNT,0l)-Integer.parseInt(money);
+//                        txtRedMoney.setText(amount+"");
+//                        SPUtils.put(context,Constants.ACTIVEAMOUNT,amount);
+                    }catch(Exception e){
+
+                    }
                 } else {
                     T.showShort(context, baseBean.Msg);
                 }

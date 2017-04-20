@@ -74,13 +74,18 @@ public class MyOrder extends BaseActivity implements XRecyclerView.LoadingListen
         txtMoney.setText(SPUtils.get(context, Constants.USERAMOUNT, 0l) + "");
         txtRedMoney.setText(SPUtils.get(context, Constants.ACTIVEAMOUNT, 0l) + "");
         imgSign.setEnabled(!(boolean) SPUtils.get(context, Constants.ISSIGN, false));
+        if ((boolean) SPUtils.get(context, Constants.ISSIGN, false)) {
+            imgSign.setText("已签到");
+        } else {
+            imgSign.setText("签到");
+        }
     }
 
     private void getOrderData() {
         Map<String, String> params = new HashMap<>();
         params.put("PageIndex", pageIndex + "");
         params.put("PageSize", pageSize + "");
-        PostTools.getData(Constants.MAIN_URL + "User/GetBetRecords", params, new PostCallBack() {
+        PostTools.getData(Constants.MAIN_URL + "User/GetRechareRecords", params, new PostCallBack() {
             @Override
             public void onResponse(String response) {
                 super.onResponse(response);
@@ -108,6 +113,7 @@ public class MyOrder extends BaseActivity implements XRecyclerView.LoadingListen
         orderList = new ArrayList();
         myOrderAdapter = new MyOrderAdapter(orderList);
         recyOrder.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
+        recyOrder.setAdapter(myOrderAdapter);
         recyOrder.setPullRefreshEnabled(false);
         recyOrder.setLoadingMoreEnabled(true);
         recyOrder.setLoadingListener(this);
@@ -117,7 +123,7 @@ public class MyOrder extends BaseActivity implements XRecyclerView.LoadingListen
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.img_back:
-                AppManager.getAppManager().finishActivity();
+                finish();
                 break;
             case R.id.img_sign:
                 signIn();

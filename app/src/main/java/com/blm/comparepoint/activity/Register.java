@@ -2,6 +2,7 @@ package com.blm.comparepoint.activity;/**
  * Created by Administrator on 2017/3/30.
  */
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -32,6 +33,7 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import okhttp3.Headers;
 
 /**
  * author:${白曌勇} on 2017/3/30
@@ -51,11 +53,17 @@ public class Register extends BaseActivity {
     @BindView(R.id.btn_register)
     Button btnRegister;
 
+    private ProgressDialog progressDialog;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.register);
         ButterKnife.bind(this);
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.setMessage("提交数据中...");
+        progressDialog.setCancelable(false);
     }
 
     private String userName, userPwd, pwdTwo, nickName;
@@ -92,13 +100,15 @@ public class Register extends BaseActivity {
                 login();
                 break;
             case R.id.img_back:
+                finish();
                 startActivity(new Intent(context, Login.class));
-                AppManager.getAppManager().finishActivity();
                 break;
         }
     }
 
     private void login() {
+        progressDialog.show();
+        btnRegister.setClickable(false);
         Constants.USERTOKEN = "";
         Map<String, String> params = new HashMap<>();
         params.put("UserName", userName);
@@ -106,6 +116,13 @@ public class Register extends BaseActivity {
         params.put("ConfirmPass", userPwd);
         params.put("NickName", nickName);
         PostTools.postData(Constants.MAIN_URL + "Account/Register", params, new PostCallBack() {
+            @Override
+            public void onAfter(Headers headers) {
+                super.onAfter(headers);
+                progressDialog.dismiss();
+                btnRegister.setClickable(true);
+            }
+
             @Override
             public void onResponse(String response) {
                 super.onResponse(response);
@@ -151,7 +168,7 @@ public class Register extends BaseActivity {
                     SPUtils.put(context, Constants.ACTIVEAMOUNT, bean_login.Data.UserActive);
                     SPUtils.put(context, Constants.NICKNAME, bean_login.Data.NickName);
                     SPUtils.put(context, Constants.AVATAR, bean_login.Data.Avatar == null ? "" : bean_login.Data.Avatar);
-                    AppManager.getAppManager().finishActivity();
+                    finish();
                     startActivity(new Intent(context, Home.class));
                 } else {
                     T.showShort(context, bean_login.Msg);

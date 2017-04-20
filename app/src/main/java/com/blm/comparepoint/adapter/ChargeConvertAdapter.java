@@ -4,6 +4,7 @@ import android.support.v7.widget.RecyclerView;
 
 import com.blm.comparepoint.BaseRecyAdapter;
 import com.blm.comparepoint.R;
+import com.blm.comparepoint.bean.Bean_GoldRecord;
 import com.blm.comparepoint.bean.Bean_Order;
 
 import java.util.List;
@@ -21,14 +22,16 @@ public class ChargeConvertAdapter extends BaseRecyAdapter {
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         super.onBindViewHolder(holder, position);
         ViewHolder mHolder = (ViewHolder) holder;
-        Bean_Order.Order order = (Bean_Order.Order) dataList.get(position);
-        mHolder.setText("押注 " + order.BetGold,R.id.txt_name);
-        mHolder.setText(order.CreateTime,R.id.txt_time);
-        if (order.IsBouns){
-            mHolder.setText("获得奖励" +order.BounsGold,R.id.txt_get_money);
-        }else {
-            mHolder.setText("输掉金币 "+order.BetGold,R.id.txt_get_money);
+        Bean_GoldRecord.Order order = (Bean_GoldRecord.Order) dataList.get(position);
+        if (order.Type == 1) {
+            mHolder.setText("充值", R.id.txt_name);
+            mHolder.setText("充值 " + order.GoldAmount+" 成功到账", R.id.txt_get_money);
         }
+        if (order.Type == 2) {
+            mHolder.setText("提现", R.id.txt_name);
+            mHolder.setText("提现 " + order.GoldAmount+" 成功到账", R.id.txt_get_money);
+        }
+        mHolder.setText(order.CreateTime, R.id.txt_time);
     }
 
     @Override

@@ -159,4 +159,17 @@ public interface HomeOprateView {
      * 重置开注的数字状态
      */
     void resetNumStatue();
+
+    /**
+     * 充值投注之后的桌面金币变化
+     * @param pos
+     * @param amount
+     */
+    void setBetMoney(int pos,int amount);
+
+    /**
+     * 如果有清除押注的情况则把清除的金额返回账号
+     * @param amount
+     */
+    void resetAmount(long amount);
 }

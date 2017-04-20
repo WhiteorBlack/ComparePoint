@@ -14,6 +14,7 @@ import com.blm.comparepoint.adapter.ChargeConvertAdapter;
 import com.blm.comparepoint.adapter.MyOrderAdapter;
 import com.blm.comparepoint.async.PostTools;
 import com.blm.comparepoint.bean.BaseBean;
+import com.blm.comparepoint.bean.Bean_GoldRecord;
 import com.blm.comparepoint.bean.Bean_Order;
 import com.blm.comparepoint.interfacer.PostCallBack;
 import com.blm.comparepoint.untils.AppManager;
@@ -81,6 +82,7 @@ public class ChargeAndConvert extends BaseActivity implements XRecyclerView.Load
         recyHistory.setPullRefreshEnabled(false);
         recyHistory.setLoadingMoreEnabled(true);
         recyHistory.setLoadingListener(this);
+        recyHistory.setAdapter(myOrderAdapter);
     }
 
     private void setUserInfo() {
@@ -100,7 +102,8 @@ public class ChargeAndConvert extends BaseActivity implements XRecyclerView.Load
         Map<String, String> params = new HashMap<>();
         params.put("PageIndex", pageIndex + "");
         params.put("PageSize", pageSize + "");
-        PostTools.postData(Constants.MAIN_URL + "User/GetBetRecords", params, new PostCallBack() {
+        params.put("Type","RechargeWithDraw");
+        PostTools.getData(Constants.MAIN_URL + "User/GetGoldRecord", params, new PostCallBack() {
             @Override
             public void onResponse(String response) {
                 super.onResponse(response);
@@ -110,7 +113,7 @@ public class ChargeAndConvert extends BaseActivity implements XRecyclerView.Load
                 if (pageIndex == 1) {
                     orderList.clear();
                 }
-                Bean_Order bean_order = new Gson().fromJson(response, Bean_Order.class);
+                Bean_GoldRecord bean_order = new Gson().fromJson(response, Bean_GoldRecord.class);
                 if (bean_order.Success && bean_order.Data != null) {
                     orderList.addAll(bean_order.Data);
                     if (bean_order.Data.size() < pageSize) {
@@ -128,7 +131,7 @@ public class ChargeAndConvert extends BaseActivity implements XRecyclerView.Load
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.img_back:
-                AppManager.getAppManager().finishActivity();
+                finish();
                 break;
             case R.id.img_convert:
                 startActivity(new Intent(context, ConvertMoney.class));

@@ -38,6 +38,7 @@ public class Constants {
     public static final int GO_BET_POP_FLAG = 1;
     public static final int NOTIFY_POP_FLAG = 2;
     public static final int UPDATE_POP_FLAG = 3;
+    public static final int ROLE_POP_FLAG=4;
 
     //接受消息的类型
     public static final int TYPE_BET_MONEY = 1;
@@ -55,6 +56,8 @@ public class Constants {
     public static String PIC_URL = "http://118.244.236.240";
 
     public static String SHARE_URL = "http://118.244.236.240";
+
+    public static String HELP_URL="http://api.ssc1688.cn/Mobile/Home/Help";
 
     //system config
     public static int ROUNDTIME = -1;

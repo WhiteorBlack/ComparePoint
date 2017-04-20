@@ -1,6 +1,7 @@
 package com.blm.comparepoint.activity;
 
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -32,6 +33,7 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import okhttp3.Headers;
 
 
 public class Login extends BaseActivity {
@@ -45,20 +47,34 @@ public class Login extends BaseActivity {
     TextView txtRegister;
     @BindView(R.id.btn_login)
     Button btnLogin;
+    private ProgressDialog progressDialog;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_new);
         ButterKnife.bind(this);
+        progressDialog=new ProgressDialog(this);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.setMessage("登陆中");
+        progressDialog.setCancelable(false);
     }
 
 
     private void login() {
+        progressDialog.show();
+        btnLogin.setClickable(false);
         Map<String, String> params = new HashMap<>();
         params.put("UserName", userName);
         params.put("PassWord", userPwd);
         PostTools.postData(Constants.MAIN_URL + "Account/Login", params, new PostCallBack() {
+            @Override
+            public void onAfter(Headers headers) {
+                super.onAfter(headers);
+                btnLogin.setClickable(true);
+                progressDialog.dismiss();
+            }
+
             @Override
             public void onResponse(String response) {
                 super.onResponse(response);
@@ -104,8 +120,8 @@ public class Login extends BaseActivity {
                     SPUtils.put(context, Constants.ACTIVEAMOUNT, bean_login.Data.UserActive);
                     SPUtils.put(context, Constants.NICKNAME, bean_login.Data.NickName);
                     SPUtils.put(context, Constants.AVATAR, bean_login.Data.Avatar == null ? "" : bean_login.Data.Avatar);
+                    finish();
                     startActivity(new Intent(context, Home.class));
-                    AppManager.getAppManager().finishActivity();
                 } else {
                     T.showShort(context, bean_login.Msg);
                 }
@@ -121,7 +137,7 @@ public class Login extends BaseActivity {
         switch (view.getId()) {
             case R.id.txt_register:
                 startActivity(new Intent(context, Register.class));
-                AppManager.getAppManager().finishActivity();
+                finish();
                 break;
             case R.id.btn_login:
                 userName = edtAccount.getText().toString();

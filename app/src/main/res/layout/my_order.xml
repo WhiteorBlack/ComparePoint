@@ -18,10 +18,11 @@
             android:background="@mipmap/img_back" />
 
         <TextView
+            android:id="@+id/txt_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="个人中心"
+            android:text="订单记录"
             android:textColor="@color/lightYellow"
             android:textSize="18sp"
             android:textStyle="bold" />

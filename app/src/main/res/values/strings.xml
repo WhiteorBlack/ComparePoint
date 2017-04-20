@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ComparePoint</string>
+    <string name="app_name">猜大小</string>
     <string name="login_notify">登录即表示同意《用户协议》</string>
     <string name="listview_header_hint_normal">下拉刷新</string>
     <string name="listview_header_hint_release">松开刷新</string>

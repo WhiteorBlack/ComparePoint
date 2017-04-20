@@ -12,15 +12,16 @@
     <com.blm.comparepoint.widget.ScrollTextView
         android:id="@+id/txt_notify"
         android:layout_width="match_parent"
-        android:layout_height="30dp"
+        android:layout_height="wrap_content"
         android:layout_gravity="top"
-        android:alpha="0.1"
+        android:padding="3dp"
         android:background="@android:color/black"
         app:delayTime="3000"
         app:direction="left"
         app:ellipsize="marquee"
         app:gravity="center"
         app:paddingEnd="5dp"
+        android:visibility="invisible"
         app:paddingStart="5dp"
         app:singleLine="true"
         app:textColor="@android:color/white" />
@@ -140,9 +141,8 @@
             android:layout_gravity="center"
             android:background="@mipmap/icon_count_down"
             android:gravity="center"
-            android:text="20s"
             android:textColor="@android:color/white"
-            android:textSize="16sp" />
+            android:textSize="15sp" />
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -159,6 +159,7 @@
                 android:drawableLeft="@mipmap/icon_order"
                 android:drawablePadding="5dp"
                 android:text="订单"
+                android:visibility="invisible"
                 android:textColor="@color/lightYellow"
                 android:textSize="14sp" />
 
@@ -169,7 +170,7 @@
 
                 android:drawableLeft="@mipmap/icon_role"
                 android:drawablePadding="5dp"
-                android:text="规则"
+                android:text="游戏规则"
                 android:textColor="@color/lightYellow"
                 android:textSize="14sp" />
         </LinearLayout>

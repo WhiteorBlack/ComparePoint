@@ -46,27 +46,39 @@ public class ServiceCenter extends BaseActivity {
     }
 
     private void setUserInfo() {
-        Glide.with(this).load(SPUtils.get(context,Constants.CHARGEURL,"")).into(imgCodePic);
+        Glide.with(this).load(SPUtils.get(context, Constants.CHARGEURL, "")).into(imgCodePic);
     }
 
     @OnClick({R.id.img_close, R.id.img_code_pic, R.id.img_download})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.img_close:
-                AppManager.getAppManager().finishActivity();
+                finish();
                 break;
             case R.id.img_code_pic:
                 break;
             case R.id.img_download:
-                Bitmap bitmap = null;
-                try {
-                    bitmap = Glide.with(this).load(SPUtils.get(context, Constants.CHARGEURL, "")).asBitmap().into(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL).get();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                }
-                SDCardUtils.saveImageToGallery(context, bitmap);
+
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            final Bitmap bitmap = Glide.with(context).load(SPUtils.get(context, Constants.CHARGEURL, "")).asBitmap().into(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL).get();
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    SDCardUtils.saveImageToGallery(context, bitmap);
+                                }
+                            });
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        } catch (ExecutionException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }).start();
+
+
                 break;
         }
     }

@@ -21,5 +21,8 @@ public class Bean_Order extends BaseBean {
         public String BounsGold;
         public boolean IsBouns;
         public String CreateTime;
+        public String RechargeAmout;
+        public String GoldAmout;
+        public String CreateBy;
     }
 }

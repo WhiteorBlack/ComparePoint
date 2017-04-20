@@ -179,9 +179,7 @@ public class MSGCountTimeView extends android.support.v7.widget.AppCompatTextVie
         if (!isAllowRun) {
         } else {
             if (!isRun) {
-                // ÿ�ο�ʼ����ʱʱ��ʼ��
                 initTimer();
-                // ����ʱ��������
                 mTimer.schedule(mTimerTask, 0, mOnetime);
                 isRun = true;
             }

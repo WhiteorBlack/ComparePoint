@@ -5,6 +5,7 @@ package com.blm.comparepoint;/**
 import android.app.Application;
 
 import com.tencent.TIMManager;
+import com.umeng.analytics.MobclickAgent;
 
 /**
  * author:${白曌勇} on 2017/3/29
@@ -15,5 +16,6 @@ public class CompareApplication extends Application {
     public void onCreate() {
         super.onCreate();
         TIMManager.getInstance().init(this);
+        MobclickAgent.setDebugMode(true);
     }
 }

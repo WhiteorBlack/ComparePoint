@@ -19,8 +19,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/img_close"
-            android:layout_gravity="right|center_vertical"
-            android:background="@mipmap/img_close"/>
+            android:layout_marginLeft="15dp"
+            android:layout_gravity="left|center_vertical"
+            android:background="@mipmap/img_back"/>
     </FrameLayout>
     <FrameLayout
         android:layout_width="60dp"
@@ -51,7 +52,6 @@
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@mipmap/ic_launcher"
                 android:id="@+id/img_code_pic"
                 />
         </LinearLayout>
@@ -79,6 +79,7 @@
             android:id="@+id/txt_phone"
             android:text="客服电话"
             android:layout_gravity="right"
+            android:visibility="gone"
             android:layout_marginBottom="25dp"
             android:layout_marginRight="15dp"
             android:textSize="14sp"

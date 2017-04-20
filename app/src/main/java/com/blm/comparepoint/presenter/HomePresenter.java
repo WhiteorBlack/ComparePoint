@@ -49,6 +49,7 @@ public class HomePresenter implements DataOprateInterfacer, Observer {
     private DataOprate dataOprate;
     private List<Bean_BetMoney> betMoneyList;
     private List<Bean_GameConfig.GameConfig> ratoList;
+    private List<Bean_BetMoney> totalBetMoneyList;
 
     private TIMConversation conversation;
 
@@ -56,12 +57,24 @@ public class HomePresenter implements DataOprateInterfacer, Observer {
         this.homeOprateView = homeOprateView;
         this.dataOprate = DataOprate.getInstance(this);
         betMoneyList = new ArrayList<>();
+        totalBetMoneyList=new ArrayList<>();
         ratoList = new ArrayList<>();
 
         conversation = TIMManager.getInstance().getConversation(TIMConversationType.Group, Constants.GROUP_ID);
         conversation.disableStorage();
         MessageEvent.getInstance().addObserver(this);
 
+    }
+
+    public void resetTotalBetMoney() {
+        totalBetMoneyList.clear();
+        for (int i = 0; i < 14; i++) {
+            Bean_BetMoney bean_betMoney = new Bean_BetMoney();
+            bean_betMoney.BetGold = 0;
+            bean_betMoney.BetNum = -1;
+            totalBetMoneyList.add(new Bean_BetMoney());
+        }
+//        homeOprateView.clearBetMoney();
     }
 
     public void resetBetMoney() {
@@ -72,7 +85,7 @@ public class HomePresenter implements DataOprateInterfacer, Observer {
             bean_betMoney.BetNum = -1;
             betMoneyList.add(new Bean_BetMoney());
         }
-        homeOprateView.clearBetMoney();
+//        homeOprateView.clearBetMoney();
     }
 
     public void dismissAllPop() {
@@ -83,7 +96,6 @@ public class HomePresenter implements DataOprateInterfacer, Observer {
      * 重置所有投注金额
      */
     public void resetStatue() {
-        Constants.IS_BET = false;
         Constants.BET_SELECT_NUM = -1;
         resetBetMoney();
         homeOprateView.resetTable();
@@ -134,6 +146,7 @@ public class HomePresenter implements DataOprateInterfacer, Observer {
      * 点击确定押注
      */
     public void betMoney() {
+        Constants.ISBETABLE=false;
         List<Bean_BetMoney> betParams = new ArrayList<>();
         for (int i = 0; i < betMoneyList.size(); i++) {
             if (betMoneyList.get(i).BetGold > 0) {
@@ -151,7 +164,7 @@ public class HomePresenter implements DataOprateInterfacer, Observer {
         if (!Constants.ISBETABLE) {
             return;
         }
-        homeOprateView.betMoney(num);
+//        homeOprateView.betMoney(num);
         switch (num) {
             case -1:
                 homeOprateView.toastCommonNotify("请选择投注类别");
@@ -213,7 +226,7 @@ public class HomePresenter implements DataOprateInterfacer, Observer {
                 betMoneyList.get(13).BetNum = 104;
                 break;
         }
-        if (num > 10) {
+        /*if (num > 10) {
             switch (num) {
                 case 101: //大
                     homeOprateView.updateBetMoney(num, betMoneyList.get(10).BetGold);
@@ -230,18 +243,38 @@ public class HomePresenter implements DataOprateInterfacer, Observer {
             }
         } else {
             homeOprateView.updateBetMoney(num, betMoneyList.get(num - 1).BetGold);
-        }
+        }*/
+        homeOprateView.updateBetMoney(num,Constants.SELECT_GOLD);
+        homeOprateView.resetAmount(-Constants.SELECT_GOLD);
     }
 
     public void endCountDown(int type) {
         switch (type) {
             case Constants.TYPE_BET_MONEY:
                 homeOprateView.showBonusNumAnim();
+                clearBetMoney();
                 break;
             case Constants.TYPE_OPEN_CHESS:
 
                 break;
         }
+    }
+
+    /**
+     * 清除没有提交的押注信息
+     */
+    public void clearBetMoney() {
+        long clearMoney=0;
+        for (int i = 0; i < betMoneyList.size(); i++) {
+            if (betMoneyList.get(i).BetGold > 0) {
+                homeOprateView.setBetMoney(betMoneyList.get(i).BetNum, betMoneyList.get(i).BetGold);
+                clearMoney+=betMoneyList.get(i).BetGold;
+                homeOprateView.setBetMoney(i,betMoneyList.get(i).BetGold);
+            }
+        }
+        homeOprateView.resetAmount(clearMoney);
+        resetBetMoney();
+        resetBetStatue();
     }
 
     @Override
@@ -350,13 +383,19 @@ public class HomePresenter implements DataOprateInterfacer, Observer {
         BaseBean baseBean = new Gson().fromJson(response, BaseBean.class);
         if (baseBean.Success) {
             Constants.IS_BET = true;
-            int betCount = 0;
+//            int betCount = 0;
             for (int i = 0; i < betMoneyList.size(); i++) {
-                betCount += betMoneyList.get(i).BetGold;
+                Bean_BetMoney betMoney=betMoneyList.get(i);
+                if (betMoney.BetGold>0){
+                    totalBetMoneyList.get(i).BetGold+=betMoney.BetGold;
+                    totalBetMoneyList.get(i).BetNum=betMoney.BetNum;
+                }
             }
-            homeOprateView.betMoneySuccess(betCount);
-            homeOprateView.resetTable();
+//            homeOprateView.betMoneySuccess(betCount);
+//            homeOprateView.resetTable();
         }
+        Constants.ISBETABLE=true;
+        resetBetMoney();
         homeOprateView.toastNotify(baseBean.Msg);
     }
 
@@ -379,7 +418,6 @@ public class HomePresenter implements DataOprateInterfacer, Observer {
         if (observable instanceof MessageEvent) {
 
             TIMMessage msg = (TIMMessage) data;
-            L.e("Msg----" + msg.getMsgId() + msg.getConversation().getType());
             if (TextUtils.equals(Constants.MSG_ID, msg.getMsgId())) {
                 return;
             }
@@ -410,12 +448,13 @@ public class HomePresenter implements DataOprateInterfacer, Observer {
                 Constants.BONUSEND = false;
                 Constants.IS_BET = false;
                 Constants.ISBETABLE = true;
-                Constants.BONUSNUM=-1;
+                Constants.BONUSNUM = -1;
                 Bean_Round round = new Gson().fromJson(msgString, Bean_Round.class);
-                Constants.LOTTERYTIME=round.Data.LotteryCost;
-                homeOprateView.currentInfo(round.Data);
+                Constants.LOTTERYTIME = round.Data.LotteryCost;
+                homeOprateView.clearBetMoney();
                 homeOprateView.resetTable();
                 homeOprateView.resetNumStatue();
+                homeOprateView.currentInfo(round.Data);
             }
 
             if (TextUtils.equals("BounsTip", bean_msg.Type)) {
@@ -433,10 +472,13 @@ public class HomePresenter implements DataOprateInterfacer, Observer {
                 }
             }
             if (TextUtils.equals("Bonus", bean_msg.Type)) {
+                if (!Constants.IS_BET){
+                    homeOprateView.clearBetMoney();
+                }
                 Constants.ISBETABLE = false;
                 Bean_Bouns bouns = new Gson().fromJson(msgString, Bean_Bouns.class);
                 Constants.BONUSEND = true;
-                Constants.BONUSNUM=bouns.Data.BonusNum;
+                Constants.BONUSNUM = bouns.Data.BonusNum;
                 homeOprateView.updateBounsHistory(Constants.BONUSNUM);
                 countBetMoney(Constants.BONUSNUM);
                 homeOprateView.endBonusAnim(bouns.Data.BonusNum);
@@ -445,19 +487,18 @@ public class HomePresenter implements DataOprateInterfacer, Observer {
     }
 
 
-
     private void countBetMoney(int bonusNum) {
         boolean isSingle = bonusNum % 2 > 0;
         boolean isBig = bonusNum > 5;
         int money = 0;
         if (ratoList != null) {
-            for (int i = 0; i < betMoneyList.size(); i++) {
-                int betGole = betMoneyList.get(i).BetGold;
+            for (int i = 0; i < totalBetMoneyList.size(); i++) {
+                int betGole = totalBetMoneyList.get(i).BetGold;
                 if (betGole > 0) {
-                    if (betMoneyList.get(i).BetNum == bonusNum) {
+                    if (totalBetMoneyList.get(i).BetNum == bonusNum) {
                         money += betGole * ratoList.get(i).Ratio;
                     }
-                    switch (betMoneyList.get(i).BetNum) {
+                    switch (totalBetMoneyList.get(i).BetNum) {
                         case 101:
                             //big
                             if (isBig) {
@@ -485,6 +526,7 @@ public class HomePresenter implements DataOprateInterfacer, Observer {
                     }
                 }
             }
+            homeOprateView.resetTable();
             if (Constants.IS_BET) {
                 if (money > 0) {
                     homeOprateView.showWinPop(money + "");

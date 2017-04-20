@@ -22,13 +22,9 @@ public class MyOrderAdapter extends BaseRecyAdapter {
         super.onBindViewHolder(holder, position);
         ViewHolder mHolder = (ViewHolder) holder;
         Bean_Order.Order order = (Bean_Order.Order) dataList.get(position);
-        mHolder.setText("押注 " + order.BetGold,R.id.txt_name);
-        mHolder.setText(order.CreateTime,R.id.txt_time);
-        if (order.IsBouns){
-            mHolder.setText("获得奖励" +order.BounsGold,R.id.txt_get_money);
-        }else {
-            mHolder.setText("输掉金币 "+order.BetGold,R.id.txt_get_money);
-        }
+        mHolder.setText("充值 " + order.RechargeAmout + " 元", R.id.txt_name);
+        mHolder.setText(order.CreateTime, R.id.txt_time);
+        mHolder.setText("获得金币 " + order.GoldAmout + " 个", R.id.txt_get_money);
     }
 
     @Override
