@@ -708,7 +708,8 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
 
     @Override
     public void updateAmount(long money) {
-        txtMoney.setText(money + "");
+        SPUtils.put(context, Constants.USERAMOUNT, (long) SPUtils.get(context, Constants.USERAMOUNT, 0l) + money);
+        txtMoney.setText(SPUtils.get(context, Constants.USERAMOUNT, 0l) + "");
     }
 
     @Override
