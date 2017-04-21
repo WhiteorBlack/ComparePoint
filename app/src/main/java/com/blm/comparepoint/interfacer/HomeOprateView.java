@@ -151,7 +151,7 @@ public interface HomeOprateView {
      */
     void betMoneySuccess(int money);
 
-    void showBonusNumAnim();
+    void showBonusNumAnim(int num);
 
     void endBonusAnim(int num);
 

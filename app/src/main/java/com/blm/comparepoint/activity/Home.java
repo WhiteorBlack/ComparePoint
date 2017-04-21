@@ -469,9 +469,9 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
 
             @Override
             public void onFinish() {
-                if (type == Constants.TYPE_BET_MONEY) {
-//                    countDown(Constants.TYPE_OPEN_CHESS,Constants.BONUSDOWNTIME);
-                }
+//                if (type == Constants.TYPE_BET_MONEY) {
+////                    countDown(Constants.TYPE_OPEN_CHESS,Constants.BONUSDOWNTIME);
+//                }
                 homePresenter.endCountDown(type);
             }
         });
@@ -481,6 +481,7 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
     protected void onDestroy() {
         super.onDestroy();
         TIMManager.getInstance().logout();
+        txtCountDown.destoryed();
 //        if (countDownTimer != null) {
 //            countDownTimer.cancel();
 //        }
@@ -673,30 +674,31 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
         }
         Constants.ROUNDNO = currentInfo.RoundNo;
         long systemTime = (System.currentTimeMillis() + Constants.NETTIME_LOCALTIME_DELATE) / 1000;
-        int timeDelate = (int) (currentInfo.StartTime - systemTime);
         if (currentInfo.LotteryCost == 0 && Constants.LOTTERYTIME > 0) {
             currentInfo.LotteryCost = Constants.LOTTERYTIME;
         }
         if (currentInfo.LotteryCost == 0) {
             currentInfo.LotteryCost = 5;
         }
-        Constants.COUNTDOWNTIME = timeDelate + (int) (currentInfo.BonusTime - currentInfo.LotteryCost - systemTime);
+        Constants.COUNTDOWNTIME = (int) (currentInfo.BonusTime - systemTime);
         Constants.BONUSDOWNTIME = (int) (currentInfo.BonusTime - systemTime);
-        L.e("time--" + currentInfo.StartTime + "-system-" + systemTime + "--" + currentInfo.BonusTime + "--" + Constants.COUNTDOWNTIME + "--" + Constants.BONUSDOWNTIME + "--" + currentInfo.LotteryCost + Constants.LOTTERYTIME);
-        if (Constants.COUNTDOWNTIME > 2) {
-            countDown(Constants.TYPE_BET_MONEY, Constants.COUNTDOWNTIME - 1);
-            Constants.ISBETABLE = true;
-        } else {
-            if (Constants.BONUSDOWNTIME > currentInfo.LotteryCost) {
-                countDown(Constants.TYPE_BET_MONEY, Constants.BONUSDOWNTIME - currentInfo.LotteryCost);
-                Constants.ISBETABLE = true;
-
-            } else {
-                countDown(Constants.TYPE_OPEN_CHESS, Constants.BONUSDOWNTIME);
-                Constants.ISBETABLE = false;
-            }
-
-        }
+        L.e("-system-" + systemTime + "--" + currentInfo.BonusTime + "--" + Constants.COUNTDOWNTIME + "--" + Constants.BONUSDOWNTIME + "--" + currentInfo.LotteryCost + Constants.LOTTERYTIME);
+//        if (Constants.COUNTDOWNTIME > 2) {
+//            countDown(Constants.TYPE_BET_MONEY, Constants.COUNTDOWNTIME - 1);
+//            Constants.ISBETABLE = true;
+//        } else {
+//            if (Constants.BONUSDOWNTIME > currentInfo.LotteryCost) {
+//                countDown(Constants.TYPE_BET_MONEY, Constants.BONUSDOWNTIME - currentInfo.LotteryCost);
+//                Constants.ISBETABLE = true;
+//
+//            } else {
+//                countDown(Constants.TYPE_OPEN_CHESS, Constants.BONUSDOWNTIME);
+//                Constants.ISBETABLE = false;
+//            }
+//
+//        }
+        Constants.ISBETABLE = true;
+        countDown(Constants.TYPE_BET_MONEY, Constants.COUNTDOWNTIME);
     }
 
     @Override
@@ -867,8 +869,11 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
     private int i = 0;
 
     @Override
-    public void showBonusNumAnim() {
-        new CountDownTimer(10 * 1000, 100) {
+    public void showBonusNumAnim(final int num) {
+        if (Constants.LOTTERYTIME == 0) {
+            Constants.LOTTERYTIME = 5;
+        }
+        new CountDownTimer((Constants.LOTTERYTIME - 2) * 1000, 100) {
 
             @Override
             public void onTick(long millisUntilFinished) {
@@ -880,26 +885,17 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
                         ((Bean_Number) numberList.get(j)).isShine = false;
                     }
 
-                    if (Constants.BONUSNUM == i + 1) {
-                        break;
-                    }
-
                 }
                 i++;
                 if (i > numberList.size() - 1) {
                     i = 0;
                 }
                 numberAdapter.notifyDataSetChanged();
-                if (Constants.BONUSEND) {
-                    cancel();
-//                        endBonusAnim();
-                    return;
-                }
             }
 
             @Override
             public void onFinish() {
-
+                homePresenter.countBetMoney(num);
             }
         }.start();
 
@@ -1017,17 +1013,6 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
         txtMoney.setText(account + "");
     }
 
-    private void endBonusAnim() {
-        for (int j = 0; j < numberList.size(); j++) {
-            ((Bean_Number) numberList.get(j)).isShine = false;
-            if (j == Constants.BONUSNUM - 1) {
-                ((Bean_Number) numberList.get(j)).isSelected = true;
-            } else {
-                ((Bean_Number) numberList.get(j)).isSelected = false;
-            }
-        }
-        numberAdapter.notifyDataSetChanged();
-    }
 
     @OnClick({R.id.txt_notify, R.id.txt_name, R.id.txt_money, R.id.img_sign, R.id.txt_red_money, R.id.img_avatar,
             R.id.txt_role, R.id.txt_order, R.id.fl_single, R.id.fl_small, R.id.fl_double, R.id.fl_big,

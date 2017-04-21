@@ -7,6 +7,11 @@ package com.blm.comparepoint.bean;/**
  * TODO:
  */
 public class Bean_Recharge {
-    public String GameUserId;
-    public long RechargeGold;
+    public String Type;
+    public Recharge Data;
+    public static class Recharge {
+        public long RechargeGold;
+        public String GameUserId;
+    }
+
 }

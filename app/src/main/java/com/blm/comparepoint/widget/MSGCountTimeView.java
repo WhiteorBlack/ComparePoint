@@ -20,6 +20,8 @@ import android.view.MotionEvent;
 import android.widget.TextView;
 
 import com.blm.comparepoint.R;
+import com.blm.comparepoint.untils.L;
+import com.blm.comparepoint.untils.T;
 
 
 public class MSGCountTimeView extends android.support.v7.widget.AppCompatTextView {
@@ -48,7 +50,7 @@ public class MSGCountTimeView extends android.support.v7.widget.AppCompatTextVie
     private int Totaltime;
 
     // �ж��Ƿ��ڵ���ʱ�У���ֹ��ε��
-    private boolean isRun;
+    private boolean isRun=false;
     // �Ƿ�������ʱ
     private boolean isAllowRun;
 
@@ -77,7 +79,7 @@ public class MSGCountTimeView extends android.support.v7.widget.AppCompatTextVie
                     mDownTime.onDown(Totaltime / 1000);
                     if (Totaltime < 0) {
                         MSGCountTimeView.this.setText(mFinishtext);
-                        isRun = false;
+
                         clearTimer();
                         mDownTime.onFinish();
                     }
@@ -176,6 +178,7 @@ public class MSGCountTimeView extends android.support.v7.widget.AppCompatTextVie
 
 
     public void startCount() {
+        L.e("isRun-------"+ isRun);
         if (!isAllowRun) {
         } else {
             if (!isRun) {
@@ -190,6 +193,7 @@ public class MSGCountTimeView extends android.support.v7.widget.AppCompatTextVie
      * ���ʱ��
      */
     private void clearTimer() {
+        isRun = false;
         if (mTimerTask != null) {
             mTimerTask.cancel();
             mTimerTask = null;
@@ -300,5 +304,9 @@ public class MSGCountTimeView extends android.support.v7.widget.AppCompatTextVie
      */
     public void isAllowRun(Boolean isAllowRun) {
         this.isAllowRun = isAllowRun;
+    }
+
+    public void destoryed(){
+        clearTimer();
     }
 }

@@ -55,7 +55,7 @@ public class Constants {
 
     public static String PIC_URL = "http://118.244.236.240";
 
-    public static String SHARE_URL = "http://118.244.236.240";
+    public static String SHARE_URL = "http://118.244.236.240http://api.ssc1688.cn/App/GameGuessV1.0.1.apk";
 
     public static String HELP_URL="http://api.ssc1688.cn/Mobile/Home/Help";
 
@@ -71,7 +71,7 @@ public class Constants {
 
     public static boolean ISBETABLE = false;
 
-    public static String GROUP_ID = "@TGS#bVZI7XNEN";
+    public static String GROUP_ID = "@TGS#b7UFSKYEA";
     public static String GROUP_TYPE = "BChatRoom";
     public static int IM_APP_ID = 1400026901;
     public static String ACCOUNT_TYPE = "11366";
