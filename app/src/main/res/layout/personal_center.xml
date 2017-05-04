@@ -71,6 +71,7 @@
                     android:textColor="@android:color/white"
                     android:textSize="14sp" />
 
+
                 <TextView
                     android:id="@+id/img_sign"
                     android:layout_width="50dp"
@@ -88,22 +89,12 @@
                 android:layout_height="0dp"
                 android:layout_weight="1">
 
-                <TextView
-                    android:id="@+id/txt_user_id"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="left|center_vertical"
-                    android:drawablePadding="5dp"
-                    android:gravity="center_vertical"
-                    android:text="144"
-                    android:textColor="@color/goldYellow"
-                    android:textSize="16sp" />
 
                 <TextView
                     android:id="@+id/txt_money"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
+                    android:layout_gravity="center_vertical|left"
                     android:drawableLeft="@mipmap/icon_gold"
                     android:drawablePadding="5dp"
                     android:gravity="center_vertical"
@@ -132,6 +123,37 @@
         android:layout_marginLeft="25dp"
         android:layout_marginRight="25dp"
         android:layout_marginTop="15dp"
+        android:background="@mipmap/line_horizontal" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        style="@style/personal_item">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="用户ID: "
+            android:textColor="@color/lightYellow"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/txt_user_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:text="ID: 88801"
+            android:layout_marginLeft="15dp"
+            android:layout_gravity="center_vertical"
+            android:textColor="@color/goldYellow"
+            android:textSize="16sp" />
+    </LinearLayout>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="25dp"
+        android:layout_marginRight="25dp"
         android:background="@mipmap/line_horizontal" />
 
     <FrameLayout

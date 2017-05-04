@@ -83,7 +83,7 @@ public class PersonalCenter extends BaseActivity {
         } else {
             imgSign.setText("签到");
         }
-        txtUserId.setText("ID: "+SPUtils.get(context,Constants.GAMER_ID,""));
+        txtUserId.setText((String) SPUtils.get(context, Constants.GAMER_ID, ""));
     }
 
     private void glideImage(String url, ImageView imageView) {

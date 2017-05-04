@@ -16,5 +16,6 @@ public class Bean_SystemConfig extends BaseBean {
         public int MinWithdramAmount;
         public String RechargeQrCode;
         public String CustomerQrCode;
+        public String ReChargeRules;
     }
 }

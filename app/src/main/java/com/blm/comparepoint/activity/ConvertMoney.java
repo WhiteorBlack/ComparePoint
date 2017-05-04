@@ -106,7 +106,7 @@ public class ConvertMoney extends BaseActivity {
             }
         });
         cardSelected();
-        edtMoney.setHint("当前可提现金额 "+((long)(SPUtils.get(context,Constants.ACTIVEAMOUNT,0l))/10));
+        edtMoney.setHint("当前可提现金额 " + ((long) (SPUtils.get(context, Constants.ACTIVEAMOUNT, 0l)) / 10));
     }
 
     private void wechatSelected() {
@@ -136,6 +136,14 @@ public class ConvertMoney extends BaseActivity {
                 finish();
                 break;
             case R.id.img_confirm:
+                long lastTime = (long) SPUtils.get(context, Constants.CONVERTTIME, 0l);
+                if (lastTime > 0) {
+                    int time = (int) ((System.currentTimeMillis() - lastTime) / 3600);
+                    if (time < 24) {
+                        T.showShort(context,"一天只能提现一次");
+                        return;
+                    }
+                }
                 name = edtName.getText().toString();
                 account = edtAccount.getText().toString();
                 money = edtMoney.getText().toString();
@@ -153,7 +161,7 @@ public class ConvertMoney extends BaseActivity {
                     return;
                 }
 
-                if (Integer.parseInt(money) > (long) SPUtils.get(context, Constants.ACTIVEAMOUNT, 0l)) {
+                if (Integer.parseInt(money) * 10 > (long) SPUtils.get(context, Constants.ACTIVEAMOUNT, 0l)) {
                     T.showShort(context, "账户余额不足");
                     return;
                 }
@@ -169,7 +177,7 @@ public class ConvertMoney extends BaseActivity {
         params.put("WithdrawType", type);
         params.put("WithdrawAccount", account);
         params.put("Amount", money);
-        params.put("GoldAmount",money);
+        params.put("GoldAmount", money);
         PostTools.postData(Constants.MAIN_URL + "User/ApplyWithDraw", params, new PostCallBack() {
             @Override
             public void onResponse(String response) {
@@ -181,12 +189,12 @@ public class ConvertMoney extends BaseActivity {
                 BaseBean baseBean = new Gson().fromJson(response, BaseBean.class);
                 if (baseBean.Success) {
                     T.showShort(context, "申请成功,我们会尽快处理");
-
-                    try{
+                    SPUtils.put(context, Constants.CONVERTTIME, System.currentTimeMillis());
+                    try {
 //                        int amount=(int)SPUtils.get(context,Constants.ACTIVEAMOUNT,0l)-Integer.parseInt(money);
 //                        txtRedMoney.setText(amount+"");
 //                        SPUtils.put(context,Constants.ACTIVEAMOUNT,amount);
-                    }catch(Exception e){
+                    } catch (Exception e) {
 
                     }
                 } else {

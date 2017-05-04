@@ -33,6 +33,11 @@ public class BetHistoryAdapter extends BaseRecyAdapter {
         } else {
             mHolder.getView(R.id.img_line_top).setVisibility(View.INVISIBLE);
         }
+        if (position==dataList.size()-1){
+            mHolder.getView(R.id.img_bottom_line).setVisibility(View.GONE);
+        }else {
+            mHolder.getView(R.id.img_bottom_line).setVisibility(View.VISIBLE);
+        }
         Bean_CurrentInfo.BonusNumList bonusNumList = (Bean_CurrentInfo.BonusNumList) dataList.get(position);
         mHolder.setText(bonusNumList.BonusNum + "", R.id.txt_num);
         if (bonusNumList.BonusNum > 5) {

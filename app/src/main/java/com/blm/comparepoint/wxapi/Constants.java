@@ -30,6 +30,7 @@ public class Constants {
     public static final String ACTIVEAMOUNT = "UserActive";
     public static final String SERVICEURL = "serviceUrl";
     public static final String CHARGEURL = "chargeUrl";
+    public static final String CONVERTTIME="convertTime";
 
 
     public static int SELECT_GOLD = 10;
@@ -80,4 +81,8 @@ public class Constants {
     public static boolean IS_BET = false;
     public static boolean BONUSEND = false;
     public static int BONUSNUM=-1;
+    public static boolean ISCOUNTDOWN=true;
+    public static long TOTALBETMONEY=0;
+
+    public static boolean ISSTART=true;
 }

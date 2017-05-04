@@ -24,7 +24,7 @@ import com.blm.comparepoint.untils.L;
 import com.blm.comparepoint.untils.T;
 
 
-public class MSGCountTimeView extends android.support.v7.widget.AppCompatTextView {
+public class MSGCountTimeView extends TextView {
     // handler��Message
     private static final int COUNTTIME = 1;
 
@@ -50,9 +50,9 @@ public class MSGCountTimeView extends android.support.v7.widget.AppCompatTextVie
     private int Totaltime;
 
     // �ж��Ƿ��ڵ���ʱ�У���ֹ��ε��
-    private boolean isRun=false;
+    private boolean isRun = false;
     // �Ƿ�������ʱ
-    private boolean isAllowRun;
+    private boolean isAllowRun=true;
 
     // ������ʱ�ķ���
     private Timer mTimer;
@@ -67,19 +67,18 @@ public class MSGCountTimeView extends android.support.v7.widget.AppCompatTextVie
                     DecimalFormat df = new DecimalFormat("#00");
                     String strTotaltime = df.format(Totaltime / 1000);
                     String runtimeText = mPrefixRuntext + strTotaltime + mSuffixRuntext;
-
-                    // ������������ɫ����
+//
+//                    // ������������ɫ����
                     Spannable spannable = new SpannableString(runtimeText);
                     ForegroundColorSpan redSpan = new ForegroundColorSpan(mColor);
                     spannable.setSpan(redSpan, mPrefixRuntext.length(), mPrefixRuntext.length() + strTotaltime.length(),
                             Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-                    MSGCountTimeView.this.setText(spannable);
+//
+                    MSGCountTimeView.this.setText(runtimeText);
                     Totaltime -= mOnetime;
                     mDownTime.onDown(Totaltime / 1000);
                     if (Totaltime < 0) {
                         MSGCountTimeView.this.setText(mFinishtext);
-
                         clearTimer();
                         mDownTime.onFinish();
                     }
@@ -90,6 +89,10 @@ public class MSGCountTimeView extends android.support.v7.widget.AppCompatTextVie
             }
         }
     };
+
+    public void setTimeText(){
+//        this.setText(TOTALTIME+mSuffixRuntext);
+    }
 
     /**
      * ����ʱ�ļ���
@@ -176,16 +179,20 @@ public class MSGCountTimeView extends android.support.v7.widget.AppCompatTextVie
         };
     }
 
+    public boolean getIsRun(){
+        return isRun;
+    }
 
+    public int getTime(){
+        return Totaltime;
+    }
     public void startCount() {
-        L.e("isRun-------"+ isRun);
-        if (!isAllowRun) {
-        } else {
-            if (!isRun) {
-                initTimer();
-                mTimer.schedule(mTimerTask, 0, mOnetime);
-                isRun = true;
-            }
+        L.e("isRun-------" + isRun);
+//        T.showShort(getContext(),"startCount--"+isRun+"--"+mTotaltime);
+        if (!isRun) {
+            initTimer();
+            mTimer.schedule(mTimerTask, 0, mOnetime);
+            isRun = true;
         }
     }
 
@@ -241,6 +248,16 @@ public class MSGCountTimeView extends android.support.v7.widget.AppCompatTextVie
         return this;
     }
 
+    public void initTextView(){
+        invalidate();
+    }
+
+    public void restart(){
+        isRun=false;
+        setTotaltime(Totaltime-1);
+        startCount();
+    }
+
     /**
      * ���õ���ʱ����ʱ��
      *
@@ -248,6 +265,9 @@ public class MSGCountTimeView extends android.support.v7.widget.AppCompatTextVie
      * @return
      */
     public MSGCountTimeView setTotaltime(int mTotaltime) {
+        if (isRun){
+            return this;
+        }
         this.mTotaltime = mTotaltime;
         return this;
     }
@@ -306,7 +326,7 @@ public class MSGCountTimeView extends android.support.v7.widget.AppCompatTextVie
         this.isAllowRun = isAllowRun;
     }
 
-    public void destoryed(){
+    public void destoryed() {
         clearTimer();
     }
 }

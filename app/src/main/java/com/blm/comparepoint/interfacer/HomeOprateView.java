@@ -100,6 +100,13 @@ public interface HomeOprateView {
     void currentInfo(Bean_CurrentInfo.CurrentInfo currentInfo);
 
     /**
+     * 更新当前游戏进度
+     *
+     * @param currentInfo
+     */
+    void gameInfo(Bean_CurrentInfo.CurrentInfo currentInfo);
+
+    /**
      * 更新在线人数
      *
      * @param count
