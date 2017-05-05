@@ -2,6 +2,7 @@ package com.blm.comparepoint.activity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -19,6 +20,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.blm.comparepoint.BaseActivity;
+import com.blm.comparepoint.MyReceiver;
 import com.blm.comparepoint.R;
 import com.blm.comparepoint.adapter.BetHistoryAdapter;
 import com.blm.comparepoint.adapter.BetNumberAdapter;
@@ -144,6 +146,7 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
     private List betHistoryList;
     private List betNumberList;
     private List numberList;
+    private List<String> notifyData;
 
     //popwindow
     private WinPop winPop;
@@ -162,7 +165,7 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
     private List gameConfig;
     private MSGCountTimeView txtCountDown;
 
-
+    public static boolean isForeground;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -221,10 +224,32 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
         }
     }
 
+    //for receive customer msg from jpush server
+    private MyReceiver mMessageReceiver;
+    public static final String MESSAGE_RECEIVED_ACTION = "findboom.android.com.findboom.MESSAGE_RECEIVED_ACTION";
+    public static final String KEY_TITLE = "title";
+    public static final String KEY_MESSAGE = "message";
+    public static final String KEY_EXTRAS = "extras";
+
+    public void registerMessageReceiver() {
+        mMessageReceiver = new MyReceiver();
+        IntentFilter filter = new IntentFilter();
+        filter.setPriority(IntentFilter.SYSTEM_HIGH_PRIORITY);
+        filter.addAction(MESSAGE_RECEIVED_ACTION);
+        registerReceiver(mMessageReceiver, filter);
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
         setUserInfo();
+        this.isForeground=true;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        this.isForeground=false;
     }
 
     private void setUserInfo() {
@@ -277,12 +302,13 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
         txtCountDown=(MSGCountTimeView)findViewById(R.id.txt_count_down);
         txtCountDown.setTextSize(14f);
         txtCountDown.setSuffixRuntext("秒");//设置运行时的文字的后缀
-        txtCountDown.setFinishtext("开奖中");
+        txtCountDown.setInittext("准备中");
 
         betHistoryList = new ArrayList();
         betNumberList = new ArrayList();
         numberList = new ArrayList();
         gameConfig = new ArrayList();
+        notifyData=new ArrayList<>();
 
         betHistoryAdapter = new BetHistoryAdapter(betHistoryList);
         recyHistory.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
@@ -489,9 +515,9 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
 
             @Override
             public void onFinish() {
+                Constants.ISCOUNTDOWN = false;
                 if (type == Constants.TYPE_BET_MONEY) {
-                    if (Constants.ISCOUNTDOWN && Constants.BONUSNUM > 0) {
-                        Constants.ISCOUNTDOWN = false;
+                    if (Constants.BONUSNUM > 0) {
                         showBonusNumAnim(Constants.BONUSNUM);
                     }
                 }
@@ -714,11 +740,10 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
             Constants.ISSTART=true;
         }else {
             Constants.ISSTART=false;
+            countDown(Constants.TYPE_BET_MONEY, Constants.COUNTDOWNTIME);
         }
-        countDown(Constants.TYPE_BET_MONEY, Constants.COUNTDOWNTIME);
         initNumber();
         numberAdapter.notifyDataSetChanged();
-//        Constants.ISSTART=false;
     }
 
     @Override
@@ -736,7 +761,10 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
         Constants.BONUSDOWNTIME = (int) (currentInfo.BonusTime - systemTime);
 
         Constants.ISBETABLE = true;
-        countDown(Constants.TYPE_BET_MONEY, Constants.COUNTDOWNTIME);
+        //这里把时间写死,防止有些手机出现时间少或者多的问题
+        countDown(Constants.TYPE_BET_MONEY, Constants.ROUNDTIME);
+        txtNotify.setVisibility(View.VISIBLE);
+        txtNotify.setData(notifyData);
     }
 
     @Override
@@ -772,9 +800,9 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
 
     @Override
     public void setNotifyData(List<String> data) {
+        this.notifyData.clear();
         if (data != null && data.size() > 0) {
-            txtNotify.setVisibility(View.VISIBLE);
-            txtNotify.setData(data);
+            this.notifyData.addAll(data);
         }
     }
 
@@ -910,7 +938,7 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
 
     @Override
     public void showBonusNumAnim(final int num) {
-        if (Constants.ISCOUNTDOWN||Constants.ISSTART) {
+        if (Constants.ISCOUNTDOWN) {
             return;
         }
         isStop = false;

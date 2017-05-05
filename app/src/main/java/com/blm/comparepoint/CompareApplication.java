@@ -7,6 +7,8 @@ import android.app.Application;
 import com.tencent.TIMManager;
 import com.umeng.analytics.MobclickAgent;
 
+import cn.jpush.android.api.JPushInterface;
+
 /**
  * author:${白曌勇} on 2017/3/29
  * TODO:
@@ -16,6 +18,8 @@ public class CompareApplication extends Application {
     public void onCreate() {
         super.onCreate();
         TIMManager.getInstance().init(this);
-        MobclickAgent.setDebugMode(true);
+        MobclickAgent.setDebugMode(false);
+        JPushInterface.setDebugMode(false); 	// 设置开启日志,发布时请关闭日志
+        JPushInterface.init(this);
     }
 }

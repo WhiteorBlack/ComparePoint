@@ -230,7 +230,32 @@
             android:layout_gravity="center_vertical|right"
             android:background="@mipmap/img_arrow_right" />
     </FrameLayout>
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="25dp"
+        android:layout_marginRight="25dp"
+        android:background="@mipmap/line_horizontal" />
 
+    <FrameLayout
+        android:id="@+id/fl_notify"
+        style="@style/personal_item">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="消息中心"
+            android:textColor="@color/lightYellow"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|right"
+            android:background="@mipmap/img_arrow_right" />
+    </FrameLayout>
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -57,6 +57,8 @@ public class PersonalCenter extends BaseActivity {
     Button btnLoginOut;
     @BindView(R.id.txt_user_id)
     TextView txtUserId;
+    @BindView(R.id.fl_notify)
+    FrameLayout flNotify;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -90,9 +92,12 @@ public class PersonalCenter extends BaseActivity {
         Glide.with(context).load(url).into(imageView);
     }
 
-    @OnClick({R.id.btn_login_out, R.id.img_back, R.id.img_sign, R.id.fl_my_info, R.id.fl_my_order, R.id.fl_my_charge, R.id.fl_help, R.id.fl_service})
+    @OnClick({R.id.fl_notify,R.id.btn_login_out, R.id.img_back, R.id.img_sign, R.id.fl_my_info, R.id.fl_my_order, R.id.fl_my_charge, R.id.fl_help, R.id.fl_service})
     public void onClick(View view) {
         switch (view.getId()) {
+            case R.id.fl_notify:
+                startActivity(new Intent(context,NotifyList.class));
+                break;
             case R.id.img_back:
                 finish();
                 break;
