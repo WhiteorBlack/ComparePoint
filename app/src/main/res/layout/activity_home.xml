@@ -16,7 +16,7 @@
         android:layout_gravity="top"
         android:padding="3dp"
         android:background="@android:color/black"
-        app:delayTime="3000"
+        app:delayTime="5000"
         app:direction="left"
         app:ellipsize="marquee"
         app:gravity="center"
@@ -159,9 +159,9 @@
                 android:drawableLeft="@mipmap/icon_order"
                 android:drawablePadding="5dp"
                 android:text="订单"
-                android:visibility="invisible"
                 android:textColor="@color/lightYellow"
-                android:textSize="14sp" />
+                android:textSize="14sp"
+                android:visibility="invisible" />
 
             <TextView
                 android:id="@+id/txt_role"

@@ -9,6 +9,10 @@ import android.util.Log;
 
 import com.blm.comparepoint.activity.Home;
 import com.blm.comparepoint.activity.NotifyDetial;
+import com.blm.comparepoint.bean.Bean_Jpush;
+import com.blm.comparepoint.interfacer.UpdateRedAmountInterfacer;
+import com.blm.comparepoint.untils.L;
+import com.google.gson.Gson;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -30,15 +34,16 @@ public class MyReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         Bundle bundle = intent.getExtras();
-        Log.d(TAG, "[MyReceiver] onReceive - " + intent.getAction() + ", extras: " + printBundle(bundle));
-
+        L.d(TAG,"----"+bundle.getString(JPushInterface.EXTRA_EXTRA));
+        String extraString = bundle.getString(JPushInterface.EXTRA_EXTRA);
+        bundle.putLong("time",System.currentTimeMillis());
         if (JPushInterface.ACTION_REGISTRATION_ID.equals(intent.getAction())) {
             String regId = bundle.getString(JPushInterface.EXTRA_REGISTRATION_ID);
             Log.d(TAG, "[MyReceiver] 接收Registration Id : " + regId);
             //send the Registration Id to your server...
 
         } else if (JPushInterface.ACTION_MESSAGE_RECEIVED.equals(intent.getAction())) {
-            Log.d(TAG, "[MyReceiver] 接收到推送下来的自定义消息: " + bundle.getString(JPushInterface.EXTRA_MESSAGE));
+            Log.d(TAG, "[MyReceiver] 接收到推送下来的自定义消息: " + bundle.getString(JPushInterface.EXTRA_MESSAGE) + "--" + bundle.getString(JPushInterface.EXTRA_EXTRA));
             processCustomMessage(context, bundle);
 
         } else if (JPushInterface.ACTION_NOTIFICATION_RECEIVED.equals(intent.getAction())) {

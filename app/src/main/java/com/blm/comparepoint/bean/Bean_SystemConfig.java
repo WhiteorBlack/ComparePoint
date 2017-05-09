@@ -10,6 +10,7 @@ public class Bean_SystemConfig extends BaseBean {
         public double GoldRange;
         public int RoundTime;
         public int LotteryTime;
+        public int RoundCost;
         public String UserAgreement;
         public String GameRules;
         public int SignBonus;

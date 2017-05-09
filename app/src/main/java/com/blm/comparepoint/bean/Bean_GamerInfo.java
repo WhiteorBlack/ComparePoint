@@ -18,5 +18,6 @@ public class Bean_GamerInfo extends BaseBean {
         public int Status;
         public boolean IsSignToday;
         public String IMSign;
+        public String UserName;
     }
 }

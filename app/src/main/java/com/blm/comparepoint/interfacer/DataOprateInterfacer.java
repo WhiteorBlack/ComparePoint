@@ -37,9 +37,8 @@ public interface DataOprateInterfacer {
      * 获取当前游戏信息,以作同步进程
      * @param response
      */
-    void getCurrentInfo(String response);
+    void getCurrentInfo(String response,String date);
 
-    void getNetDate(String date);
 
     void betMoneyResult(String response);
 }

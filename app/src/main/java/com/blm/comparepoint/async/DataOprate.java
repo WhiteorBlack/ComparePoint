@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import com.blm.comparepoint.bean.Bean_SystemConfig;
 import com.blm.comparepoint.interfacer.DataOprateInterfacer;
 import com.blm.comparepoint.interfacer.PostCallBack;
+import com.blm.comparepoint.untils.L;
 import com.blm.comparepoint.untils.NetUtils;
 import com.blm.comparepoint.wxapi.Constants;
 import com.google.gson.Gson;
@@ -99,19 +100,17 @@ public class DataOprate {
     public void getCurrentInfo() {
         PostTools.postData(Constants.MAIN_URL + "Game/GetCurRound", null, new PostCallBack() {
             @Override
-            public void onResponse(String response) {
+            public void onResponse(String response,Headers headers) {
                 super.onResponse(response);
-                dataOprateInterfacer.getCurrentInfo(response);
+                L.e("okhttp--"+headers.get("OkHttp-Received-Millis"));
+                L.e("headDate--"+headers.get("Date"));
+                dataOprateInterfacer.getCurrentInfo(response,headers.get("Date"));
 
             }
 
             @Override
             public void onAfter(Headers headers) {
                 super.onAfter(headers);
-                if (headers == null) {
-                    return;
-                }
-                dataOprateInterfacer.getNetDate(headers.get("Date"));
             }
         });
     }

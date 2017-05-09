@@ -1,6 +1,8 @@
 package com.blm.comparepoint.wxapi;
 
 
+import android.os.Handler;
+
 public class Constants {
     //public static final String DESCRIPTOR = "com.umeng.share";
     // appid
@@ -31,6 +33,7 @@ public class Constants {
     public static final String SERVICEURL = "serviceUrl";
     public static final String CHARGEURL = "chargeUrl";
     public static final String CONVERTTIME="convertTime";
+    public static final String USERNAME="userName";
 
 
     public static int SELECT_GOLD = 10;
@@ -56,7 +59,7 @@ public class Constants {
 
     public static String PIC_URL = "http://118.244.236.240";
 
-    public static String SHARE_URL = "http://api.ssc1688.cn/App/GameGuessV1.0.1.apk";
+    public static String SHARE_URL = "http://api.ssc1688.cn/App/gameguess.latest.apk";
 
     public static String HELP_URL="http://api.ssc1688.cn/Mobile/Home/Help";
 
@@ -85,4 +88,5 @@ public class Constants {
     public static long TOTALBETMONEY=0;
 
     public static boolean ISSTART=true;
+
 }

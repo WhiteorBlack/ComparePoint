@@ -9,6 +9,7 @@ import com.blm.comparepoint.bean.Bean_AppVersion;
 import com.blm.comparepoint.bean.Bean_BetMoney;
 import com.blm.comparepoint.bean.Bean_BonusTip;
 import com.blm.comparepoint.bean.Bean_Bouns;
+import com.blm.comparepoint.bean.Bean_Convert;
 import com.blm.comparepoint.bean.Bean_CurrentInfo;
 import com.blm.comparepoint.bean.Bean_GameConfig;
 import com.blm.comparepoint.bean.Bean_Msg;
@@ -350,38 +351,33 @@ public class HomePresenter implements DataOprateInterfacer, Observer {
     }
 
     @Override
-    public void getCurrentInfo(String response) {
+    public void getCurrentInfo(String response,String date) {
         if (TextUtils.isEmpty(response)) {
             retryGameInfo();
             return;
         }
+        long headerTime=0l;
+        if (!TextUtils.isEmpty(date)) {
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss z", Locale.ENGLISH);
+            TimeZone.setDefault(TimeZone.getTimeZone("GMT+8"));
+            try {
+                Date serverDate = simpleDateFormat.parse(date);
+                headerTime=serverDate.getTime();
+                L.e("serverDateLong---"+serverDate.getTime());
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
         Bean_CurrentInfo bean_CurrentInfo = new Gson().fromJson(response, Bean_CurrentInfo.class);
         if (bean_CurrentInfo.Success && bean_CurrentInfo != null) {
+            homeOprateView.currentInfo(bean_CurrentInfo.Data,headerTime);
             initConversion();
-            homeOprateView.currentInfo(bean_CurrentInfo.Data);
         }
         if (time == 6) {
             homeOprateView.toastNotify("获取游戏信息失败,请重试!");
             time = 1;
         }
 //        initConversion();
-    }
-
-    @Override
-    public void getNetDate(String date) {
-        if (TextUtils.isEmpty(date)) {
-            return;
-        }
-        if (!TextUtils.isEmpty(date)) {
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss z", Locale.ENGLISH);
-            TimeZone.setDefault(TimeZone.getTimeZone("GMT+8"));
-            try {
-                Date serverDate = simpleDateFormat.parse(date);
-                Constants.NETTIME_LOCALTIME_DELATE = serverDate.getTime() - System.currentTimeMillis();
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-        }
     }
 
     @Override
@@ -483,6 +479,9 @@ public class HomePresenter implements DataOprateInterfacer, Observer {
                 Bean_Recharge recharge = new Gson().fromJson(msgString, Bean_Recharge.class);
                 if (TextUtils.equals(recharge.Data.GameUserId, Constants.USER_ID)) {
                     homeOprateView.updateAmount(recharge.Data.RechargeGold);
+                    if (recharge.Data.PayMentType==1){
+                        homeOprateView.updateRedAmount(-recharge.Data.RechargeGold);
+                    }
                 }
             }
             if (TextUtils.equals("Bonus", bean_msg.Type)) {
@@ -496,6 +495,13 @@ public class HomePresenter implements DataOprateInterfacer, Observer {
 
 //                countBetMoney(Constants.BONUSNUM);
                 homeOprateView.showBonusNumAnim(bouns.Data.BonusNum);
+            }
+            if (TextUtils.equals("WithDraw",bean_msg.Type)){
+                //更新红包信息
+                Bean_Convert bean_convert=new Gson().fromJson(msgString,Bean_Convert.class);
+                if (TextUtils.equals(Constants.USER_ID,bean_convert.Data.GameUserId)){
+                    homeOprateView.updateRedAmount(-bean_convert.Data.WithDrawGold);
+                }
             }
         }
     }

@@ -12,6 +12,7 @@ public class Bean_Recharge {
     public static class Recharge {
         public long RechargeGold;
         public String GameUserId;
+        public int PayMentType;
     }
 
 }

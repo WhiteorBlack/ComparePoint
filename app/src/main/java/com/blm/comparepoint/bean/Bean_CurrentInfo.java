@@ -18,10 +18,18 @@ public class Bean_CurrentInfo extends BaseBean {
         public int BetAmount;
         public int BonusAmount;
         public int BetUserCount;
-        public int[] LastBonusNum;
+        public List<BonusNumList> LastBonusNum;
+        public List<BetRecords> BetRecords;
     }
 
     public static class BonusNumList{
         public int BonusNum;
+        public String RoundNo;
+    }
+
+    public static class BetRecords{
+        public String RoundNo;
+        public int BetNumber;
+        public int BetGold;
     }
 }

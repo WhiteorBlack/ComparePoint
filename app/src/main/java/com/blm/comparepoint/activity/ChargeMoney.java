@@ -65,11 +65,23 @@ public class ChargeMoney extends BaseActivity {
         setUserInfo();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        txtRedMoney.setText(SPUtils.get(context, Constants.ACTIVEAMOUNT, 0l) + "");
+    }
+
+    @Override
+    public void setRedAmount() {
+        super.setRedAmount();
+        txtRedMoney.setText(SPUtils.get(context, Constants.ACTIVEAMOUNT, 0l) + "");
+    }
+
     private void setUserInfo() {
         Glide.with(this).load(SPUtils.get(context, Constants.AVATAR, "")).into(imgAvatar);
         txtName.setText((String) SPUtils.get(context, Constants.NICKNAME, ""));
         txtMoney.setText(SPUtils.get(context, Constants.USERAMOUNT, 0l) + "");
-        txtRedMoney.setText(SPUtils.get(context, Constants.ACTIVEAMOUNT, 0l) + "");
+
         imgSign.setEnabled(!(boolean) SPUtils.get(context, Constants.ISSIGN, false));
         Glide.with(this).load(SPUtils.get(context, Constants.CHARGEURL, "")).into(imgCodePic);
     }

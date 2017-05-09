@@ -8,6 +8,7 @@ import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLSession;
 
 import okhttp3.Call;
+import okhttp3.Headers;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -196,7 +197,7 @@ public class OkHttpUtils
 	                {
 	                    try
 	                    {
-	                        sendFailResultCallback(call, new RuntimeException(response.body().string()), finalCallback);
+	                        sendFailResultCallback(call, new RuntimeException(response.body().string()), finalCallback,response.headers());
 	                    } catch (IOException e)
 	                    {
 	                        e.printStackTrace();
@@ -207,23 +208,23 @@ public class OkHttpUtils
 	                try
 	                {
 	                    Object o = finalCallback.parseNetworkResponse(response);
-	                    sendSuccessResultCallback(o, finalCallback,call);
+	                    sendSuccessResultCallback(o, finalCallback,call,response.headers());
 	                } catch (Exception e)
 	                {
-	                    sendFailResultCallback(call, e, finalCallback);
+	                    sendFailResultCallback(call, e, finalCallback, response.headers());
 	                }
 			}
 			
 			@Override
 			public void onFailure(Request arg0, IOException e) {
-				 sendFailResultCallback(call, e, finalCallback);
+				 sendFailResultCallback(call, e, finalCallback, null);
 				
 			}
 		});
     }
 
 
-    public void sendFailResultCallback(final Call call, final Exception e, final Callback callback)
+    public void sendFailResultCallback(final Call call, final Exception e, final Callback callback, final Headers headers)
     {
         if (callback == null) return;
 
@@ -233,12 +234,12 @@ public class OkHttpUtils
             public void run()
             {
                 callback.onError(call, e);
-                callback.onAfter(call.request().headers());
+                callback.onAfter(headers);
             }
         });
     }
 
-    public void sendSuccessResultCallback(final Object object, final Callback callback,final Call call)
+    public void sendSuccessResultCallback(final Object object, final Callback callback, final Call call, final Headers headers)
     {
         if (callback == null) return;
         mDelivery.post(new Runnable()
@@ -247,7 +248,8 @@ public class OkHttpUtils
             public void run()
             {
                 callback.onResponse(object);
-                callback.onAfter(call.request().headers());
+                callback.onResponse(object,headers);
+                callback.onAfter(headers);
             }
         });
     }

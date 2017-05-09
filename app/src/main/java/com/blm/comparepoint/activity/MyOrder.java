@@ -72,7 +72,7 @@ public class MyOrder extends BaseActivity implements XRecyclerView.LoadingListen
         Glide.with(this).load(SPUtils.get(context, Constants.AVATAR, "")).into(imgAvatar);
         txtName.setText((String) SPUtils.get(context, Constants.NICKNAME, ""));
         txtMoney.setText(SPUtils.get(context, Constants.USERAMOUNT, 0l) + "");
-        txtRedMoney.setText(SPUtils.get(context, Constants.ACTIVEAMOUNT, 0l) + "");
+
         imgSign.setEnabled(!(boolean) SPUtils.get(context, Constants.ISSIGN, false));
         if ((boolean) SPUtils.get(context, Constants.ISSIGN, false)) {
             imgSign.setText("已签到");
@@ -81,6 +81,18 @@ public class MyOrder extends BaseActivity implements XRecyclerView.LoadingListen
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        txtRedMoney.setText(SPUtils.get(context, Constants.ACTIVEAMOUNT, 0l) + "");
+    }
+
+    @Override
+    public void setRedAmount() {
+        super.setRedAmount();
+        T.showShort(context,"hhhh");
+        txtRedMoney.setText(SPUtils.get(this, Constants.ACTIVEAMOUNT, 0l) + "");
+    }
     private void getOrderData() {
         Map<String, String> params = new HashMap<>();
         params.put("PageIndex", pageIndex + "");

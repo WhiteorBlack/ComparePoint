@@ -97,7 +97,7 @@ public interface HomeOprateView {
      *
      * @param currentInfo
      */
-    void currentInfo(Bean_CurrentInfo.CurrentInfo currentInfo);
+    void currentInfo(Bean_CurrentInfo.CurrentInfo currentInfo,long time);
 
     /**
      * 更新当前游戏进度
@@ -179,4 +179,6 @@ public interface HomeOprateView {
      * @param amount
      */
     void resetAmount(long amount);
+
+    void currentInfoAfater(long time);
 }

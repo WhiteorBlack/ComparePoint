@@ -16,6 +16,7 @@ import com.blm.comparepoint.async.PostTools;
 import com.blm.comparepoint.bean.BaseBean;
 import com.blm.comparepoint.interfacer.PostCallBack;
 import com.blm.comparepoint.untils.AppManager;
+import com.blm.comparepoint.untils.L;
 import com.blm.comparepoint.untils.SPUtils;
 import com.blm.comparepoint.untils.T;
 import com.blm.comparepoint.widget.CircleImageView;
@@ -79,13 +80,26 @@ public class ConvertMoney extends BaseActivity {
         Glide.with(this).load((String) SPUtils.get(this, Constants.AVATAR, "")).into(imgAvatar);
         txtName.setText((String) SPUtils.get(this, Constants.NICKNAME, ""));
         txtMoney.setText(SPUtils.get(this, Constants.USERAMOUNT, 0l) + "");
-        txtRedMoney.setText(SPUtils.get(this, Constants.ACTIVEAMOUNT, 0l) + "");
+
         imgSign.setEnabled(!(boolean) SPUtils.get(this, Constants.ISSIGN, false));
         if ((boolean) SPUtils.get(this, Constants.ISSIGN, false)) {
             imgSign.setText("已签到");
         } else {
             imgSign.setText("签到");
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        txtRedMoney.setText(SPUtils.get(this, Constants.ACTIVEAMOUNT, 0l) + "");
+    }
+
+    @Override
+    public void setRedAmount() {
+        super.setRedAmount();
+        T.showShort(context,"hhhh");
+        txtRedMoney.setText(SPUtils.get(this, Constants.ACTIVEAMOUNT, 0l) + "");
     }
 
     private void initView() {
@@ -136,14 +150,15 @@ public class ConvertMoney extends BaseActivity {
                 finish();
                 break;
             case R.id.img_confirm:
-                long lastTime = (long) SPUtils.get(context, Constants.CONVERTTIME, 0l);
+                //后台已做处理
+                /*long lastTime = (long) SPUtils.get(context, Constants.CONVERTTIME, 0l);
                 if (lastTime > 0) {
                     int time = (int) ((System.currentTimeMillis() - lastTime) / 3600);
                     if (time < 24) {
                         T.showShort(context,"一天只能提现一次");
                         return;
                     }
-                }
+                }*/
                 name = edtName.getText().toString();
                 account = edtAccount.getText().toString();
                 money = edtMoney.getText().toString();
@@ -177,7 +192,7 @@ public class ConvertMoney extends BaseActivity {
         params.put("WithdrawType", type);
         params.put("WithdrawAccount", account);
         params.put("Amount", money);
-        params.put("GoldAmount", money);
+        params.put("GoldAmount", Integer.parseInt(money)*10+"");
         PostTools.postData(Constants.MAIN_URL + "User/ApplyWithDraw", params, new PostCallBack() {
             @Override
             public void onResponse(String response) {

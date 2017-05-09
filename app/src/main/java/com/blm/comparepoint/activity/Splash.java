@@ -106,6 +106,7 @@ public class Splash extends BaseActivity {
                     SPUtils.put(context, Constants.ACTIVEAMOUNT, bean_gamerInfo.Data.UserActive);
                     SPUtils.put(context, Constants.IS_LOGIN, true);
                     SPUtils.put(context, Constants.ISSIGN, bean_gamerInfo.Data.IsSignToday);
+                    SPUtils.put(context,Constants.USERNAME,bean_gamerInfo.Data.UserName);
 
                 } else {
                     SPUtils.put(context, Constants.IS_LOGIN, false);

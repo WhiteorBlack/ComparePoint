@@ -4,6 +4,7 @@ import android.support.v7.widget.RecyclerView;
 
 import com.blm.comparepoint.BaseRecyAdapter;
 import com.blm.comparepoint.R;
+import com.blm.comparepoint.bean.Bean_NotifyList;
 
 import java.util.List;
 
@@ -19,7 +20,11 @@ public class NotifyListAdapter extends BaseRecyAdapter {
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         super.onBindViewHolder(holder, position);
-
+        ViewHolder mholder = (ViewHolder) holder;
+        Bean_NotifyList.NotifyDetail notifyDetail = (Bean_NotifyList.NotifyDetail) dataList.get(position);
+        mholder.setText(notifyDetail.SendTime, R.id.txt_time);
+        mholder.setText(notifyDetail.MsgTitle, R.id.txt_title);
+        mholder.setText(notifyDetail.MsgContent, R.id.txt_notify_detial);
     }
 
     @Override

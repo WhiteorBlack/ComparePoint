@@ -102,4 +102,8 @@ public class AppManager {
             e.printStackTrace();
         }
     }
+
+    public boolean isActivityInStack(Activity activity){
+        return activityStack.contains(activity);
+    }
 }

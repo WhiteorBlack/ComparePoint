@@ -10,7 +10,7 @@
     <uses-permission android:name="com.blm.comparepoint.permission.JPUSH_MESSAGE" />
     <!-- Required  一些系统要求的权限，如访问网络等-->
     <uses-permission android:name="com.tencent.qcloud.timchat.permission.MIPUSH_RECEIVE" />
-    <uses-permission android:name="findboom.android.com.findboom.permission.JPUSH_MESSAGE" />
+    <uses-permission android:name="com.blm.comparepoint.permission.JPUSH_MESSAGE" />
     <uses-permission android:name="android.permission.RECEIVE_USER_PRESENT" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.READ_CALENDAR" />
@@ -63,6 +63,7 @@
         </activity>
         <activity
             android:name=".activity.Home"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait" />
         <activity
             android:name=".activity.WebView"
@@ -193,7 +194,24 @@
             android:exported="false" >
         </service>
 
+        <!-- Rich push 核心功能 since 2.0.6-->
+        <activity
+            android:name="cn.jpush.android.ui.PopWinActivity"
+            android:exported="false"
+            android:theme="@style/MyDialogStyle" />
         <!-- Required SDK 核心功能-->
+        <activity
+            android:name="cn.jpush.android.ui.PushActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:exported="false"
+            android:theme="@android:style/Theme.NoTitleBar">
+            <intent-filter>
+                <action android:name="cn.jpush.android.ui.PushActivity" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="com.blm.comparepoint" />
+            </intent-filter>
+        </activity>
         <!-- 可配置android:process参数将PushService放在其他进程中 -->
         <service
             android:name="cn.jpush.android.service.PushService"

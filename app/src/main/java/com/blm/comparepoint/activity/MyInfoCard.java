@@ -14,6 +14,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.blm.comparepoint.MyReceiver;
 import com.blm.comparepoint.R;
 import com.blm.comparepoint.async.PostTools;
 import com.blm.comparepoint.bean.BaseBean;
@@ -21,6 +22,7 @@ import com.blm.comparepoint.bean.Bean_UploadAvater;
 import com.blm.comparepoint.dialog.ChangeNamePop;
 import com.blm.comparepoint.interfacer.PopInterfacer;
 import com.blm.comparepoint.interfacer.PostCallBack;
+import com.blm.comparepoint.interfacer.UpdateRedAmountInterfacer;
 import com.blm.comparepoint.untils.SPUtils;
 import com.blm.comparepoint.untils.T;
 import com.blm.comparepoint.widget.CircleImageView;
@@ -43,11 +45,13 @@ import butterknife.OnClick;
 import cn.sharesdk.framework.ShareSDK;
 import cn.sharesdk.onekeyshare.OnekeyShare;
 
+import static com.tencent.qalsdk.service.QalService.context;
+
 /**
  * Created by 41508 on 2017/3/8.
  */
 
-public class MyInfoCard extends TakePhotoActivity implements PopInterfacer {
+public class MyInfoCard extends TakePhotoActivity implements PopInterfacer, UpdateRedAmountInterfacer {
     @BindView(R.id.img_back)
     ImageView imgBack;
     @BindView(R.id.img_avatar)
@@ -75,6 +79,7 @@ public class MyInfoCard extends TakePhotoActivity implements PopInterfacer {
     @BindView(R.id.img_share)
     ImageView imgShare;
     private ChangeNamePop changeNamePop;
+    private MyReceiver myReceiver;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -82,13 +87,31 @@ public class MyInfoCard extends TakePhotoActivity implements PopInterfacer {
         setContentView(R.layout.mine_card);
         ButterKnife.bind(this);
         setUserInfo();
+//        myReceiver=new MyReceiver();
+//        myReceiver.setUpdateRedAmountInterfacer(this);
+    }
+
+    @Override
+    public void updateRedAmount(int redAmount) {
+        long redMoney = (long) SPUtils.get(context, Constants.ACTIVEAMOUNT, 0l);
+        if (redMoney > 0) {
+            redMoney -= redAmount;
+        }
+        txtRedMoney.setText(redMoney + "");
+        SPUtils.put(context, Constants.ACTIVEAMOUNT, redMoney);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        txtRedMoney.setText(SPUtils.get(this, Constants.ACTIVEAMOUNT, 0l) + "");
     }
 
     private void setUserInfo() {
         Glide.with(this).load((String) SPUtils.get(this, Constants.AVATAR, "")).into(imgAvatar);
         txtName.setText((String) SPUtils.get(this, Constants.NICKNAME, ""));
         txtMoney.setText(SPUtils.get(this, Constants.USERAMOUNT, 0l) + "");
-        txtRedMoney.setText(SPUtils.get(this, Constants.ACTIVEAMOUNT, 0l) + "");
+
         imgSign.setEnabled(!(boolean) SPUtils.get(this, Constants.ISSIGN, false));
         if ((boolean) SPUtils.get(this, Constants.ISSIGN, false)) {
             imgSign.setText("已签到");

@@ -19,7 +19,7 @@ public class CompareApplication extends Application {
         super.onCreate();
         TIMManager.getInstance().init(this);
         MobclickAgent.setDebugMode(false);
-        JPushInterface.setDebugMode(false); 	// 设置开启日志,发布时请关闭日志
+        JPushInterface.setDebugMode(true); 	// 设置开启日志,发布时请关闭日志
         JPushInterface.init(this);
     }
 }

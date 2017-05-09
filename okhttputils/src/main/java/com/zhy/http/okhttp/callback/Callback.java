@@ -45,7 +45,7 @@ public abstract class Callback<T>
     public abstract void onError(Call call, Exception e);
 
     public abstract void onResponse(T response);
-
+    public abstract void onResponse(T response,Headers headers);
 
     public static Callback CALLBACK_DEFAULT = new Callback()
     {
@@ -65,6 +65,11 @@ public abstract class Callback<T>
         @Override
         public void onResponse(Object response)
         {
+
+        }
+
+        @Override
+        public void onResponse(Object response, Headers headers) {
 
         }
     };

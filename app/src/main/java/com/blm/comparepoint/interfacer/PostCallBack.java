@@ -31,6 +31,12 @@ public class PostCallBack extends Callback<String> {
     }
 
     @Override
+    public void onResponse(String response,Headers headers) {
+        // TODO Auto-generated method stub
+        L.e(response);
+    }
+
+    @Override
     public void onBefore(Request request) {
         // TODO Auto-generated method stub
         super.onBefore(request);

@@ -168,6 +168,7 @@ public class Register extends BaseActivity {
                     SPUtils.put(context, Constants.ACTIVEAMOUNT, bean_login.Data.UserActive);
                     SPUtils.put(context, Constants.NICKNAME, bean_login.Data.NickName);
                     SPUtils.put(context, Constants.AVATAR, bean_login.Data.Avatar == null ? "" : bean_login.Data.Avatar);
+                    SPUtils.put(context,Constants.USERNAME,bean_login.Data.UserName);
                     finish();
                     startActivity(new Intent(context, Home.class));
                 } else {

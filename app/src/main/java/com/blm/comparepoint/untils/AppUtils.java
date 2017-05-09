@@ -4,6 +4,10 @@ import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.net.ParseException;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * 跟App相关的辅助类
@@ -66,4 +70,13 @@ public class AppUtils {
         return -1;
     }
 
+    public static String longToString(long currentTime, String formatType)
+            throws ParseException {
+        Date dateOld = new Date(currentTime); // 根据long类型的毫秒数生命一个date类型的时间
+        String sDateTime = dateToString(dateOld, formatType); // 把date类型的时间转换为string
+        return sDateTime;
+    }
+    public static String dateToString(Date data, String formatType) {
+        return new SimpleDateFormat(formatType).format(data);
+    }
 }

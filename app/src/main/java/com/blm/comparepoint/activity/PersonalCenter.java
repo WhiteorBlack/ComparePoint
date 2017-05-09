@@ -74,6 +74,13 @@ public class PersonalCenter extends BaseActivity {
         setUserInfo();
     }
 
+    @Override
+    public void setRedAmount() {
+        super.setRedAmount();
+        T.showShort(context,"hhhh");
+        txtRedMoney.setText(SPUtils.get(this, Constants.ACTIVEAMOUNT, 0l) + "");
+    }
+
     private void setUserInfo() {
         glideImage((String) SPUtils.get(context, Constants.AVATAR, ""), imgAvatar);
         txtName.setText((String) SPUtils.get(context, Constants.NICKNAME, ""));
