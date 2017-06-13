@@ -63,7 +63,7 @@ public class ServiceCenter extends BaseActivity {
                     @Override
                     public void run() {
                         try {
-                            final Bitmap bitmap = Glide.with(context).load(SPUtils.get(context, Constants.CHARGEURL, "")).asBitmap().into(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL).get();
+                            final Bitmap bitmap = Glide.with(context).load(SPUtils.get(context, Constants.SERVICEURL, "")).asBitmap().into(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL).get();
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {

@@ -11,6 +11,8 @@ import com.blm.comparepoint.untils.AppManager;
 import com.blm.comparepoint.untils.AppUtils;
 import com.blm.comparepoint.untils.L;
 
+import java.net.Socket;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
