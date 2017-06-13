@@ -32,6 +32,9 @@ public class Constants {
     public static final String ACTIVEAMOUNT = "UserActive";
     public static final String SERVICEURL = "serviceUrl";
     public static final String CHARGEURL = "chargeUrl";
+    public static final String CHARGEALIURL = "chargeAliUrl";
+    public static final String CHARGEDESC = "chargeDesc";
+    public static final String CONVERTDESC="convertDesc";
     public static final String CONVERTTIME="convertTime";
     public static final String USERNAME="userName";
 
@@ -59,7 +62,7 @@ public class Constants {
 
     public static String PIC_URL = "http://118.244.236.240";
 
-    public static String SHARE_URL = "http://api.ssc1688.cn/App/gameguess.latest.apk";
+    public static String SHARE_URL = "http://api.ssc1688.cn/Mobile/Home/Download";
 
     public static String HELP_URL="http://api.ssc1688.cn/Mobile/Home/Help";
 

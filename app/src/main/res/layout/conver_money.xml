@@ -114,146 +114,162 @@
         </LinearLayout>
     </LinearLayout>
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="0dp"
         android:layout_weight="1"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:paddingBottom="30dp">
+        android:layout_marginTop="50dp"
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="50dp"
-            android:layout_marginRight="50dp"
-            android:orientation="horizontal">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@mipmap/conver_money_bg" />
-
-            <EditText
-                android:id="@+id/edt_money"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:inputType="number"
-                android:background="@color/converMoneyEdt"
+                android:layout_height="0dp"
+                android:layout_weight="1"
                 android:gravity="center"
+                android:orientation="vertical"
+                android:paddingBottom="30dp">
 
-                android:hint="输入你要提现的金额"
-                android:textColor="@color/goldYellow"
-                android:textColorHint="@color/lightYellow"
-                android:textSize="16sp" />
-        </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="50dp"
+                    android:layout_marginRight="50dp"
+                    android:orientation="horizontal">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="50dp"
-            android:layout_marginRight="50dp"
-            android:layout_marginTop="10dp"
-            android:orientation="horizontal">
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@mipmap/conver_money_bg" />
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@mipmap/conver_account_bg" />
+                    <EditText
+                        android:id="@+id/edt_money"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@color/converMoneyEdt"
+                        android:gravity="center"
+                        android:hint="输入你要提现的金额"
 
-            <EditText
-                android:id="@+id/edt_account"
+                        android:inputType="number"
+                        android:textColor="@color/goldYellow"
+                        android:textColorHint="@color/lightYellow"
+                        android:textSize="16sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="50dp"
+                    android:layout_marginRight="50dp"
+                    android:layout_marginTop="10dp"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@mipmap/conver_account_bg" />
+
+                    <EditText
+                        android:id="@+id/edt_account"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@color/converMoneyEdt"
+                        android:gravity="center"
+                        android:hint="输入你要提现的银行卡号"
+                        android:inputType="number"
+                        android:textColor="@color/goldYellow"
+                        android:textColorHint="@color/lightYellow"
+                        android:textSize="16sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="50dp"
+                    android:layout_marginRight="50dp"
+                    android:layout_marginTop="10dp"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@mipmap/conver_account_bg" />
+
+                    <EditText
+                        android:id="@+id/edt_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@color/converMoneyEdt"
+                        android:gravity="center"
+                        android:hint="输入你银行卡开户姓名"
+                        android:textColor="@color/goldYellow"
+                        android:textColorHint="@color/lightYellow"
+                        android:textSize="16sp" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="35dp"
+                    android:text="除了银行卡,你也可以选择以下提现路径"
+                    android:textColor="@color/lightYellow"
+                    android:textSize="14sp" />
+
+                <RadioGroup
+                    android:id="@+id/radioGroup"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <RadioButton
+                        android:id="@+id/chb_card"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:button="@drawable/checkbox_card"
+                        android:checked="true" />
+
+                    <RadioButton
+                        android:id="@+id/chb_alipay"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="30dp"
+                        android:button="@drawable/checkbox_alipay" />
+
+
+                    <RadioButton
+                        android:id="@+id/chb_wechat"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="30dp"
+                        android:button="@drawable/checkbox_wechat" />
+
+
+                </RadioGroup>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/txt_convert_info"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/converMoneyEdt"
-                android:gravity="center"
-                android:inputType="number"
-                android:hint="输入你要提现的银行卡号"
-                android:textColor="@color/goldYellow"
-                android:textColorHint="@color/lightYellow"
-                android:textSize="16sp" />
+                android:layout_height="wrap_content"
+                android:paddingLeft="15dp"
+                android:layout_marginTop="20dp"
+                android:paddingRight="15dp"
+                android:textColor="@color/lightYellow"
+                android:textSize="14sp" />
         </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="50dp"
-            android:layout_marginRight="50dp"
-            android:layout_marginTop="10dp"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@mipmap/conver_account_bg" />
-
-            <EditText
-                android:id="@+id/edt_name"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/converMoneyEdt"
-                android:gravity="center"
-                android:hint="输入你银行卡开户姓名"
-                android:textColor="@color/goldYellow"
-                android:textColorHint="@color/lightYellow"
-                android:textSize="16sp" />
-        </LinearLayout>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="35dp"
-            android:text="除了银行卡,你也可以选择以下提现路径"
-            android:textColor="@color/lightYellow"
-            android:textSize="14sp" />
-
-        <RadioGroup
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:gravity="center"
-            android:id="@+id/radioGroup"
-            android:orientation="horizontal">
-            <RadioButton
-                android:id="@+id/chb_card"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:checked="true"
-                android:button="@drawable/checkbox_card" />
-            <RadioButton
-                android:id="@+id/chb_alipay"
-                android:layout_marginLeft="30dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:button="@drawable/checkbox_alipay" />
-
-
-            <RadioButton
-                android:id="@+id/chb_wechat"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="30dp"
-                android:button="@drawable/checkbox_wechat" />
-
-
-        </RadioGroup>
-    </LinearLayout>
-
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="25dp"
-        android:layout_marginRight="25dp"
-        android:layout_marginTop="15dp"
-        android:visibility="gone"
-        android:background="@mipmap/line_horizontal" />
+    </ScrollView>
 
     <ImageView
         android:id="@+id/img_confirm"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
         android:layout_gravity="center_horizontal"
         android:layout_marginBottom="20dp"
+        android:layout_marginTop="10dp"
         android:background="@mipmap/btn_confirm_bet" />
 </LinearLayout>

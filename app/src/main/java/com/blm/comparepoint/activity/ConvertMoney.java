@@ -1,9 +1,9 @@
 package com.blm.comparepoint.activity;
 
 import android.os.Bundle;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.view.View;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioButton;
@@ -15,8 +15,6 @@ import com.blm.comparepoint.R;
 import com.blm.comparepoint.async.PostTools;
 import com.blm.comparepoint.bean.BaseBean;
 import com.blm.comparepoint.interfacer.PostCallBack;
-import com.blm.comparepoint.untils.AppManager;
-import com.blm.comparepoint.untils.L;
 import com.blm.comparepoint.untils.SPUtils;
 import com.blm.comparepoint.untils.T;
 import com.blm.comparepoint.widget.CircleImageView;
@@ -64,6 +62,8 @@ public class ConvertMoney extends BaseActivity {
     RadioButton chbCard;
     @BindView(R.id.radioGroup)
     RadioGroup radioGroup;
+    @BindView(R.id.txt_convert_info)
+    TextView txtConvertInfo;
 
     private String type = "银行卡";
 
@@ -80,7 +80,7 @@ public class ConvertMoney extends BaseActivity {
         Glide.with(this).load((String) SPUtils.get(this, Constants.AVATAR, "")).into(imgAvatar);
         txtName.setText((String) SPUtils.get(this, Constants.NICKNAME, ""));
         txtMoney.setText(SPUtils.get(this, Constants.USERAMOUNT, 0l) + "");
-
+        txtConvertInfo.setText((String)SPUtils.get(this,Constants.CONVERTDESC,""));
         imgSign.setEnabled(!(boolean) SPUtils.get(this, Constants.ISSIGN, false));
         if ((boolean) SPUtils.get(this, Constants.ISSIGN, false)) {
             imgSign.setText("已签到");
@@ -98,7 +98,6 @@ public class ConvertMoney extends BaseActivity {
     @Override
     public void setRedAmount() {
         super.setRedAmount();
-        T.showShort(context,"hhhh");
         txtRedMoney.setText(SPUtils.get(this, Constants.ACTIVEAMOUNT, 0l) + "");
     }
 
@@ -112,11 +111,13 @@ public class ConvertMoney extends BaseActivity {
                         break;
                     case R.id.chb_card:
                         cardSelected();
+//                        edtName.setFocusable(false);
                         break;
                     case R.id.chb_wechat:
                         wechatSelected();
                         break;
                 }
+                edtMoney.setFocusable(true);
             }
         });
         cardSelected();
@@ -127,18 +128,21 @@ public class ConvertMoney extends BaseActivity {
         edtAccount.setHint("请输入微信账号");
         edtName.setHint("请输入微信手机号");
         type = "微信";
+        edtAccount.setInputType(InputType.TYPE_CLASS_TEXT);
     }
 
     private void cardSelected() {
         edtAccount.setHint("请输入银行卡账号");
         edtName.setHint("请输入银行卡开卡人姓名");
         type = "银行卡";
+        edtAccount.setInputType(InputType.TYPE_CLASS_NUMBER);
     }
 
     private void aliPaySelected() {
         edtAccount.setHint("请输入支付宝账号");
         edtName.setHint("请输入支付宝真实姓名");
         type = "支付宝";
+        edtAccount.setInputType(InputType.TYPE_CLASS_TEXT);
     }
 
     private String name, account, money;
@@ -184,6 +188,7 @@ public class ConvertMoney extends BaseActivity {
                 convertMoney();
                 break;
         }
+        edtMoney.setFocusable(true);
     }
 
     private void convertMoney() {
@@ -192,7 +197,7 @@ public class ConvertMoney extends BaseActivity {
         params.put("WithdrawType", type);
         params.put("WithdrawAccount", account);
         params.put("Amount", money);
-        params.put("GoldAmount", Integer.parseInt(money)*10+"");
+        params.put("GoldAmount", Integer.parseInt(money) * 10 + "");
         PostTools.postData(Constants.MAIN_URL + "User/ApplyWithDraw", params, new PostCallBack() {
             @Override
             public void onResponse(String response) {

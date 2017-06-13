@@ -83,7 +83,14 @@
             android:paddingLeft="15dp"
             android:paddingRight="15dp"
             android:textSize="16sp" />
-
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:textColor="@color/goldYellow"
+            android:layout_marginTop="15dp"
+            android:id="@+id/txt_user_agreement"
+            android:text="《点击注册即同意时时猜条款》"/>
         <Button
             android:id="@+id/btn_register"
             android:layout_width="120dp"

@@ -18,5 +18,9 @@ public class Bean_SystemConfig extends BaseBean {
         public String RechargeQrCode;
         public String CustomerQrCode;
         public String ReChargeRules;
+        public String RechargeWePayQrCode;
+        public String RechargeAliPayQrCode;
+        public String RechargeDesc;
+        public String WithdrawDesc;
     }
 }

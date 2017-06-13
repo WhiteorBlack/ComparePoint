@@ -42,7 +42,6 @@ public class Splash extends BaseActivity {
         setContentView(R.layout.activity_splash);
         ButterKnife.bind(this);
         countDown();
-
     }
 
     @Override

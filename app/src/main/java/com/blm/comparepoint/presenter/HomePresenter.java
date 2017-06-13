@@ -115,6 +115,15 @@ public class HomePresenter implements DataOprateInterfacer, Observer {
     }
 
     /**
+     * 防止系统内存不足被回收,所以在trim等级大于80的时候进行检查
+     */
+    public void checkConversion(){
+        if (conversation==null){
+            getCurrentInfo();
+        }
+    }
+
+    /**
      * 重置所有选择状态
      */
     public void resetBetStatue() {
@@ -276,9 +285,9 @@ public class HomePresenter implements DataOprateInterfacer, Observer {
         long clearMoney = 0;
         for (int i = 0; i < betMoneyList.size(); i++) {
             if (betMoneyList.get(i).BetGold > 0) {
-                homeOprateView.setBetMoney(betMoneyList.get(i).BetNum, betMoneyList.get(i).BetGold);
+//                homeOprateView.setBetMoney(betMoneyList.get(i).BetNum, betMoneyList.get(i).BetGold);
                 clearMoney += betMoneyList.get(i).BetGold;
-                homeOprateView.setBetMoney(i, betMoneyList.get(i).BetGold);
+                homeOprateView.setBetMoney(betMoneyList.get(i).BetNum, betMoneyList.get(i).BetGold);
             }
         }
 //        homeOprateView.resetAmount(clearMoney);
@@ -463,7 +472,7 @@ public class HomePresenter implements DataOprateInterfacer, Observer {
                 Constants.LOTTERYTIME = round.Data.LotteryCost;
                 homeOprateView.clearBetMoney();
                 homeOprateView.resetTable();
-                homeOprateView.resetNumStatue();
+//                homeOprateView.resetNumStatue();
                 homeOprateView.gameInfo(round.Data);
             }
 
@@ -488,6 +497,7 @@ public class HomePresenter implements DataOprateInterfacer, Observer {
                 if (!Constants.IS_BET) {
                     homeOprateView.clearBetMoney();
                 }
+                homeOprateView.resetNumStatue();
                 Constants.ISBETABLE = false;
                 Bean_Bouns bouns = new Gson().fromJson(msgString, Bean_Bouns.class);
                 Constants.BONUSEND = true;

@@ -138,7 +138,7 @@ public class MyInfoCard extends TakePhotoActivity implements PopInterfacer, Upda
             case R.id.fl_city:
                 break;
             case R.id.img_share:
-                showShare("猜大小", Constants.SHARE_URL, "快来一起玩儿吧", Constants.PIC_URL);
+                showShare("时时猜", Constants.SHARE_URL, "快来一起玩儿吧", Constants.PIC_URL);
                 break;
             case R.id.img_sign:
                 signIn();

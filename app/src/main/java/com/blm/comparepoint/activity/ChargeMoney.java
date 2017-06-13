@@ -5,17 +5,18 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.blm.comparepoint.BaseActivity;
 import com.blm.comparepoint.R;
 import com.blm.comparepoint.async.PostTools;
 import com.blm.comparepoint.bean.BaseBean;
-import com.blm.comparepoint.bean.Bean_Order;
 import com.blm.comparepoint.interfacer.PostCallBack;
-import com.blm.comparepoint.untils.AppManager;
+import com.blm.comparepoint.untils.DensityUtils;
 import com.blm.comparepoint.untils.SDCardUtils;
 import com.blm.comparepoint.untils.SPUtils;
+import com.blm.comparepoint.untils.ScreenUtils;
 import com.blm.comparepoint.untils.T;
 import com.blm.comparepoint.widget.CircleImageView;
 import com.blm.comparepoint.wxapi.Constants;
@@ -23,8 +24,6 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.Target;
 import com.google.gson.Gson;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import butterknife.BindView;
@@ -54,6 +53,14 @@ public class ChargeMoney extends BaseActivity {
     TextView txtNotify;
     @BindView(R.id.img_download)
     ImageView imgDownload;
+    @BindView(R.id.img_alipay_pic)
+    ImageView imgAlipayPic;
+    @BindView(R.id.img_alipay_download)
+    ImageView imgAlipayDownload;
+    @BindView(R.id.ll_wechat_content)
+    LinearLayout llWechatContent;
+    @BindView(R.id.ll_alipay_content)
+    LinearLayout llAlipayContent;
 
 
     @Override
@@ -61,8 +68,21 @@ public class ChargeMoney extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.charge_money);
         ButterKnife.bind(this);
-
+        initView();
         setUserInfo();
+    }
+
+    private void initView() {
+        int width = ScreenUtils.getScreenWidth(this);
+        LinearLayout.LayoutParams wechatParams = (LinearLayout.LayoutParams) llWechatContent.getLayoutParams();
+        width = (width - DensityUtils.dp2px(this, 60)) / 2;
+        wechatParams.width = wechatParams.height = width;
+        llWechatContent.setLayoutParams(wechatParams);
+
+        LinearLayout.LayoutParams alipayParams= (LinearLayout.LayoutParams) llAlipayContent.getLayoutParams();
+        alipayParams.width=alipayParams.height=width;
+        llAlipayContent.setLayoutParams(alipayParams);
+
     }
 
     @Override
@@ -81,6 +101,8 @@ public class ChargeMoney extends BaseActivity {
         Glide.with(this).load(SPUtils.get(context, Constants.AVATAR, "")).into(imgAvatar);
         txtName.setText((String) SPUtils.get(context, Constants.NICKNAME, ""));
         txtMoney.setText(SPUtils.get(context, Constants.USERAMOUNT, 0l) + "");
+        txtNotify.setText((String) SPUtils.get(context, Constants.CHARGEDESC, ""));
+        Glide.with(this).load(SPUtils.get(context, Constants.CHARGEALIURL, "")).into(imgAlipayPic);
 
         imgSign.setEnabled(!(boolean) SPUtils.get(context, Constants.ISSIGN, false));
         Glide.with(this).load(SPUtils.get(context, Constants.CHARGEURL, "")).into(imgCodePic);
@@ -116,7 +138,7 @@ public class ChargeMoney extends BaseActivity {
         });
     }
 
-    @OnClick({R.id.img_back, R.id.img_sign, R.id.img_download})
+    @OnClick({R.id.img_back, R.id.img_sign, R.id.img_download, R.id.img_alipay_download})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.img_back:
@@ -145,6 +167,27 @@ public class ChargeMoney extends BaseActivity {
                     }
                 }).start();
                 break;
+            case R.id.img_alipay_download:
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            final Bitmap bitmap = Glide.with(context).load(SPUtils.get(context, Constants.CHARGEALIURL, "")).asBitmap().into(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL).get();
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    SDCardUtils.saveImageToGallery(context, bitmap);
+                                }
+                            });
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        } catch (ExecutionException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }).start();
+                break;
         }
     }
+
 }

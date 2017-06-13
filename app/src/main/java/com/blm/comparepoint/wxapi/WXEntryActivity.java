@@ -15,6 +15,7 @@ import com.blm.comparepoint.async.PostTools;
 import com.blm.comparepoint.bean.Bean_Login;
 import com.blm.comparepoint.bean.Bean_WxLogin;
 import com.blm.comparepoint.interfacer.PostCallBack;
+import com.blm.comparepoint.untils.AppManager;
 import com.blm.comparepoint.untils.L;
 import com.blm.comparepoint.untils.NetUtils;
 import com.blm.comparepoint.untils.SPUtils;
@@ -43,58 +44,62 @@ import butterknife.ButterKnife;
 public class WXEntryActivity extends BaseActivity implements IWXAPIEventHandler {
 
 
-    @BindView(R.id.btn_login)
-    ImageView btnLogin;
-    @BindView(R.id.txt_notify)
-    TextView txtNotify;
+//    @BindView(R.id.btn_login)
+//    ImageView btnLogin;
+//    @BindView(R.id.txt_notify)
+//    TextView txtNotify;
 
     private IWXAPI iwxapi;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
-        ButterKnife.bind(this);
-        iwxapi = WXAPIFactory.createWXAPI(this, Constants.APP_ID, true);
-        iwxapi.registerApp(Constants.APP_ID);
+//        setContentView(R.layout.activity_login);
+//        ButterKnife.bind(this);
+//        iwxapi = WXAPIFactory.createWXAPI(this, Constants.APP_ID, true);
+//        iwxapi.registerApp(Constants.APP_ID);
+        AppManager.getAppManager().finishActivity(this);
     }
 
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         setIntent(intent);
+        L.e("onNewIntent");
     }
 
     @Override
     public void onReq(BaseReq baseReq) {
+        L.e("onReq");
     }
 
     @Override
     public void onResp(BaseResp baseResp) {
-        SendAuth.Resp resp = (SendAuth.Resp) baseResp;
-        switch (baseResp.errCode) {
-            case 0://同意
-                getToken(resp.code);
-                break;
-            default:
-                T.showShort(WXEntryActivity.this, "授权失败,请重试!");
-                btnLogin.setEnabled(true);
-                break;
-        }
+        L.e("onResp");
+//        SendAuth.Resp resp = (SendAuth.Resp) baseResp;
+//        switch (baseResp.errCode) {
+//            case 0://同意
+//                getToken(resp.code);
+//                break;
+//            default:
+//                T.showShort(WXEntryActivity.this, "授权失败,请重试!");
+//                btnLogin.setEnabled(true);
+//                break;
+//        }
     }
 
     @Override
     public void pointClick(View v) {
-        super.pointClick(v);
-        switch (v.getId()) {
-            case R.id.btn_login:
-                loginByChat();
-                btnLogin.setEnabled(false);
-                break;
-            case R.id.txt_notify:
-
-                break;
-        }
+//        super.pointClick(v);
+//        switch (v.getId()) {
+//            case R.id.btn_login:
+//                loginByChat();
+//                btnLogin.setEnabled(false);
+//                break;
+//            case R.id.txt_notify:
+//
+//                break;
+//        }
     }
 
     private void loginByChat() {
@@ -147,7 +152,7 @@ public class WXEntryActivity extends BaseActivity implements IWXAPIEventHandler 
                 super.onResponse(response);
                 if (TextUtils.isEmpty(response)) {
                     T.showShort(context, "获取用户信息失败,请重试");
-                    btnLogin.setEnabled(true);
+//                    btnLogin.setEnabled(true);
                     return;
                 }
                 final Bean_Login bean_login = new Gson().fromJson(response, Bean_Login.class);

@@ -10,13 +10,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.blm.comparepoint.BaseActivity;
 import com.blm.comparepoint.R;
 import com.blm.comparepoint.async.PostTools;
 import com.blm.comparepoint.bean.Bean_Login;
 import com.blm.comparepoint.interfacer.PostCallBack;
-import com.blm.comparepoint.untils.AppManager;
 import com.blm.comparepoint.untils.L;
 import com.blm.comparepoint.untils.SPUtils;
 import com.blm.comparepoint.untils.T;
@@ -52,6 +52,8 @@ public class Register extends BaseActivity {
     EditText edtPwdTwo;
     @BindView(R.id.btn_register)
     Button btnRegister;
+    @BindView(R.id.txt_user_agreement)
+    TextView txtUserAgreement;
 
     private ProgressDialog progressDialog;
 
@@ -68,7 +70,7 @@ public class Register extends BaseActivity {
 
     private String userName, userPwd, pwdTwo, nickName;
 
-    @OnClick({R.id.img_back, R.id.btn_register})
+    @OnClick({R.id.img_back, R.id.btn_register,R.id.txt_user_agreement})
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_register:
@@ -102,6 +104,9 @@ public class Register extends BaseActivity {
             case R.id.img_back:
                 finish();
                 startActivity(new Intent(context, Login.class));
+                break;
+            case R.id.txt_user_agreement:
+                startActivity(new Intent(context,UserAgreement.class));
                 break;
         }
     }
@@ -168,7 +173,7 @@ public class Register extends BaseActivity {
                     SPUtils.put(context, Constants.ACTIVEAMOUNT, bean_login.Data.UserActive);
                     SPUtils.put(context, Constants.NICKNAME, bean_login.Data.NickName);
                     SPUtils.put(context, Constants.AVATAR, bean_login.Data.Avatar == null ? "" : bean_login.Data.Avatar);
-                    SPUtils.put(context,Constants.USERNAME,bean_login.Data.UserName);
+                    SPUtils.put(context, Constants.USERNAME, bean_login.Data.UserName);
                     finish();
                     startActivity(new Intent(context, Home.class));
                 } else {

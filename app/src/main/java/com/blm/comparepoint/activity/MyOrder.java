@@ -90,7 +90,6 @@ public class MyOrder extends BaseActivity implements XRecyclerView.LoadingListen
     @Override
     public void setRedAmount() {
         super.setRedAmount();
-        T.showShort(context,"hhhh");
         txtRedMoney.setText(SPUtils.get(this, Constants.ACTIVEAMOUNT, 0l) + "");
     }
     private void getOrderData() {

@@ -86,7 +86,7 @@ public class NotifyList extends BaseActivity implements XRecyclerView.LoadingLis
         notifyListAdapter.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(View v, int pos) {
-                Bean_NotifyList.NotifyDetail notifyDetial = (Bean_NotifyList.NotifyDetail) notifyList.get(pos);
+                Bean_NotifyList.NotifyDetail notifyDetial = (Bean_NotifyList.NotifyDetail) notifyList.get(pos-1);
                 startActivity(new Intent(context, NotifyDetial.class).putExtra("time", notifyDetial.SendTime).
                         putExtra("title", notifyDetial.MsgTitle).putExtra("notify", notifyDetial.MsgContent));
             }

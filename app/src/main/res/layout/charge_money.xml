@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/background"
     android:orientation="vertical">
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="50dp">
@@ -121,48 +122,111 @@
         android:layout_marginRight="25dp"
         android:layout_marginTop="15dp"
         android:background="@mipmap/line_horizontal" />
+
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="match_parent"
         android:gravity="center"
-        android:paddingBottom="50dp"
-        android:orientation="vertical"
-        android:layout_weight="1">
+        android:orientation="vertical">
+
         <LinearLayout
-            android:layout_width="180dp"
-            android:layout_height="180dp"
-            android:gravity="center"
-            android:padding="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:background="@mipmap/code_pic_bg">
-            <ImageView
+            >
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:id="@+id/img_code_pic"
-                />
-        </LinearLayout>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:layout_marginTop="15dp"
-            android:text="进行充值"
-            android:textColor="@color/goldYellow"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/txt_notify"
-            android:textSize="14sp"
-            android:layout_marginTop="20dp"
-            android:text="@string/charge_notify"
-            android:textColor="@color/lightYellow"/>
-    </LinearLayout>
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="25dp"
-        android:id="@+id/img_download"
-        android:layout_gravity="center_horizontal"
-        android:background="@mipmap/btn_download"/>
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
 
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="微信支付"
+                    android:textColor="@color/goldYellow"
+                    android:textSize="12sp" />
+
+                <LinearLayout
+                    android:id="@+id/ll_wechat_content"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:layout_marginTop="5dp"
+                    android:background="@mipmap/code_pic_bg"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:padding="10dp">
+
+                    <ImageView
+                        android:id="@+id/img_code_pic"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+                </LinearLayout>
+
+                <ImageView
+                    android:id="@+id/img_download"
+                    android:layout_width="60dp"
+                    android:layout_height="30dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginBottom="25dp"
+                    android:background="@mipmap/btn_download" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="支付宝支付"
+                    android:textColor="@color/goldYellow"
+                    android:textSize="12sp" />
+
+                <LinearLayout
+                    android:id="@+id/ll_alipay_content"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:layout_marginTop="5dp"
+                    android:background="@mipmap/code_pic_bg"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:padding="10dp">
+
+                    <ImageView
+                        android:id="@+id/img_alipay_pic"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+                </LinearLayout>
+
+                <ImageView
+                    android:id="@+id/img_alipay_download"
+                    android:layout_width="60dp"
+                    android:layout_height="30dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginBottom="25dp"
+                    android:background="@mipmap/btn_download" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/txt_notify"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:layout_marginTop="15dp"
+            android:text="@string/charge_notify"
+            android:textColor="@color/lightYellow"
+            android:textSize="14sp" />
+    </LinearLayout>
 </LinearLayout>

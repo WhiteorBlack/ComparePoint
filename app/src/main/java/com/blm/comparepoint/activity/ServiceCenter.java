@@ -46,7 +46,7 @@ public class ServiceCenter extends BaseActivity {
     }
 
     private void setUserInfo() {
-        Glide.with(this).load(SPUtils.get(context, Constants.CHARGEURL, "")).into(imgCodePic);
+        Glide.with(this).load(SPUtils.get(context, Constants.SERVICEURL, "")).into(imgCodePic);
     }
 
     @OnClick({R.id.img_close, R.id.img_code_pic, R.id.img_download})

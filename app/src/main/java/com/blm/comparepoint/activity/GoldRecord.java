@@ -94,7 +94,6 @@ public class GoldRecord extends BaseActivity implements XRecyclerView.LoadingLis
     @Override
     public void setRedAmount() {
         super.setRedAmount();
-        T.showShort(context,"hhhh");
         txtRedMoney.setText(SPUtils.get(this, Constants.ACTIVEAMOUNT, 0l) + "");
     }
 

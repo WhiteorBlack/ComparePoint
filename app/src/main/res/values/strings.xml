@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">猜大小</string>
+    <string name="app_name">时时猜</string>
     <string name="login_notify">登录即表示同意《用户协议》</string>
     <string name="listview_header_hint_normal">下拉刷新</string>
     <string name="listview_header_hint_release">松开刷新</string>
@@ -8,6 +8,7 @@
     <string name="refreshing">刷新中...</string>
     <string name="refresh_done">刷新完成</string>
     <string name="listview_header_last_time">最后更新时间：</string>
-    <string name="service_center">识别二维码添加微信好友\n以方便我们提供客户服务</string>
+    <string name="service_center">如需联系客服，微信识别二维码添加好友。</string>
     <string name="charge_notify">识别二维码添加微信好友后转账充值</string>
+    <string name="convert_notify">提现帮助:\n    1.当日仅限提款一笔;\n    2.提款最低金额10元，低于20元的提款，收取1元手续费;\n    3.当日提款最高10万，当日9:00-21:00提款，当日到账;\n    4:部分银行的提款时间可能有延迟，如出现提款为到账的情况，请联系微信客服。</string>
 </resources>

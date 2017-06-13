@@ -13,6 +13,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
@@ -48,6 +49,8 @@ import com.blm.comparepoint.untils.L;
 import com.blm.comparepoint.untils.SPUtils;
 import com.blm.comparepoint.untils.ScreenUtils;
 import com.blm.comparepoint.untils.T;
+import com.blm.comparepoint.widget.AutoHorizontalScrollTextView;
+import com.blm.comparepoint.widget.AutoScrollTextView;
 import com.blm.comparepoint.widget.CircleImageView;
 import com.blm.comparepoint.widget.MSGCountTimeView;
 import com.blm.comparepoint.widget.RecycleViewDivider;
@@ -59,6 +62,7 @@ import com.tencent.TIMManager;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -69,7 +73,7 @@ import cn.jpush.android.api.TagAliasCallback;
 public class Home extends BaseActivity implements HomeOprateView, PopInterfacer {
 
     @BindView(R.id.txt_notify)
-    ScrollTextView txtNotify;
+    AutoScrollTextView txtNotify;
     @BindView(R.id.txt_name)
     TextView txtName;
     @BindView(R.id.txt_money)
@@ -170,7 +174,7 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
     private MSGCountTimeView txtCountDown;
 
     public static boolean isForeground;
-    private long getInfoTime=0;
+    private long getInfoTime = 0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -180,7 +184,7 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         homePresenter = new HomePresenter(this);
         Constants.USER_ID = (String) SPUtils.get(context, Constants.GAMER_ID, "-1");
-        Constants.USERTOKEN= (String) SPUtils.get(context,Constants.TOKEN,"");
+        Constants.USERTOKEN = (String) SPUtils.get(context, Constants.TOKEN, "");
         initView();
         initNumData();
         initBetStatue();
@@ -211,7 +215,7 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
         homePresenter.getGameConfig();
         homePresenter.getVersion();
         homePresenter.getCurrentInfo();
-        getInfoTime=System.currentTimeMillis();
+        getInfoTime = System.currentTimeMillis();
     }
 
     private static final int MSG_SET_ALIAS = 1001;
@@ -237,7 +241,7 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
     private final TagAliasCallback mAliasCallback = new TagAliasCallback() {
         @Override
         public void gotResult(int code, String alias, Set<String> tags) {
-            String logs ;
+            String logs;
             switch (code) {
                 case 0:
                     logs = "Set tag and alias success";
@@ -270,9 +274,15 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
     public void onTrimMemory(int level) {
         super.onTrimMemory(level);
         L.e("level--" + level);
-        if (level > TRIM_MEMORY_BACKGROUND) {
-//            T.showShort(this, "进程即将被杀死"+level );
-            AppManager.getAppManager().AppExit(this);
+        if (level > TRIM_MEMORY_MODERATE) {
+            if (TextUtils.isEmpty(Constants.USERTOKEN)){
+                Constants.USERTOKEN = (String) SPUtils.get(context, Constants.TOKEN, "");
+            }
+            if (TextUtils.isEmpty(Constants.USER_ID)){
+                Constants.USER_ID = (String) SPUtils.get(context, Constants.GAMER_ID, "-1");
+            }
+            homePresenter.checkConversion();
+//            AppManager.getAppManager().AppExit(this);
         }
     }
 
@@ -369,15 +379,14 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
         txtCountDown.setSuffixRuntext("秒");//设置运行时的文字的后缀
         txtCountDown.setInittext("准备中");
 
+        txtNotify.init(getWindowManager());
         betHistoryList = new ArrayList();
         betNumberList = new ArrayList();
         numberList = new ArrayList();
         gameConfig = new ArrayList();
-//        notifyData=new ArrayList<>();
 
         betHistoryAdapter = new BetHistoryAdapter(betHistoryList);
         recyHistory.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-//        recyHistory.addItemDecoration(new RecycleViewDivider(context,LinearLayoutManager.HORIZONTAL,1,R.color.lineLight));
         recyHistory.setAdapter(betHistoryAdapter);
 
         betNumberAdapter = new BetNumberAdapter(betNumberList);
@@ -566,7 +575,10 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
         txtCountDown.onDownTime(new MSGCountTimeView.onDownTime() {
             @Override
             public void onDown(final int time) {
-                if (time==53){
+                if (time > 0) {
+                    Constants.ISCOUNTDOWN = true;
+                }
+                if (time == 53) {
                     dismissBetPop();
                 }
                 if (time < 7) {
@@ -607,7 +619,7 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-//        unregisterReceiver(myReceiver);
+        unregisterReceiver(myReceiver);
         TIMManager.getInstance().logout();
         homePresenter.onDestory();
         txtCountDown.destoryed();
@@ -758,8 +770,11 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
         Constants.ROUNDTIME = systemConfig.RoundCost;
         Constants.LOTTERYTIME = systemConfig.LotteryTime;
         Constants.GOldRANGE = systemConfig.GoldRange;
-        SPUtils.put(context, Constants.CHARGEURL, Constants.PIC_URL + systemConfig.RechargeQrCode);
+        SPUtils.put(context, Constants.CHARGEURL, Constants.PIC_URL + systemConfig.RechargeWePayQrCode);
+        SPUtils.put(context, Constants.CHARGEALIURL, Constants.PIC_URL + systemConfig.RechargeAliPayQrCode);
+        SPUtils.put(context, Constants.CHARGEDESC, TextUtils.isEmpty(systemConfig.RechargeDesc)?"":systemConfig.RechargeDesc);
         SPUtils.put(context, Constants.SERVICEURL, Constants.PIC_URL + systemConfig.CustomerQrCode);
+        SPUtils.put(context,Constants.CONVERTDESC,TextUtils.isEmpty(systemConfig.WithdrawDesc)?"":systemConfig.WithdrawDesc);
     }
 
     @Override
@@ -773,7 +788,7 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
 
     @Override
     public void checkUpdate(Bean_AppVersion.AppVersion appVersion) {
-        if (!TextUtils.equals(appVersion.VisionName,AppUtils.getVersionName(context))) {
+        if (!TextUtils.equals(appVersion.VisionName, AppUtils.getVersionName(context))) {
             downUrl = appVersion.DownUrl;
             if (updatePop == null) {
                 updatePop = new UpdatePop(context);
@@ -785,7 +800,7 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
     }
 
     @Override
-    public void currentInfo(Bean_CurrentInfo.CurrentInfo currentInfo,long time) {
+    public void currentInfo(Bean_CurrentInfo.CurrentInfo currentInfo, long time) {
         if (currentInfo.LastBonusNum != null && currentInfo.LastBonusNum.size() > 0) {
             betHistoryList.clear();
             for (int i = 0; i < currentInfo.LastBonusNum.size(); i++) {
@@ -799,19 +814,21 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
             betHistoryAdapter.notifyDataSetChanged();
         }
         Constants.ROUNDNO = currentInfo.RoundNo;
-        Constants.NETTIME_LOCALTIME_DELATE=currentInfo.BonusTime;
-
-        long systemTime = (System.currentTimeMillis() + Constants.NETTIME_LOCALTIME_DELATE) / 1000;
-
-        if (currentInfo.LotteryCost == 0 && Constants.LOTTERYTIME > 0) {
-            currentInfo.LotteryCost = Constants.LOTTERYTIME;
-        }
-        if (currentInfo.LotteryCost == 0) {
-            currentInfo.LotteryCost = 5;
-        }
+//        Constants.NETTIME_LOCALTIME_DELATE=currentInfo.BonusTime;
+//
+//        long systemTime = (System.currentTimeMillis() + Constants.NETTIME_LOCALTIME_DELATE) / 1000;
+//
+//        if (currentInfo.LotteryCost == 0 && Constants.LOTTERYTIME > 0) {
+//            currentInfo.LotteryCost = Constants.LOTTERYTIME;
+//        }
+//        if (currentInfo.LotteryCost == 0) {
+//            currentInfo.LotteryCost = 5;
+//        }
 //        Constants.COUNTDOWNTIME = (int) (currentInfo.BonusTime - systemTime);
-        Constants.BONUSDOWNTIME = (int) (currentInfo.BonusTime - systemTime);
-        Constants.COUNTDOWNTIME= (int) (currentInfo.BonusTime-time/1000);
+//        Constants.BONUSDOWNTIME = (int) (currentInfo.BonusTime - systemTime);
+        getInfoTime=System.currentTimeMillis()-getInfoTime;
+        L.e("getinfoTime-- "+getInfoTime);
+        Constants.COUNTDOWNTIME = (int) (currentInfo.BonusTime - time / 1000-getInfoTime/1000);
         Constants.ISBETABLE = true;
         if (Constants.COUNTDOWNTIME < 2) {
             txtCountDown.setFinishtext("准备中");
@@ -820,8 +837,8 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
             Constants.ISSTART = false;
             countDown(Constants.TYPE_BET_MONEY, Constants.COUNTDOWNTIME);
         }
-        initNumber();
-        numberAdapter.notifyDataSetChanged();
+//        initNumber();
+//        numberAdapter.notifyDataSetChanged();
         if (currentInfo.BetRecords != null && currentInfo.BetRecords.size() > 0) {
             for (int j = 0; j < currentInfo.BetRecords.size(); j++) {
                 Bean_CurrentInfo.BetRecords betRecords = currentInfo.BetRecords.get(j);
@@ -845,8 +862,7 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
                             break;
                     }
                 } else if (betNumberList.size() > 0) {
-                    if (betNumberList!=null&&betNumberList.size()>0)
-                    {
+                    if (betNumberList != null && betNumberList.size() > 0) {
                         ((Bean_BetNumber) betNumberList.get(betRecords.BetNumber - 1)).betGold = betRecords.BetGold;
                     }
                 }
@@ -904,17 +920,23 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
         redAmount += money;
         txtRedMoney.setText(redAmount + "");
         SPUtils.put(context, Constants.ACTIVEAMOUNT, redAmount);
-        Intent intent=new Intent();
+        Intent intent = new Intent();
         intent.setAction("action.UpdateRedAmount");
         sendBroadcast(intent);
     }
 
     @Override
     public void setNotifyData(List<String> data) {
-//        this.notifyData.clear();
         if (data != null && data.size() > 0) {
             txtNotify.setVisibility(View.VISIBLE);
-            txtNotify.setData(data);
+            String notifyString = "";
+            for (int j = 0; j < data.size(); j++) {
+                notifyString += data.get(j) + "                          ";
+            }
+            L.e("notify---" + notifyString);
+            notifyString += notifyString;
+            txtNotify.setText(notifyString);
+            txtNotify.startScroll();
         }
     }
 
@@ -1087,8 +1109,8 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
 
             @Override
             public void onFinish() {
-                initNumber();
-                numberAdapter.notifyDataSetChanged();
+//                initNumber();
+//                numberAdapter.notifyDataSetChanged();
             }
         }.start();
 
@@ -1129,6 +1151,7 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
 
     @Override
     public void setBetMoney(int pos, int amount) {
+        L.e("amount---" + amount);
         if (pos > 10) {
             switch (pos) {
                 case 101: //大
@@ -1366,6 +1389,9 @@ public class Home extends BaseActivity implements HomeOprateView, PopInterfacer 
                 Uri downUri = Uri.parse(downUrl);
                 intent.setData(downUri);
                 startActivity(intent);
+                if (updatePop!=null){
+                    updatePop.dismiss();
+                }
                 break;
         }
     }

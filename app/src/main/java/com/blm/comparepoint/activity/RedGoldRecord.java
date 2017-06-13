@@ -94,7 +94,6 @@ public class RedGoldRecord extends BaseActivity implements XRecyclerView.Loading
     @Override
     public void setRedAmount() {
         super.setRedAmount();
-        T.showShort(context,"hhhh");
         txtRedMoney.setText(SPUtils.get(this, Constants.ACTIVEAMOUNT, 0l) + "");
     }
     private void getOrderData() {
@@ -177,7 +176,7 @@ public class RedGoldRecord extends BaseActivity implements XRecyclerView.Loading
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                txtMoney.setText(SPUtils.get(context, Constants.USERAMOUNT, 0) + "");
+                                txtMoney.setText(SPUtils.get(context, Constants.USERAMOUNT, 0l) + "");
                             }
                         });
                     } else {
